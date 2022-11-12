@@ -1,0 +1,151 @@
+.multiplayer-title{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 16px;
+  /* identical to box height, or 100% */
+  
+  letter-spacing: -0.078px;
+  
+  /* Light Text / Subhead */
+  
+  color: #6D7885;
+  
+  
+}
+
+.multiplayer-div{
+  margin-top: 100px;
+}
+
+.multiplayer-title-div{
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.multiplayer-title-code{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 22px;
+  
+  letter-spacing: -0.408px;
+
+  
+
+  position: flex;
+}
+
+.multiplayer-title-return{
+  
+  position: flex;
+  
+}
+
+.multiplayer-qr-button-div{
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.multiplayer-qr-button{
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-right: 24px;
+  padding-left: 24px;
+	color:#1984FF;
+	border-radius:25px;
+}
+
+
+.multiplayer-separator-div{
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  
+}
+
+
+.separator-right{
+  float: right;
+  width: 80px; 
+  margin-left: 22px;
+}
+
+.title-or{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 16px;
+  /* identical to box height, or 100% */
+
+  letter-spacing: -0.078px;
+
+  /* Light Text / Tertiary */
+
+  color: #99A2AD;
+}
+
+.separator-left{
+  width: 80px;
+  margin-right: 22px;
+}
+
+.multiplayer-code-button{
+  padding-top: 10px;
+  padding-bottom: 8px;
+  padding-right: 24px;
+  padding-left: 24px;
+	color:#1984FF;
+	border-radius:25px;
+}
+
+.multiplayer-complexity-div{
+  display: flex;
+  justify-content: center;
+}
+
+.complexity-button-on{
+  padding-top: 6px;
+  padding-bottom: 4px;
+  padding-right: 10px;
+  padding-left: 10px;
+	color:#1984FF;
+  background-color: #ECF1FA;
+	border-radius:25px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.complexity-button-off{
+  padding-top: 6px;
+  padding-bottom: 4px;
+  padding-right: 10px;
+  padding-left: 10px;
+	color:#1984FF;
+	border-radius:25px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.multiplayer-play-div{
+  display: flex;
+  justify-content: center;
+}
+
+.multiplayer-play-button{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 30%;
+  padding-left: 30%;
+	color:#1984FF;
+	border-radius:25px;
+}
+
+.multiplayer-play-group{
+  bottom: 10px;
+}

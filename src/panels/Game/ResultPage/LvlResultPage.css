@@ -1,0 +1,59 @@
+.lvl-res-headDiv{
+    margin-top: 15%;
+}
+
+.lvl-res-title-div{
+    margin-top: 16px;
+    font-family: 'SF Pro Rounded';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 22px;
+    letter-spacing: 0.25px;
+
+    color: #000000;
+
+
+    display: flex;
+    justify-content: center;
+}
+
+.lvl-res-sub-title-div{
+    margin-top: 8px;
+    font-family: 'SF Pro Text';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px; 
+
+    color: #6D7885;
+
+ 
+
+
+    display: flex;
+    justify-content: center;
+}
+
+.lvl-res-div{
+    display: flex;
+    justify-content: center;
+}
+
+.lvl-res-clock-div{
+    display: flex;
+    justify-content: center;
+    margin-left: -15px;
+}
+
+.lvl-res-absolute-div{
+    margin-bottom: 12px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 20%;
+    bottom: 0;
+    backdrop-filter: blur(1.5px);
+    background: rgba(247, 247, 250, 0.8)
+    
+  }

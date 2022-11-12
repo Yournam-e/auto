@@ -1,0 +1,327 @@
+ 
+
+body {
+  --background_content: #F7F7FA; 
+  background-color: #F7F7FA;
+  background: #F7F7FA;
+    
+}
+
+.vkuiPanel .vkuiPanel__in, .vkuiPanel:after {
+  background-color: #F7F7FA;
+  background-color: #F7F7FA;
+}
+
+@keyframes pulsing-heart {
+  0% { transform: none; }
+  25% { background-color: #2BD328;
+    color: #FFFFFF; }
+  50% { background-color: #2BD328;
+  color: #FFFFFF; }
+  75% { background-color: #2BD328;
+    color: #FFFFFF; }
+  100% { transform: none; }
+}
+
+.equationDiv{ /*div для примера*/
+  margin: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.equationMark{ /*вопросительный знак*/
+  font-family: 'SF Pro Rounded';
+  font-style: normal;
+  font-weight: 600;
+  color: #1A84FF;
+  font-size: 36px;
+  line-height: 22px;
+}
+
+
+.equation{ /*пример*/
+
+
+
+  font-family: 'SF Pro Rounded';
+  font-style: normal;
+  font-weight: 600;
+  margin-left: auto;
+  margin-right: auto;
+  width: 155px;
+  padding: 16px;
+  text-align: center;
+  font-size: 35px;
+  line-height: 22px;
+  
+  letter-spacing: 2px; 
+
+  background: #F0F1F5;
+  border-radius: 20px;
+}
+
+.selectAnswer{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 17px;
+  color: #6D7885;
+
+}
+
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 10px;
+    max-inline-size: 400px;
+    margin-inline: auto; 
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:13%;
+  }
+
+
+
+  
+.item { 
+
+    font-family: 'SF Pro Rounded';
+    font-style: normal;
+    font-weight: 600;
+    --font-size: 222px; 
+    /* identical to box height, or 73% */
+    
+    text-align: center;
+    letter-spacing: 1px;
+  
+
+
+    min-block-size: 100px; 
+    background: #FFFFFF;
+    border-radius: 28px;
+    color: #000000;
+
+     
+
+    height: 150px;
+    width: 150px;
+    transition-duration: 200ms;
+
+    
+
+
+    box-sizing: border-box;
+  }
+
+
+  .item:active {
+    background-color: #2BD328;
+    color: #FFFFFF;
+    
+
+  }
+  
+  
+@media (min-width: 150px) {
+    .item {
+      flex-basis: calc((100% - 10px) / 2);
+    }
+  }
+
+.single-clock-div{
+  display: flex;
+  justify-content: center;
+}
+
+.clock-icon-div{
+  display: flex;
+  justify-content: center;
+}
+.time-title{
+  display: flex;
+  justify-content: center;
+}
+
+.check-circle-outline{
+  margin-top: 10%;
+  
+}
+
+.result-task-title{
+  font-family: 'SF Pro Rounded';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 22px;
+  /* identical to box height, or 100% */
+
+  display: flex;
+  justify-content: center;
+  letter-spacing: 0.25px;
+}
+
+.result-task-text{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 22px;
+  /* or 129% */
+  text-align: center;
+  
+  display: flex;
+  justify-content: center;
+  color: #6D7885;
+}
+
+.result-task-button{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 18px;
+
+  padding-left: 16px;
+  padding-right: 16px;
+
+  padding-top: 6px;
+  padding-bottom: 6px;
+
+  letter-spacing: -0.25px;
+  margin-bottom: 16px;
+  
+}
+
+.result-task-button-div{
+  display: flex;
+  justify-content: center;
+  
+}
+
+.result-task-resTitle{
+
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px; 
+
+  color: #6D7885;
+
+
+ 
+}
+
+.result-task-resTitle-div{
+  margin-left: 10%;
+ 
+  display: flex;
+  align-items: center;
+}
+
+
+.result-friend-position{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17px;
+  position: absolute;
+  top: 50%;
+  margin-top: -17px;
+  /* identical to box height, or 94% */
+
+  letter-spacing: -0.078px;
+
+  /* Light Text / Tertiary */
+
+  color: #99A2AD;
+}
+
+
+.result-friendList{
+  padding-bottom: 28%;
+}
+ 
+
+.result-absolute-div{
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 20%;
+  bottom: 0;
+  backdrop-filter: blur(1.5px); 
+  
+}
+
+.result-buttonGroup{
+  display: flex;
+  align-items: center;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.result-buttonRetry-div{
+  
+  width:100%;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+}
+.result-buttonNotNow-div{
+  width:100%;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+}
+
+
+.result-buttonGroup-retry{
+  margin-top: 10px;
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 18px;
+
+  padding-left: 25px;
+  padding-right: 25px;
+  
+
+  padding-top:10px;
+  padding-bottom: 10px;
+
+  letter-spacing: -0.25px;
+}
+
+.result-buttonGroup-notNow{
+  
+}
+
+.friendsPoint{
+  display: flex; 
+  align-items: center; 
+  padding-left: -10px;
+  padding-right: -10px;
+  margin-left: 16;
+
+  width: auto;
+  height: 28px; 
+}
+
+.friendsAvatar{
+  float: right;
+  padding-left: 16px;
+}
+
+.vkuiTabbarItem--selected .vkuiTabbarItem__icon {
+  color: #000000;
+  color: #000000;
+}
+
+.vkuiTabbarItem--selected { 
+  color: #000000;
+}
