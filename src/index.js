@@ -6,5 +6,5 @@ import App from "./App";
 bridge.send("VKWebAppInit");
 
 const root = createRoot(document.getElementById('root'));
-
+import("./eruda").then(({ default: eruda }) => {}); //runtime download
 root.render(<App />)

@@ -21,16 +21,28 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 	const userId = useUserId()
 	const [complexity, setComplexity] = useState(0)
 
-	const [playersList, updatePlayersList] = React.useState([
-	]);
+	const [playersList, updatePlayersList] = React.useState([]);
 
+	const [playersId, setPlayersId] = useState([]) //список id участников
 
 	
 
+	useEffect(()=>{
+
+		console.log(playersId)
+
+	}, [playersId])
 
 	client.joinedRoom = ({ users }) => {
 		console.debug("joinedRoom", users);
+
+	
 		users!==0? updatePlayersList(users): console.log('ok')
+		users && users.map((item, index)=>{
+			setPlayersId([...playersId, item.userId]);
+			console.log('наш массив Id' + playersId)
+		})
+
 	  };
 
 
@@ -43,7 +55,6 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 				await setJoinCode(response.data.data)
 				await connectRoom(qsSign, response.data.data, userId);
 				await setGameInfo({ ...gameInfo, roomId: response.data.data})
-				
 				
 			})
 			.catch(function (error) {
@@ -116,17 +127,18 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 
 				</div>
 
+				
 
 
 				<List style={{ marginTop: 16, marginBottom: 16 }}>
-					{fetchedUser && playersList.map((item, index) => (
+					{fetchedUser && [0,1,2,3].map((item, index) => (
 						<Cell
 							key={index}
-							mode={index === 0 ? false : 'removable'}
-							before={fetchedUser && index === 0 ? <Avatar src={fetchedUser.photo_200} /> : <Avatar src={item.avatar} />}
-							disabled={index === 0 ? true : false}
+							mode={index === 0 ? false : 'removable'|| playersList[index]?false:'removable'}
+							before={playersList[index]?<Avatar src={playersList[index].avatar} />:<div className='ory' />  }
+							disabled={index === 0 ? true : false || playersList[index]?false:true}
 						>
-							{index === 0 ? `${fetchedUser.first_name} ${fetchedUser.last_name}` : playersList[index].name}
+							{playersList[index]? <Title level="3" weight="2" className='player-name-on'>{playersList[index].name}</Title> : <Title level="3" weight="3" className='player-name-off'>Пусто</Title>}
 						</Cell>
 					))}
 				</List>
@@ -175,11 +187,9 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 
 					<ButtonGroup gap="space" style={{ marginTop: 10 }} className='multiplayer-play-div'>
 						<Button size="s" className='multiplayer-play-button' appearance="accent"
-						onClick={(e)=>{
-							go(e)
-							startGame(joinCode, 332056392, "easy", [332056392])
-						}}
-						data-to="multiplayerGame">Играть</Button>
+						onClick={()=>{
+							startGame(joinCode, fetchedUser.id, "easy", playersId)
+						}}>Играть</Button>
 					</ButtonGroup>
 				</div>
 

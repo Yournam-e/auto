@@ -149,3 +149,29 @@
 .multiplayer-play-group{
   bottom: 10px;
 }
+
+.ory{
+  width: 44px;
+  height: 44px;
+
+  /* Light / Image Border
+
+  image_border
+  Dark: white_alpha8 #14FFFFFF
+  Light: black_alpha8 #14000000
+  */
+  border: 2px dashed rgba(0, 0, 0, 0.08);
+  border-radius: 231px; 
+  margin-top: 4px;
+  margin-bottom: 4px;
+  margin-left: auto; 
+  margin-right: auto; 
+
+   
+}
+
+
+.player-name-off{
+  margin-left: 12px;
+  color:#99A2AD;
+}

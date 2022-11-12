@@ -53,6 +53,7 @@ const App = () => {
 			setGameInfo({ ...gameInfo, taskId: id})
 		}
 		lol()
+		setActivePanel('multiplayerGame')
 	};
 
 	
