@@ -86,7 +86,7 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 								setActiveModal('inputCodeQR')
 							}}
 							before={<Icon20QrCodeOutline />}
-							mode='secondary'>Поделиться 1QR</Button>
+							mode='secondary'>Поделиться QR</Button>
 					</div>
 
 					<div className='multiplayer-separator-div'>
