@@ -18,9 +18,11 @@ import {
 
  import { connectRoom, createRoom, joinRoom } from '../../sockets/game';
 
-const ModalInputCode = ({ id}) =>{
+const ModalInputCode = ({ id, setGameInfo, gameInfo, go, setHostInfo, setActivePanel, setConnectType}) =>{
 
     const textInput = React.createRef();
+
+ 
 
     return(
         
@@ -32,16 +34,6 @@ const ModalInputCode = ({ id}) =>{
                 <div><Title level="1" >Используйте все функции!</Title></div>
                 <div> <Title level="3" weight="3" >дай код</Title></div>
                 
-                
-                
-                
-                
-                
-                
-    
-                
-                 
-    
                 <Input
                     getRef={textInput}
                     type="text"
@@ -51,19 +43,23 @@ const ModalInputCode = ({ id}) =>{
                         <IconButton
                         hoverMode="opacity"
                         aria-label="Очистить поле"
-                        onClick={()=>{
+                        onClick={(e)=>{
+                            
                             async function getId(){
                                 const user = await bridge.send('VKWebAppGetUserInfo');
                                 console.log(user.id)
                                 console.log(textInput.current.value)
                                 //await connectRoom(qsSign, textInput.current.value, user.id);
                                 joinRoom(textInput.current.value, user.id)
+                                setGameInfo({ ...gameInfo, roomId: textInput.current.value})
+                                setConnectType('join')
                             }
 
                             getId()
                             
 
                         }}
+                        data-to='lobbyForGuest'
                         >
                         <Icon16Clear />
                         </IconButton>

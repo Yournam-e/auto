@@ -23,6 +23,21 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 	var friendList = ['Адам', 'kek', 'cheb', 'lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb',]
 	console.log(mpGameResults)
 
+
+	const [timeLeft, setTimeLeft] = useState(10); //время
+
+	useEffect(()=>{
+		timeLeft === 0?setActivePanel('multiplayerResult'):console.log()
+	}, [timeLeft])
+
+	useEffect(()=>{
+		async function timeFunction(){
+			await setTimeout(() => 1000);
+		}
+
+		timeFunction()
+	}, [])
+
 	return(
 
  
@@ -82,7 +97,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 								backgroundColor:'#1A84FF',
 								borderRadius:25
 								}} className="result-buttonGroup-retry" appearance="accent" stretched>
-							Сыграть снова
+							Сыграть снова {timeLeft}c
 						</Button>
 					</div>
 					<div className="result-buttonNotNow-div">

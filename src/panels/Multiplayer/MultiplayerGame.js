@@ -18,17 +18,16 @@ import { getPadTime } from '../../scripts/getPadTime';
 import { Icon16ClockCircleFill } from '@vkontakte/icons';
 import { answerTask } from '../../sockets/game';
 import { client } from '../../sockets/receiver';
+import { useUserId } from '../../hooks/useUserId';
 
-const MultiplayerGame = ({ id, go, count, setCount, setActivePanel, setPopout, gameInfo, setGameInfo, taskInfo, setTaskInfo, setAnswersInfo, answersInfo, setMpGameResults}) => {
+
+const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout, gameInfo, setGameInfo, taskInfo, setTaskInfo, setAnswersInfo, answersInfo, setMpGameResults}) => {
 	
 
 	
 
 	//const [equation, setEquation] = useState([2, 2, '+', 4]); //задача
-
-	const [selectedAnswer, setSelectedAnswer] = useState();// выбранный ответ
-
-	 
+ 
  
 	const [timeLeft, setTimeLeft] = useState(30); //время
 	const [isCounting, setIsCounting] = useState(true); //время
@@ -51,12 +50,7 @@ const MultiplayerGame = ({ id, go, count, setCount, setActivePanel, setPopout, g
 	}, [timeLeft])
 
 	useEffect(()=>{
-		async function lol(){
-			await setPopout(<ScreenSpinner size='large' />)
-			await setTimeout(() =>setPopout(null), 1000);
-		}
-
-		lol()
+		
 	}, [])
 
 	useEffect(()=>{
@@ -85,8 +79,6 @@ const MultiplayerGame = ({ id, go, count, setCount, setActivePanel, setPopout, g
 		<Panel id={id}>
 
 			<div>
-			
-			<Title level="2"  style={{ textAlign: 'right' }}>твои баллы: {count}</Title>
 			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
 			<div className='equationDiv'>
 			{taskInfo&& <Title level="1" className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span></Title>}
@@ -134,8 +126,8 @@ const MultiplayerGame = ({ id, go, count, setCount, setActivePanel, setPopout, g
 							//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
 							console.log(gameInfo)
 							console.log('aaaaa')
-							console.log(answersInfo)
-							answerTask(gameInfo.roomId, gameInfo.userId, value, gameInfo.taskId)
+							console.log(answersInfo) 
+							answerTask(gameInfo.roomId, fetchedUser.id, value, gameInfo.taskId)
 							//setIsCounting(true)
 						}} >
 							{answersInfo[index]}

@@ -17,6 +17,7 @@ import LvlResultPage from './panels/Game/ResultPage/LvlResultPage';
 import MultiplayerGame from './panels/Multiplayer/MultiplayerGame';
 import { client } from './sockets/receiver';
 import MultiplayerResult from './panels/Multiplayer/mpResult/MultiplayerResult';
+import LobbyForGuest from './panels/Multiplayer/LobbyForGuest/LobbyForGuest';
 
 const App = () => {
 	const [scheme, setScheme] = useState('bright_light')
@@ -38,27 +39,36 @@ const App = () => {
 	});
 
 	const [taskInfo, setTaskInfo] = useState(); //данные о примере
-
 	const [answersInfo, setAnswersInfo] = useState(); // ответы
-
 	const [joinCode, setJoinCode] = useState(null) //код для подкл
-
 	const [mpGameResults, setMpGameResults] = useState(); //массив для резуьтатов
-	
 	const [playersId, setPlayersId] = useState([]) //список id участников
+	const [firstStart, setFirstStart] = useState(true) //первый старт
+	const [playersList, updatePlayersList] = useState([]); //информация о юзерах в лобби
+
+	const [connectType, setConnectType] = useState('host')
 
 
+ 
 
-	client.gameStarted = ({ answers, task, id }) => {
-		console.debug("gameStarted", answers, task, id);
-		setTaskInfo(task)
-		setAnswersInfo(answers)
-		async function lol(){
-			setGameInfo({ ...gameInfo, taskId: id})
-		}
-		lol()
-		setActivePanel('multiplayerGame')
-	};
+	client.joinedRoom = ({ users }) => {
+		console.debug("joinedRoom", users);
+	
+		users!==0? updatePlayersList(users): console.log('ok')
+
+		users && users.map((item, index)=>{
+			setPlayersId([...playersId, item.userId]);
+		})
+
+		 
+
+	  };
+
+	 
+
+	   
+
+
 
 	
 
@@ -76,7 +86,10 @@ const App = () => {
 			const user = await bridge.send('VKWebAppGetUserInfo');
 			await setUser(user)
 			await setGameInfo({ ...gameInfo, userId: user.id})
+			await console.log('воооот')
 			await console.log(user)
+			
+			await console.log('воооот')
 			await setPopout(null);
 		}
 		fetchData();
@@ -92,11 +105,18 @@ const App = () => {
 		<ModalRoot activeModal={activeModal} onClose={()=>{
 			setActiveModal(null);
 		}}>
-		  <ModalInputCode id= 'inputCode' setActiveModal={setActiveModal}/>
+		  <ModalInputCode 
+		  id='inputCode' 
+		  setActiveModal={setActiveModal} 
+		  gameInfo={gameInfo} 
+		  setGameInfo={setGameInfo} 
+		  go={go} 
+		  playersList={playersList}
+		  setActivePanel={setActivePanel}
+		  setConnectType={setConnectType}/>
 		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal}/>
 		</ModalRoot>
 	  );
-
 
 
 	return (
@@ -136,17 +156,20 @@ const App = () => {
 										
 										<View id="multiplayer" activePanel="multiplayer">
 											<Multiplayer 
+											setActivePanel={setActivePanel}
 											id='multiplayer'
 											go={go} 
+											connectType={connectType}
 											setPopout={setPopout} 
 											fetchedUser={fetchedUser}
-											gameInfo={gameInfo} 
-											setGameInfo={setGameInfo}
+											gameInfo={gameInfo} setGameInfo={setGameInfo}
 											setActiveModal={setActiveModal}
-											playersId={playersId}
-											setPlayersId={setPlayersId}
-											joinCode={joinCode}
-											setJoinCode={setJoinCode} />
+											playersId={playersId} setPlayersId={setPlayersId}
+											joinCode={joinCode} setJoinCode={setJoinCode}
+											firstStart={firstStart} setFirstStart={setFirstStart}
+											playersList={playersList}
+											setTaskInfo={setTaskInfo}
+											setAnswersInfo={setAnswersInfo}/>
 										</View>
 									
 									</Epic>
@@ -171,7 +194,9 @@ const App = () => {
 								answersInfo={answersInfo}
 								setAnswersInfo={setAnswersInfo}
 								setActivePanel={setActivePanel}
-								setMpGameResults={setMpGameResults}/>
+								setMpGameResults={setMpGameResults}
+								fetchedUser={fetchedUser}
+								connectType={connectType}/>
 
 								
 								<LvlResultPage id='resultLvl' go={go}/>
@@ -182,7 +207,24 @@ const App = () => {
 								mpGameResults={mpGameResults} 
 								fetchedUser={fetchedUser}
 								joinCode={joinCode} 
-								setActiveStory={setActiveStory}/>
+								setActiveStory={setActiveStory}
+								setPlayersId={setPlayersId} />
+
+								<LobbyForGuest 
+								id='lobbyForGuest'
+								fetchedUser={fetchedUser}
+								gameInfo={gameInfo} 
+								setGameInfo={setGameInfo}
+								setActiveModal={setActiveModal}
+								joinCode={joinCode}
+								setJoinCode={setJoinCode}
+								firstStart={firstStart}
+								setFirstStart={setFirstStart} 
+								playersList={playersList}
+								setTaskInfo={setTaskInfo}
+								setAnswersInfo={setAnswersInfo}
+								setActivePanel={setActivePanel}
+								/>
 								
 
 								
