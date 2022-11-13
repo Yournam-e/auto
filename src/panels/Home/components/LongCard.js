@@ -1,13 +1,28 @@
-import React from 'react'; 
-
+import React, { useEffect, useState } from 'react';
 
 import {Title, Button, Card, Div} from '@vkontakte/vkui';
 import { Icon24Play, Icon24ClockOutline } from '@vkontakte/icons';
 
+import axios from 'axios';
+
 import '../Home.css';
+import { qsSign } from '../../../hooks/qs-sign';
 
 
 const LongCard = ({go}) => {
+
+
+
+	useEffect(()=>{
+			axios.post(`https://showtime.app-dich.com/api/plus-plus/info${qsSign}`,{'lvlType': "one"})
+		.then(async function (response) {
+			console.log(response.data.data)
+		})
+		.catch(function (error) {
+			console.warn(error);
+		});
+	}, [])
+
 
 	return(
 
