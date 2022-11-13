@@ -14,9 +14,11 @@ import {
 
  import { Icon56CheckCircleOutline, Icon24StoryOutline, Icon16Done } from '@vkontakte/icons';
  import '../../Game/Game.css'
+import { client } from '../../../sockets/receiver';
+import { leaveRoom } from '../../../sockets/game';
 
 
-const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser }) => {
+const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel, joinCode }) => {
 
 	var friendList = ['Адам', 'kek', 'cheb', 'lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb',]
 	console.log(mpGameResults)
@@ -30,17 +32,25 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser }) => {
 			
 			<Div  className='check-circle-outline'>
 				<div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
+
 					<Title className='result-task-title'>Вы заняли <span style={{color: '#1984FF', paddingRight:5, paddingLeft:5}}>2-е</span>  место</Title>
+
 				</div>
 
 				<div style={{marginLeft: 18, marginRight: 18, marginTop: 16}}>
-					{mpGameResults && fetchedUser && <Title className='result-task-text'>Правильных ответов: {mpGameResults.players.map((value)=>{
+
+					{mpGameResults && fetchedUser && 
+					<Title className='result-task-text'>Правильных ответов: {mpGameResults.players.map((value)=>{
                          if(value.userId === fetchedUser.id){
                             return value.rightResults
-                         }
-                    })}</Title>}
+							}
+						})}
+					</Title>}
+
 				</div> 
+
 				<List className='result-friendList' style={{marginTop:20}}>
+
 				{friendList.map((item, idx) => (
 				
 					<Cell
@@ -48,6 +58,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser }) => {
 						key={idx}
 						before={<div style={{width:100}}><Avatar size={56} className='friendsAvatar' /> <Title style={{ verticalAlign: 'middle'}} className='result-friend-position'>#{idx +1}</Title></div>} 
 						>
+
 						<div style={{height: 65,  marginLeft: 16}}>
 							<Title style={{paddingBottom: 8,}}>{item}</Title>
 							<Button className='friendsPoint'
@@ -57,6 +68,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser }) => {
 								color:'#1984FF',
 								borderRadius:25}}>1</Button>
 						</div>
+
 					</Cell>
 				
 			))}
@@ -77,7 +89,8 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser }) => {
 						<Button 
 							onClick={(e)=>{
 								go(e)
-								console.log('ask')
+								leaveRoom(joinCode, fetchedUser.id)
+								setActivePanel('multiplayer')
 							}}
 							data-to='menu'
 							size="l"

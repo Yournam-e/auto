@@ -37,11 +37,15 @@ const App = () => {
 		taskId: null
 	});
 
-	const [taskInfo, setTaskInfo] = useState();
+	const [taskInfo, setTaskInfo] = useState(); //данные о примере
 
-	const [answersInfo, setAnswersInfo] = useState();
+	const [answersInfo, setAnswersInfo] = useState(); // ответы
 
-	const [mpGameResults, setMpGameResults] = useState();
+	const [joinCode, setJoinCode] = useState(null) //код для подкл
+
+	const [mpGameResults, setMpGameResults] = useState(); //массив для резуьтатов
+	
+	const [playersId, setPlayersId] = useState([]) //список id участников
 
 
 
@@ -138,13 +142,21 @@ const App = () => {
 											fetchedUser={fetchedUser}
 											gameInfo={gameInfo} 
 											setGameInfo={setGameInfo}
-											setActiveModal={setActiveModal}/>
+											setActiveModal={setActiveModal}
+											playersId={playersId}
+											setPlayersId={setPlayersId}
+											joinCode={joinCode}
+											setJoinCode={setJoinCode} />
 										</View>
 									
 									</Epic>
 								</Panel>
 								<Panel id='game'>
-									<Game setCount={setCount} count={count} setActivePanel={setActivePanel} setPopout={setPopout}/>
+									<Game 
+									setCount={setCount} 
+									count={count} 
+									setActivePanel={setActivePanel} 
+									setPopout={setPopout} />
 									
 								</Panel>
 								<ResultPage id='result' count={count} go={go}/>
@@ -164,7 +176,13 @@ const App = () => {
 								
 								<LvlResultPage id='resultLvl' go={go}/>
 
-								<MultiplayerResult id='multiplayerResult' go={go} mpGameResults={mpGameResults} fetchedUser={fetchedUser}/>
+								<MultiplayerResult 
+								id='multiplayerResult' 
+								go={go} 
+								mpGameResults={mpGameResults} 
+								fetchedUser={fetchedUser}
+								joinCode={joinCode} 
+								setActiveStory={setActiveStory}/>
 								
 
 								

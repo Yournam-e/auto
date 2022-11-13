@@ -14,16 +14,24 @@ import { useUserId } from '../../hooks/useUserId';
 import { qsSign } from '../../hooks/qs-sign';
 
 
-const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInfo}) => {
+const Multiplayer = ({ 
+	id,
+	go,
+	fetchedUser, 
+	setActiveModal, 
+	setGameInfo, 
+	gameInfo, 
+	playersId, 
+	setPlayersId,
+	joinCode,
+	setJoinCode}) => {
 
-	const [joinCode, setJoinCode] = useState(null)
+	
 
 	const userId = useUserId()
-	const [complexity, setComplexity] = useState(0)
+	const [complexity, setComplexity] = useState("easy")
 
 	const [playersList, updatePlayersList] = React.useState([]);
-
-	const [playersId, setPlayersId] = useState([]) //список id участников
 
 	
 
@@ -40,7 +48,6 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 		users!==0? updatePlayersList(users): console.log('ok')
 		users && users.map((item, index)=>{
 			setPlayersId([...playersId, item.userId]);
-			console.log('наш массив Id' + playersId)
 		})
 
 	  };
@@ -53,8 +60,12 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 			.then(async function (response) {
 				console.log(response.data.data)
 				await setJoinCode(response.data.data)
+				console.log('1')
 				await connectRoom(qsSign, response.data.data, userId);
+				
+				console.log('12')
 				await setGameInfo({ ...gameInfo, roomId: response.data.data})
+				console.log('13')
 				
 			})
 			.catch(function (error) {
@@ -73,14 +84,23 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 				<div style={{ paddingLeft: 'auto', paddingRight: 'auto' }}>
 					<Title
 						className='multiplayer-title'
-						style={{ textAlign: 'center' }}>Пригласите друзей в лобби</Title>
+						style={{ textAlign: 'center' }}>Пригласите друзей в лобби
+					</Title>
+
+
 					<div style={{ height: 30 }} className='multiplayer-title-div'>
+
+
 						<Title
 							className='multiplayer-title-code'
 							style={{
 								display: 'inline-block',
 								paddingLeft: 5
-							}} >{joinCode}</Title>
+							}} >
+								{joinCode}
+						</Title>
+
+
 						<Icon20Sync className='multiplayer-title-return'
 							fill='#1A84FF'
 							style={{
@@ -88,6 +108,8 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 								paddingLeft: 5,
 								verticalAlign: 'middle'
 							}} />
+
+
 					</div>
 					<div className='multiplayer-qr-button-div'>
 						<Button
@@ -152,9 +174,9 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 								appearance="accent"
 								mode="tertiary"
 								gap='m'
-								className={complexity === 0 ? 'complexity-button-on' : 'complexity-button-off'}
+								className={complexity === 'easy' ? 'complexity-button-on' : 'complexity-button-off'}
 								onClick={() => {
-									setComplexity(0)
+									setComplexity("easy")
 								}}
 							>
 								Легко
@@ -164,9 +186,9 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 								appearance="accent"
 								mode="tertiary"
 								gap='m'
-								className={complexity === 1 ? 'complexity-button-on' : 'complexity-button-off'}
+								className={complexity === 'mid' ? 'complexity-button-on' : 'complexity-button-off'}
 								onClick={() => {
-									setComplexity(1)
+									setComplexity("mid")
 								}}
 							>
 								Средне
@@ -175,9 +197,9 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 								appearance="accent"
 								mode="tertiary"
 								gap='m'
-								className={complexity === 2 ? 'complexity-button-on' : 'complexity-button-off'}
+								className={complexity === "hard" ? 'complexity-button-on' : 'complexity-button-off'}
 								onClick={() => {
-									setComplexity(2)
+									setComplexity("hard")
 								}}
 							>
 								Сложно
@@ -188,7 +210,7 @@ const Multiplayer = ({ id, go, fetchedUser, setActiveModal, setGameInfo, gameInf
 					<ButtonGroup gap="space" style={{ marginTop: 10 }} className='multiplayer-play-div'>
 						<Button size="s" className='multiplayer-play-button' appearance="accent"
 						onClick={()=>{
-							startGame(joinCode, fetchedUser.id, "easy", playersId)
+							startGame(joinCode, fetchedUser.id, complexity, playersId)
 						}}>Играть</Button>
 					</ButtonGroup>
 				</div>
