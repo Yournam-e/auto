@@ -41,6 +41,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout
 	client.gameFinished = ({ game }) => {
 		console.debug("gameFinished", game);
 		setGameInfo(null)
+		setMpGameResults([])
 		setMpGameResults(game)
 
 	  };

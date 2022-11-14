@@ -17,7 +17,7 @@ import ExmpleGeneration from '../../scripts/ExmpleGeneration';
 import { getPadTime } from '../../scripts/getPadTime';
 import { Icon16ClockCircleFill } from '@vkontakte/icons';
 
-const Game = ({ id, go, count, setCount, setActivePanel, setPopout }) => {
+const LvlGame = ({ id, go, count, setCount, setActivePanel, setPopout, singleType }) => {
 	
 
 	
@@ -137,4 +137,4 @@ const Game = ({ id, go, count, setCount, setActivePanel, setPopout }) => {
 
 
 
-export default Game;
+export default LvlGame;

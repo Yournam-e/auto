@@ -9,22 +9,28 @@ import './Home.css';
 import LevelCard from './components/LevelCard';
 import LongCard from './components/LongCard';
 import { connectRoom } from '../../sockets/game';
+import axios from 'axios';
+import { qsSign } from '../../hooks/qs-sign';
 
-const Home = ({ id, go, setPopout }) => {
+const Home = ({ id, go, setPopout, setSingleType, setLocalTask }) => {
 
-	const [lvlInfo, setLvlInfo] = useState([])
+	const [lvlsInfo, setLvlsInfo] = useState(null)
 
+	const url ='https://showtime.app-dich.com/api/plus-plus/'
+	
+	useEffect(()=>{
+		axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
+		.then(async function (response) {
+			await setLvlsInfo(response.data.data)
+			await console.log(response.data.data)
+			await setPopout(null)
+		})
+		.catch(function (error) {
+			console.warn(error);
+		});
+	}, [])
 
-
-
-	useEffect(() => {
-		async function fetchData() {
-			var data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-			await setLvlInfo(data)
-			setPopout(null);
-		}
-		fetchData();
-	}, []);
+ 
 	
 
 	return(
@@ -33,10 +39,14 @@ const Home = ({ id, go, setPopout }) => {
 				<div className='long-card-div'>
 					<CardGrid size="l" style={{marginBottom:56}}>
 						
-						<LongCard go={go}/>
+						<LongCard go={go} 
+						setSingleType={setSingleType} 
+						setPopout={setPopout} 
+						lvlsInfo={lvlsInfo}
+						setLocalTask={setLocalTask}/>
 
 						 
-						{lvlInfo.map((number)=>{
+						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number)=>{
 							return(
 								<LevelCard key={number} go={go} number={number}/>
 							)

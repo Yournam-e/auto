@@ -16,9 +16,9 @@ import {
 
  import { qsSign } from '../../hooks/qs-sign';
 
- import { connectRoom, createRoom, joinRoom } from '../../sockets/game';
+ import { joinRoom } from '../../sockets/game';
 
-const ModalInputCode = ({ id, setGameInfo, gameInfo, go, setHostInfo, setActivePanel, setConnectType}) =>{
+const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,setActiveModal}) =>{
 
     const textInput = React.createRef();
 
@@ -46,13 +46,13 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo, go, setHostInfo, setActiveP
                         onClick={(e)=>{
                             
                             async function getId(){
-                                const user = await bridge.send('VKWebAppGetUserInfo');
-                                console.log(user.id)
-                                console.log(textInput.current.value)
+                                const user = await bridge.send('VKWebAppGetUserInfo'); 
                                 //await connectRoom(qsSign, textInput.current.value, user.id);
                                 joinRoom(textInput.current.value, user.id)
                                 setGameInfo({ ...gameInfo, roomId: textInput.current.value})
                                 setConnectType('join')
+                                setJoinCode(textInput.current.value)
+                                setActiveModal(null)
                             }
 
                             getId()

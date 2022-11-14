@@ -16,7 +16,7 @@
 }
 
 .multiplayer-div{
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .multiplayer-title-div{
@@ -150,7 +150,7 @@
   bottom: 10px;
 }
 
-.ory{
+.noneUser{
   width: 44px;
   height: 44px;
 
@@ -174,4 +174,8 @@
 .player-name-off{
   margin-left: 12px;
   color:#99A2AD;
+}
+
+.vkuiPanelHeader--vkcom.vkuiPanelHeader--sizeX-regular:not(.vkuiModalPageHeader__in):after{
+  background-color: #ebedf0;
 }

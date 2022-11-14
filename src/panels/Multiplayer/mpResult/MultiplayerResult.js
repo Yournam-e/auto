@@ -18,22 +18,39 @@ import { client } from '../../../sockets/receiver';
 import { leaveRoom } from '../../../sockets/game';
 
 
-const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel, joinCode }) => {
+const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel, joinCode,playersList }) => {
 
-	var friendList = ['Адам', 'kek', 'cheb', 'lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb',]
+	let friendList = null
 	console.log(mpGameResults)
+
+	console.log(playersList)
 
 
 	const [timeLeft, setTimeLeft] = useState(10); //время
 
 	useEffect(()=>{
-		timeLeft === 0?setActivePanel('multiplayerResult'):console.log()
+		timeLeft === 0?setActivePanel('multiplayer'):console.log()
 	}, [timeLeft])
 
+	
+	if(mpGameResults){
+		friendList = mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? 1 : -1);
+	}
+ 
+
 	useEffect(()=>{
+
 		async function timeFunction(){
 			await setTimeout(() => 1000);
 		}
+
+		
+		
+
+		const interval = setInterval(()=>{
+			setTimeLeft((timeLeft)=> timeLeft >= 1 ? timeLeft - 1 :0)
+		}, 1000)
+		
 
 		timeFunction()
 	}, [])
@@ -66,7 +83,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 				<List className='result-friendList' style={{marginTop:20}}>
 
-				{friendList.map((item, idx) => (
+				{friendList && friendList.map((item, idx) => (
 				
 					<Cell
 						style={{marginLeft:28, marginRight:28}}
@@ -75,13 +92,25 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 						>
 
 						<div style={{height: 65,  marginLeft: 16}}>
-							<Title style={{paddingBottom: 8,}}>{item}</Title>
-							<Button className='friendsPoint'
+						{mpGameResults && playersList.map((inItem, index)=>{
+						if(item.userId === inItem.userId){
+
+							
+								return(
+								<div key={inItem}>
+								<Title style={{paddingBottom: 8,}}>{inItem.name}</Title>
+								<Button className='friendsPoint'
 								before={<Icon16Done />}
 								style={{ 
 								backgroundColor:'#F4F9FF',
 								color:'#1984FF',
-								borderRadius:25}}>1</Button>
+								borderRadius:25}}>{item.rightResults}</Button>
+								</div>
+								)
+							}
+
+							})}
+							
 						</div>
 
 					</Cell>

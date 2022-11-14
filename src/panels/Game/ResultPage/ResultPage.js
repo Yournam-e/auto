@@ -14,12 +14,26 @@ import {
 
  import { Icon56CheckCircleOutline, Icon24StoryOutline, Icon16Done } from '@vkontakte/icons';
  import '../Game.css'
+import axios from 'axios';
+import { qsSign } from '../../../hooks/qs-sign';
 
 
-const ResultPage = ({ id, go, count }) => {
+const ResultPage = ({ id, go, count, answer }) => {
 
 	var friendList = ['Адам', 'kek', 'cheb', 'lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb','lol', 'kek', 'cheb',]
 	
+
+		axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
+			"id": answer.id,
+			"lvlType": answer.lvlType,
+			"answers": answer.answers,
+		  })
+		.then(async function (response) {
+			console.log(response)
+		})
+		.catch(function (error) {
+			console.warn(error);
+		});
 
 	return(
 

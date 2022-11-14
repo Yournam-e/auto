@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { Panel, Div, Avatar, Title, Button, Separator, List, Cell, ButtonGroup,IconButton } from '@vkontakte/vkui';
+import { Panel, Div, Avatar, Title, Button, Separator, List, Cell, ButtonGroup,PanelHeader, PanelHeaderButton } from '@vkontakte/vkui';
 
 import './Multiplayer.css';
 import { Icon20Sync, Icon20QrCodeOutline, Icon24Cancel,Icon20DoorArrowRightOutline } from '@vkontakte/icons';
 
 import bridge from '@vkontakte/vk-bridge';
 
-import { connectRoom, createRoom, joinRoom, startGame } from '../../sockets/game';
+import { connectRoom, createRoom, joinRoom, leaveRoom, startGame } from '../../sockets/game';
 import { client } from '../../sockets/receiver';
 import axios from 'axios';
 import { useUserId } from '../../hooks/useUserId';
@@ -27,60 +27,55 @@ const Multiplayer = ({
 	setActivePanel,
 	setAnswersInfo,
 	setTaskInfo,
-	connectType,
- }) => {
-		
-		client.gameStarted = ({ answers, task, id }) => {
-			console.debug("gameStarted", answers, task, id);
-			setTaskInfo(task)
-			setAnswersInfo(answers)
-			async function lol(){
-				setGameInfo({ ...gameInfo, taskId: id})
-			}
-			lol()
-			setActivePanel('multiplayerGame')
-		};
+	connectType,setConnectType
 	
- 
+ }) => {
 
 	const userId = useUserId()
 	const [complexity, setComplexity] = useState("easy")
 
-	
-	
-	console.log('as' + connectType)
+
+	client.gameStarted = ({ answers, task, id }) => {
+		console.debug("gameStarted", answers, task, id);
+		setTaskInfo(task)
+		setAnswersInfo(answers)
+		async function lol(){
+			setGameInfo({ ...gameInfo, taskId: id})
+		}
+		lol()
+		setActivePanel('multiplayerGame')
+	};
+
+
+
+	function joinToYourRoom(){
+		
+			
+		axios.post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
+		.then(async function (response) {
+			console.log(response.data.data)
+			await setJoinCode(response.data.data)
+			if(firstStart){
+				await connectRoom(qsSign, response.data.data, userId);
+			}else{
+				await joinRoom(response.data.data, userId)
+
+			}
+			
+			
+			console.log('12')
+			await setGameInfo({ ...gameInfo, roomId: response.data.data})
+			setFirstStart(false)
+			
+		})
+		.catch(function (error) {
+			console.warn(error);
+		});
+	}
+
 
 	useEffect(() => {
-
-		
-			
-
-		
-			
-			axios.post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
-			.then(async function (response) {
-				console.log(response.data.data)
-				await setJoinCode(response.data.data)
-				if(firstStart){
-					await connectRoom(qsSign, response.data.data, userId);
-					console.log("перый раз")
-				}else{
-					await joinRoom(response.data.data, userId)
-					console.log("второй раз")
-
-				}
-				
-				
-				console.log('12')
-				await setGameInfo({ ...gameInfo, roomId: response.data.data})
-				setFirstStart(false)
-				
-			})
-			.catch(function (error) {
-				console.warn(error);
-			});
-		
-		
+		joinToYourRoom()
 
 	}, []);
 
@@ -91,14 +86,34 @@ const Multiplayer = ({
 
 	return (
 		<Panel id={id}>
-		{connectType === 'host'?<div></div>:
-			<div>
-				<IconButton style={{width: 40,}}><Icon20DoorArrowRightOutline style={{justifyContent: "center",}}/></IconButton>
-			</div>}
+
+		
+
+			{connectType === 'join' &&
+			<PanelHeader
+			style={{backgroundColor: 'transparent' }}
+				before={
+					<PanelHeaderButton onClick={()=>{
+						leaveRoom(joinCode, userId)
+						setConnectType('host')
+						joinToYourRoom()
+					}} >
+					<Icon20DoorArrowRightOutline fill='#1A84FF' style={{marginLeft:25}}/>
+					</PanelHeaderButton>
+				}
+				transparent={true}
+				shadow={false}
+				separator={false}
+				  
+				>
+			</PanelHeader>
+	}
 
 
 	
 			<Div className='multiplayer-div'>
+
+				
 			
 				<div style={{ paddingLeft: 'auto', paddingRight: 'auto' }}>
 					<Title
@@ -123,6 +138,7 @@ const Multiplayer = ({
 
 						<Icon20Sync className='multiplayer-title-return'
 							fill='#1A84FF'
+							onClick={()=>{}}
 							style={{
 								display: 'inline-block',
 								paddingLeft: 5,
@@ -179,9 +195,9 @@ const Multiplayer = ({
 						<Cell
 							key={index}
 							mode={index === 0 ? false : 'removable'|| playersList[index]?false:'removable'}
-							before={playersList[index]?<Avatar src={playersList[index].avatar} />:<div className='ory' />  }
+							before={playersList[index]?<Avatar src={playersList[index].avatar} />:<div className='noneUser' />  }
 							disabled={index === 0 ? true : false || playersList[index]?false:true}
-							after={index === 0 ?false: <Icon24Cancel fill='#99A2AD'/> || playersList[index]?<Icon24Cancel fill='#99A2AD'/>:false}
+							after={index === 0 ?false: playersList[index]?<Icon24Cancel fill='#99A2AD'/>:false}
 						>
 							{playersList[index]? <Title level="3" weight="2" className='player-name-on'>{playersList[index].name}</Title> : <Title level="3" weight="3" className='player-name-off'>Пусто</Title>}
 						</Cell>

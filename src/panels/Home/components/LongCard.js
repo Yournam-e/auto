@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import {Title, Button, Card, Div} from '@vkontakte/vkui';
+import {Title, Button, Card, Div, ScreenSpinner} from '@vkontakte/vkui';
 import { Icon24Play, Icon24ClockOutline } from '@vkontakte/icons';
 
 import axios from 'axios';
@@ -9,21 +9,39 @@ import '../Home.css';
 import { qsSign } from '../../../hooks/qs-sign';
 
 
-const LongCard = ({go}) => {
+const LongCard = ({go, setSingleType, setPopout, lvlsInfo}) => {
+	
+ 
 
 
+	function checkToDelete(){
+		lvlsInfo&&lvlsInfo.map((item, index)=>{
 
-	useEffect(()=>{
-			axios.post(`https://showtime.app-dich.com/api/plus-plus/info${qsSign}`,{'lvlType': "one"})
-		.then(async function (response) {
-			console.log(response.data.data)
+			console.log(item)
+			console.log('Длина массива ' + lvlsInfo.length)
+			
+			console.log('Длина indexc ' + index)
+			
+			if(item.lvlType === 'single30'){
+				axios.delete(`https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`)
+				.then(async function (response) {
+					console.log(response.data.data)
+				})
+				.catch(function (error) {
+					console.warn(error);
+				});
+			}
+
+			 
+			
 		})
-		.catch(function (error) {
-			console.warn(error);
-		});
-	}, [])
+	}
+ 
 
+ 
 
+	
+	
 	return(
 
 		<div className='long-card-div-div'>
@@ -49,8 +67,13 @@ const LongCard = ({go}) => {
 
 						<Button
 							className='button-long'
-							onClick={go}
-							data-to='game'
+							onClick={(e)=>{
+								setSingleType('single30')
+								go(e)
+								checkToDelete()
+								setPopout(<ScreenSpinner size='large' />)
+							}}
+							data-to='temporaryGame'
 							style={{
 							backgroundColor:'#F4F9FF',
 							color:'#1984FF',

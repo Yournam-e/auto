@@ -8,7 +8,7 @@ import '@vkontakte/vkui/dist/vkui.css';
 
 import Home from './panels/Home/Home';
 import Multiplayer from './panels/Multiplayer/Multiplayer';
-import Game from './panels/Game/Game';
+import LvlGame from './panels/Game/LvlGame';
 import ResultPage from './panels/Game/ResultPage/ResultPage';
 
 import ModalInputCode from './modals/ModalInputCode/ModalInputCode'
@@ -18,10 +18,11 @@ import MultiplayerGame from './panels/Multiplayer/MultiplayerGame';
 import { client } from './sockets/receiver';
 import MultiplayerResult from './panels/Multiplayer/mpResult/MultiplayerResult';
 import LobbyForGuest from './panels/Multiplayer/LobbyForGuest/LobbyForGuest';
+import TemporaryGame from './panels/Game/TemporaryGame';
 
 const App = () => {
 	const [scheme, setScheme] = useState('bright_light')
-	const [activePanel, setActivePanel] = useState('resultLvl');
+	const [activePanel, setActivePanel] = useState('menu');
 	const [popout, setPopout] = useState(<ScreenSpinner size='large' />);
 	const [activeStory, setActiveStory] = useState("single");
 	const [fetchedUser, setUser] = useState();
@@ -37,7 +38,6 @@ const App = () => {
 		roomId: null,
 		taskId: null
 	});
-
 	const [taskInfo, setTaskInfo] = useState(); //данные о примере
 	const [answersInfo, setAnswersInfo] = useState(); // ответы
 	const [joinCode, setJoinCode] = useState(null) //код для подкл
@@ -45,11 +45,20 @@ const App = () => {
 	const [playersId, setPlayersId] = useState([]) //список id участников
 	const [firstStart, setFirstStart] = useState(true) //первый старт
 	const [playersList, updatePlayersList] = useState([]); //информация о юзерах в лобби
-
 	const [connectType, setConnectType] = useState('host')
 
 
- 
+
+	//single 
+	const [singleType, setSingleType] = useState()
+	const [localTask, setLocalTask] = useState([])
+
+	const [answer, setAnswer]=useState({
+		"id": null,
+		"lvlType": null,
+		"answers": []
+	  }) //body содержащий ответы
+	
 
 	client.joinedRoom = ({ users }) => {
 		console.debug("joinedRoom", users);
@@ -57,6 +66,7 @@ const App = () => {
 		users!==0? updatePlayersList(users): console.log('ok')
 
 		users && users.map((item, index)=>{
+			setPlayersId([])
 			setPlayersId([...playersId, item.userId]);
 		})
 
@@ -66,7 +76,11 @@ const App = () => {
 
 	 
 
-	   	
+	  client.lvlFinished = ({ id,userId,lvlId }) => {
+		console.debug("lvlFinished", lvlId);
+        console.log(userId)
+
+	  };
 
 
 
@@ -87,11 +101,8 @@ const App = () => {
 			const user = await bridge.send('VKWebAppGetUserInfo');
 			await setUser(user)
 			await setGameInfo({ ...gameInfo, userId: user.id})
-			await console.log('воооот')
-			await console.log(user)
-			
-			await console.log('воооот')
-			await setPopout(null);
+
+			await console.log(user) 
 		}
 		fetchData();
 	}, []);
@@ -110,11 +121,10 @@ const App = () => {
 		  id='inputCode' 
 		  setActiveModal={setActiveModal} 
 		  gameInfo={gameInfo} 
-		  setGameInfo={setGameInfo} 
-		  go={go} 
+		  setGameInfo={setGameInfo}  
 		  playersList={playersList}
-		  setActivePanel={setActivePanel}
-		  setConnectType={setConnectType}/>
+		  setConnectType={setConnectType}
+		  setJoinCode={setJoinCode} />
 		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal}/>
 		</ModalRoot>
 	  );
@@ -152,7 +162,12 @@ const App = () => {
 									}>
 
 										<View id="single" activePanel="single">
-											<Home id='single' go={go} setPopout={setPopout} />
+											<Home 
+											id='single' 
+											go={go} 
+											setPopout={setPopout}
+											setSingleType={setSingleType}
+											setLocalTask={setLocalTask} />
 										</View>
 										
 										<View id="multiplayer" activePanel="multiplayer">
@@ -170,20 +185,32 @@ const App = () => {
 											firstStart={firstStart} setFirstStart={setFirstStart}
 											playersList={playersList}
 											setTaskInfo={setTaskInfo}
-											setAnswersInfo={setAnswersInfo}/>
+											setAnswersInfo={setAnswersInfo}
+											setConnectType={setConnectType}/>
 										</View>
 									
 									</Epic>
 								</Panel>
-								<Panel id='game'>
-									<Game 
+								<Panel id='lvlGame'>
+									<LvlGame 
 									setCount={setCount} 
 									count={count} 
 									setActivePanel={setActivePanel} 
-									setPopout={setPopout} />
+									setPopout={setPopout}
+									singleType={singleType} />
 									
 								</Panel>
-								<ResultPage id='result' count={count} go={go}/>
+								<TemporaryGame id='temporaryGame'
+									setCount={setCount} 
+									count={count} 
+									setActivePanel={setActivePanel} 
+									setPopout={setPopout}
+									singleType={singleType} 
+									setLocalTask={setLocalTask}
+									localTask={localTask}
+									answer={answer}
+									setAnswer={setAnswer}/> 
+								<ResultPage id='result' count={count} go={go} answer={answer} setAnswer={setAnswer}/>
 								
 								<MultiplayerGame  
 								id='multiplayerGame' 
@@ -207,9 +234,11 @@ const App = () => {
 								go={go} 
 								mpGameResults={mpGameResults} 
 								fetchedUser={fetchedUser}
+								setActivePanel={setActivePanel}
 								joinCode={joinCode} 
 								setActiveStory={setActiveStory}
-								setPlayersId={setPlayersId} />
+								setPlayersId={setPlayersId} 
+								playersList={playersList} />
 
 								<LobbyForGuest 
 								id='lobbyForGuest'
