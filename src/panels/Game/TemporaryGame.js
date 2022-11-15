@@ -57,7 +57,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 	useEffect(()=>{
 		
 
-        
+        setPopout(null)
 
 		//lol()
 	}, [])
