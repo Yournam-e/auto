@@ -40,7 +40,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
 	const [tasks, setTasks] = useState(null);//варианты ответов
  
-	const [timeLeft, setTimeLeft] = useState(30); //время
+	const [timeLeft, setTimeLeft] = useState(15); //время
 	const [isCounting, setIsCounting] = useState(false); //время
 	
 
@@ -49,13 +49,15 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 	const seconds = getPadTime(timeLeft - minutes * 60); //секунды
 
 	useEffect(()=>{
-		timeLeft === 0?setActivePanel('result'):console.log()
+		if(timeLeft === 0){
+			setTaskNumber(0)
+			setActivePanel('result')}
 	}, [timeLeft])
     
 	useEffect(()=>{
 		
 
-        setPopout(null)
+        
 
 		//lol()
 	}, [])
@@ -173,6 +175,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
                             }
 
                             if(!first){
+								console.log(gameData)
 
                                 const newItem = {
                                     "id": gameData.tasks[taskNumber].id,

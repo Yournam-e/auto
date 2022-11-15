@@ -9,7 +9,7 @@ import '../Home.css';
 import { qsSign } from '../../../hooks/qs-sign';
 
 
-const LongCard = ({go, setSingleType, setPopout, lvlsInfo}) => {
+const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo}) => {
 	
  
 
@@ -67,11 +67,11 @@ const LongCard = ({go, setSingleType, setPopout, lvlsInfo}) => {
 
 						<Button
 							className='button-long'
-							onClick={(e)=>{
-								setSingleType('single30')
-								go(e)
-								checkToDelete()
-								setPopout(<ScreenSpinner size='large' />)
+							onClick={async function(e){
+								await setSingleType('single30')
+								await setActivePanel('temporaryGame')
+								await checkToDelete()
+								await setPopout(<ScreenSpinner size='large' />)
 							}}
 							data-to='temporaryGame'
 							style={{

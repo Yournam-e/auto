@@ -11,8 +11,9 @@ import LongCard from './components/LongCard';
 import { connectRoom } from '../../sockets/game';
 import axios from 'axios';
 import { qsSign } from '../../hooks/qs-sign';
+import { useUserId } from '../../hooks/useUserId';
 
-const Home = ({ id, go, setPopout, setSingleType, setLocalTask }) => {
+const Home = ({ id, go, setPopout, setSingleType, setLocalTask, setActivePanel }) => {
 
 	const [lvlsInfo, setLvlsInfo] = useState(null)
 
@@ -28,6 +29,15 @@ const Home = ({ id, go, setPopout, setSingleType, setLocalTask }) => {
 		.catch(function (error) {
 			console.warn(error);
 		});
+
+
+		
+
+
+
+		
+
+		 
 	}, [])
 
  
@@ -39,7 +49,7 @@ const Home = ({ id, go, setPopout, setSingleType, setLocalTask }) => {
 				<div className='long-card-div'>
 					<CardGrid size="l" style={{marginBottom:56}}>
 						
-						<LongCard go={go} 
+						<LongCard setActivePanel={setActivePanel} 
 						setSingleType={setSingleType} 
 						setPopout={setPopout} 
 						lvlsInfo={lvlsInfo}

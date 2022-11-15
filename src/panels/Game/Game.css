@@ -314,7 +314,7 @@ body {
 
 .friendsAvatar{
   float: right;
-  padding-left: 16px;
+  margin-left: 16px;
 }
 
 .vkuiTabbarItem--selected .vkuiTabbarItem__icon {
@@ -324,4 +324,50 @@ body {
 
 .vkuiTabbarItem--selected { 
   color: #000000;
+}
+
+.result-getFriend-button{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 18px;
+  margin-top: 24px;
+
+  padding-left: 16px;
+  padding-right: 16px;
+
+  padding-top: 6px;
+  padding-bottom: 6px;
+
+  letter-spacing: -0.25px;
+  margin-top: 24px;
+}
+
+.eyes-photo{
+  display: block;
+  margin-left: auto;
+  margin-right: auto
+}
+
+.result-getFriend-text{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  /* or 138% */
+  margin-top: 4px;
+
+  text-align: center;
+
+  /* Light Text / Subhead */
+
+  color: #6D7885;
+
+}
+
+.notFriend-div{
+  border: 2px dashed rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
 }

@@ -165,6 +165,7 @@ const App = () => {
 											<Home 
 											id='single' 
 											go={go} 
+											setActivePanel={setActivePanel}
 											setPopout={setPopout}
 											setSingleType={setSingleType}
 											setLocalTask={setLocalTask} />
@@ -210,7 +211,15 @@ const App = () => {
 									localTask={localTask}
 									answer={answer}
 									setAnswer={setAnswer}/> 
-								<ResultPage id='result' count={count} go={go} answer={answer} setAnswer={setAnswer}/>
+								<ResultPage
+								id='result'
+								count={count}
+								go={go}
+								answer={answer} 
+								setAnswer={setAnswer} 
+								setPopout={setPopout}
+								setSingleType={setSingleType}
+								setActivePanel={setActivePanel}/>
 								
 								<MultiplayerGame  
 								id='multiplayerGame' 
