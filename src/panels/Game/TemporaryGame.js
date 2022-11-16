@@ -50,6 +50,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
 	useEffect(()=>{
 		if(timeLeft === 0){
+			setPopout(<ScreenSpinner size='large' />)
 			setTaskNumber(0)
 			setActivePanel('result')}
 	}, [timeLeft])
@@ -102,6 +103,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
               })
             
             setGameData(response.data.data)
+			setPopout(null)
         })
         .catch(function (error) {
             console.warn(error);
@@ -113,9 +115,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
  
 		<Panel id={id}>
 
-			<div>
-			
-			<Title level="2"  style={{ textAlign: 'right' }}>твои баллы: {count}</Title>
+			<div> 
 			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
 			<div className='equationDiv'>
 			{gameData&&<Title level="1" className='equation'>
@@ -171,20 +171,23 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 						key={index}
 						onClick={()=>{
                             if(first){
+								setPopout(<ScreenSpinner size='large' />)
                                 createLvl()
                             }
 
                             if(!first){
-								console.log(gameData)
+								if(gameData){
+									console.log(gameData)
 
-                                const newItem = {
-                                    "id": gameData.tasks[taskNumber].id,
-                                    "answer": gameData.tasks[taskNumber].answers[index]
-                                  }
+									const newItem = {
+										"id": gameData.tasks[taskNumber].id,
+										"answer": gameData.tasks[taskNumber].answers[index]
+									}
 
-                                const copy  = Object.assign({}, answer);
-                                copy.answers = [...answer.answers, newItem]
-                                setAnswer(copy);
+									const copy  = Object.assign({}, answer);
+									copy.answers = [...answer.answers, newItem]
+									setAnswer(copy);
+								}
 
                             }
                             setFirst(false)

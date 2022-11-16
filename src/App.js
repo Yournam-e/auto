@@ -51,13 +51,32 @@ const App = () => {
 
 	//single 
 	const [singleType, setSingleType] = useState()
-	const [localTask, setLocalTask] = useState([])
+	const [localTask, setLocalTask] = useState([]) 
+
+	const [timeFinish, setTimeFinish] = useState(0)
+
+	const [ready, setReady] = useState(false)
+
+	const [lvlNumber, setLvlNumber] = useState()
+
+	const [completeLvl, setCompleteLvl] = useState()
+
+	const [lvlResult, setLvlResult] = useState({
+		"id": null,
+		"lvlType": null,
+		"answers": []
+	  })
 
 	const [answer, setAnswer]=useState({
 		"id": null,
 		"lvlType": null,
 		"answers": []
 	  }) //body содержащий ответы
+
+	  const [lvlData, setLvlData] = useState()
+
+
+
 	
 
 	client.joinedRoom = ({ users }) => {
@@ -76,10 +95,8 @@ const App = () => {
 
 	 
 
-	  client.lvlFinished = ({ id,userId,lvlId }) => {
-		console.debug("lvlFinished", lvlId);
-        console.log(userId)
-
+	  client.lvlFinished = ({ lvlId }) => {
+		console.debug("lvlFinished", lvlId); 
 	  };
 
 
@@ -168,7 +185,11 @@ const App = () => {
 											setActivePanel={setActivePanel}
 											setPopout={setPopout}
 											setSingleType={setSingleType}
-											setLocalTask={setLocalTask} />
+											setLocalTask={setLocalTask} 
+											setLvlData={setLvlData}
+											lvlData={lvlData} 
+											setLvlNumber={setLvlNumber}
+											setReady={setReady} />
 										</View>
 										
 										<View id="multiplayer" activePanel="multiplayer">
@@ -198,9 +219,19 @@ const App = () => {
 									count={count} 
 									setActivePanel={setActivePanel} 
 									setPopout={setPopout}
-									singleType={singleType} />
+									singleType={singleType}
+									setLvlData={setLvlData}
+									lvlData={lvlData} 
+									lvlNumber={lvlNumber}
+									setLvlResult={setLvlResult}
+									lvlResult={lvlResult}
+									setCompleteLvl={setCompleteLvl}
+									setTimeFinish={setTimeFinish}
+									timeFinish={timeFinish} />
 									
 								</Panel>
+
+
 								<TemporaryGame id='temporaryGame'
 									setCount={setCount} 
 									count={count} 
@@ -211,6 +242,8 @@ const App = () => {
 									localTask={localTask}
 									answer={answer}
 									setAnswer={setAnswer}/> 
+
+								
 								<ResultPage
 								id='result'
 								count={count}
@@ -236,7 +269,17 @@ const App = () => {
 								connectType={connectType}/>
 
 								
-								<LvlResultPage id='resultLvl' go={go}/>
+								<LvlResultPage id='resultLvl'
+								go={go}
+								lvlResult={lvlResult}
+								setPopout={setPopout}
+								setTimeFinish={setTimeFinish}
+								timeFinish={timeFinish} 
+								setLvlNumber={setLvlNumber}
+								lvlNumber={lvlNumber}
+								setReady={setReady}
+								setActivePanel={setActivePanel}/>
+								
 
 								<MultiplayerResult 
 								id='multiplayerResult' 

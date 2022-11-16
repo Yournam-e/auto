@@ -13,11 +13,53 @@ import axios from 'axios';
 import { qsSign } from '../../hooks/qs-sign';
 import { useUserId } from '../../hooks/useUserId';
 
-const Home = ({ id, go, setPopout, setSingleType, setLocalTask, setActivePanel }) => {
+const Home = ({ 
+	id,
+	go,
+	setPopout,
+	setSingleType, 
+	setLocalTask, 
+	setActivePanel, 
+	setLvlData, 
+	lvlData, 
+	setLvlNumber, 
+	setReady,
+	lvlNumber}) => {
 
 	const [lvlsInfo, setLvlsInfo] = useState(null)
 
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
+
+
+
+		
+	function devideLvl(){
+		switch (lvlNumber) {
+			case 1:
+				return ['40 секунд', '10 задач']
+			case 2:
+				return ['40 секунд', '10 задач']
+			case 3:
+				return ['30 секунд', '10 задач']
+			case 4:
+				return ['30 секунд', '15 задач']
+			case 5:
+				return ['1 минута', '15 задач']
+			case 6:
+				return ['1 минута', '15 задач']
+			case 7:
+				return ['1 минута', '15 задач']
+			case 8:
+				return ['1 минута', '15 задач']
+			case 9:
+				return ['25 секунд', '15 задач']
+			case 10:
+				return ['20 секунд', '20 задач']
+		  }
+
+	}
+
+	
 	
 	useEffect(()=>{
 		axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
@@ -58,7 +100,17 @@ const Home = ({ id, go, setPopout, setSingleType, setLocalTask, setActivePanel }
 						 
 						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number)=>{
 							return(
-								<LevelCard key={number} go={go} number={number}/>
+								<LevelCard
+									key={number} 
+									go={go}
+									number={number} 
+									lvlsInfo={lvlsInfo}
+									setPopout={setPopout}
+									setActivePanel={setActivePanel}
+									setLvlData={setLvlData}
+									lvlData={lvlData}
+									setLvlNumber={setLvlNumber}
+									setReady={setReady} />
 							)
 						})} 
 						

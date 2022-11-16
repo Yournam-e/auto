@@ -26,6 +26,9 @@ import { qsSign } from '../../../hooks/qs-sign';
 
 
 const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActivePanel }) => {
+	const url ='https://showtime.app-dich.com/api/plus-plus/'
+	
+
 
 	const [lvlsInfo, setLvlsInfo] = useState(null)
 	
@@ -50,6 +53,8 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 				axios.delete(`https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`)
 				.then(async function (response) {
 					console.log(response.data.data)
+					console.log('ЩЩЩЩЩЩЩЩЩЩЩ')
+					setPopout(null)
 				})
 				.catch(function (error) {
 					console.warn(error);
@@ -156,15 +161,9 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 		}
 
 	}, [friendsIds])
-
-
-
-
-	 
 	
-	useEffect(()=>{
-		
-		checkToDelete()
+	
+	useEffect(()=>{ 
 		getFriendsAndCheck()
 
 		axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
@@ -179,6 +178,17 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 		.catch(function (error) {
 			console.warn(error);
 		});
+
+		axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
+		.then(async function (response) {
+			await setLvlsInfo(response.data.data)
+			await console.log(response.data.data)
+			await setPopout(null)
+		})
+		.catch(function (error) {
+			console.warn(error);
+		});
+
 	}, [])
 
 	return(
@@ -286,9 +296,9 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 								appearance="accent" 
 								onClick={async function(e){
 									await setSingleType('single30')
+									await setPopout(<ScreenSpinner size='large' />)
 									await setActivePanel('temporaryGame')
 									await checkToDelete()
-									await setPopout(<ScreenSpinner size='large' />)
 								}}
 								stretched>
 							Попробовать снова

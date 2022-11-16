@@ -1,11 +1,101 @@
-import React from 'react'; 
+import React, { useEffect, useState } from 'react';
 
 
-import { Card, Title, Text, Button } from '@vkontakte/vkui';
+import { Card, Title, Text, Button, ScreenSpinner } from '@vkontakte/vkui';
 import { Icon16Done, Icon24CheckCircleOutline, Icon28RecentOutline, Icon24Play } from '@vkontakte/icons';
 import '../Home.css';
+import { qsSign } from '../../../hooks/qs-sign';
+import axios from 'axios';
 
-const LevelCard = ({number}) => {
+const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, setReady}) => {
+
+	 
+
+
+	useEffect(()=>{
+
+		console.log(lvlsInfo)
+		
+	}, [lvlsInfo])
+
+	
+	
+	function devideType(){
+		switch (number) {
+			case 1:
+				return 'one'
+			case 2:
+				return 'two'
+			case 3:
+				return 'three'
+			case 4:
+				return 'four'
+			case 5:
+				return 'five'
+			case 6:
+				return 'six'
+			case 7:
+				return 'seven'
+			case 8:
+				return 'eight'
+			case 9:
+				return 'nine'
+			case 10:
+				return 'ten'
+		  }
+
+	}
+
+
+
+	async function mapingLvls(){
+		await setPopout(<ScreenSpinner size='large' />)
+
+		
+		const promise = new Promise((resolve, reject) => {
+
+		 
+				
+				
+
+				lvlsInfo&&lvlsInfo.map((item, index)=>{
+					console.log('oook' + index)
+					if(item.lvlType === devideType(number)){
+						console.log("нашел")
+						try{
+							axios.delete(`https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`)
+							.then(async function (response) {
+								await setReady(true)
+								console.log(response.data.data)
+								console.log('удалил')
+							})
+							.catch(function () { 
+							});
+						}catch(e){
+						}
+						
+					}
+	
+					
+		
+				})  
+				resolve()
+	
+			})
+
+		promise.then(result =>setPopout(<ScreenSpinner size='large' />), setActivePanel('lvlGame') )
+
+
+		  }; 
+
+		
+	
+
+	useEffect(()=>{
+
+	
+ 
+	}, [])
 
 
 
@@ -39,6 +129,10 @@ const LevelCard = ({number}) => {
 						backgroundColor:'#F4F9FF',
 						color:'#1984FF',
 						borderRadius:25
+						}}
+						onClick={async function(){
+							await setLvlNumber(number)
+							await mapingLvls()
 						}}
 						before={<Icon24Play height={16} width={16} />}
 						mode='accent'

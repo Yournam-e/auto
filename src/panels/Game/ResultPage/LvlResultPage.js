@@ -9,23 +9,169 @@ import {
 	Div,
 	Cell,
 	List,
-	ButtonGroup
+	ButtonGroup,
+    ScreenSpinner
  } from '@vkontakte/vkui';
 
  import { Icon56CheckCircleOutline, Icon56CancelCircleOutline, Icon20ArrowRightOutline, Icon16ClockCircleFill, Icon24RefreshOutline } from '@vkontakte/icons';
  import './LvlResultPage.css'
+import { qsSign } from '../../../hooks/qs-sign';
+import axios from 'axios';
 
  
-const LvlResultPage = ({ id, go, count }) => {
+const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFinish,setLvlNumber,setActivePanel,setReady }) => {
 
-    let complete = true
+	const url ='https://showtime.app-dich.com/api/plus-plus/'
+     
+
+    const [complete, setComplete] = useState([false, 'notRight'])
+
+
+    let findArr = false
+
+    	
+	function devideType(i){
+		switch (i) {
+			case 1:
+				return 'one'
+			case 2:
+				return 'two'
+			case 3:
+				return 'three'
+			case 4:
+				return 'four'
+			case 5:
+				return 'five'
+			case 6:
+				return 'six'
+			case 7:
+				return 'seven'
+			case 8:
+				return 'eight'
+			case 9:
+				return 'nine'
+			case 10:
+				return 'ten'
+		  }
+
+	} 
+
+    function playNext(){
+        const url ='https://showtime.app-dich.com/api/plus-plus/'
+         
+            axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
+            .then(async function (response) {
+                const lvls = await response.data.data 
+                await setPopout(null)
+
+
+                const promise = new Promise((resolve, reject) => {
+
+                
+                    async function deleted(){
+                        
+                        for await (const item of lvls){
+                            
+                            if(item.lvlType === devideType(complete[0]?lvlNumber+1:lvlNumber)){ 
+                                try{
+
+                                axios.delete(`https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`)
+                                    .then(async function (response) {
+                                        await setReady(true)
+                                        await resolve()
+                                    
+                                    
+                                    })
+
+                                .catch(function () { 
+
+                                    });
+
+                                }catch(e){
+
+
+                                }
+                                
+                            }
+
+                            complete[0]?setLvlNumber(lvlNumber +1):setLvlNumber(lvlNumber)
+
+                            resolve()
+                        } 
+
+                    }
+
+                    deleted()
+                
+
+
+                
+        
+                })
+    
+            promise.then(result =>setPopout(<ScreenSpinner size='large' />), setActivePanel('lvlGame') )
+    
+    
+            })
+            .catch(function (error) {
+                console.warn(error);
+            });
+    
+    
+      
+    
+    }
+
+    
+
+    useEffect(()=>{
+        setReady(false)
+
+        
+        axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
+            "id": lvlResult.id,
+            "lvlType": lvlResult.lvlType,
+            "answers": lvlResult.answers,
+          })
+        .then(async function (response) {
+            console.log(response)
+            axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
+            .then(async function (response) { 
+                await console.log(response.data.data)
+                let items = response.data.data
+                let searchTerm = lvlResult.lvlType;
+                let rightResults = items.find(one => one.lvlType === searchTerm).rightResults
+                let timeStarted = items.find(one => one.lvlType === searchTerm).started
+                console.log(rightResults);
+                await setPopout(null); 
+                console.log(timeStarted)  
+                if(rightResults> lvlResult.answers.length-1){
+                    if(timeFinish - new Date(timeStarted).getTime()< 30000){
+                        setComplete([true, 'right'])
+                    }else{
+                        setComplete([false, 'beOnTime'])
+                    }
+                }else{
+                    setComplete([false, 'notright'])
+                }
+            })
+            .catch(function (error) {
+                console.warn(error);
+            });
+            
+        })
+        .catch(function (error) {
+            console.warn(error);
+        });
+    
+    }, [])
 
 	
 	return( 
 		<Panel id={id}>
 
             <div className='lvl-res-headDiv'>
-                {complete?<Icon56CheckCircleOutline 
+                {complete[0]?<Icon56CheckCircleOutline 
                 fill="#1A84FF" 
                 style={{
                     marginLeft: 'auto', 
@@ -39,9 +185,9 @@ const LvlResultPage = ({ id, go, count }) => {
                             }}
                         />}
 
-                <Title className='lvl-res-title-div'>Уровень {complete?'пройден!':'провален'}</Title>
+                <Title className='lvl-res-title-div'>Уровень {complete[0]?'пройден!':'провален'}</Title>
                 
-                <Title  className='lvl-res-sub-title-div' weight="1" >{complete?'Неплохо!':'Вы не успели'}</Title>
+                <Title  className='lvl-res-sub-title-div' weight="1" >{complete[0]?'Неплохо!':complete[1] === "beOnTime"?'Вы не успели':'Вы ошблись'}</Title>
 
                 <div style={{height: 30, marginTop: 12}} className='lvl-res-clock-div'>
 					<Icon16ClockCircleFill 
@@ -72,7 +218,11 @@ const LvlResultPage = ({ id, go, count }) => {
             <div className='lvl-res-absolute-div'>
                 <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
                     <div className="result-buttonRetry-div">
-                        <Button size="l" style={{
+                        <Button size="l" 
+                                onClick={()=>{
+                                    playNext()
+                                }}
+                                style={{
                                 backgroundColor:'#1A84FF',
                                 borderRadius:25
                                 }} 
@@ -80,7 +230,7 @@ const LvlResultPage = ({ id, go, count }) => {
                                 appearance="accent" 
                                 stretched
                                 before={complete?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
-                            {complete?"Следующий уровень":"Попробовать снова"}
+                            {complete[0]?"Следующий уровень":"Попробовать снова"}
                         </Button>
                     </div>
                     <div className="result-buttonNotNow-div">
