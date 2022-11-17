@@ -47,10 +47,7 @@ const Home = ({
 			await setLvlsInfo(response.data.data)
 			await console.log(response.data.data)
 			response.data.data.map((item, index)=>{
-
-				if(item.lvlType === 'one'){
-					
-				}
+ 
 
 			})
 			await setPopout(null)
