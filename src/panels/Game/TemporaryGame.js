@@ -20,6 +20,8 @@ import { qsSign } from '../../hooks/qs-sign';
 import axios from 'axios';
 import { client } from '../../sockets/receiver';
 
+import '../../img/Fonts.css'
+
 const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, singleType, answer, setAnswer }) => {
 
     const [first, setFirst] = useState(true) //первый запуск
@@ -29,10 +31,13 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
     const [taskNumber, setTaskNumber] = useState(0)
 
 
-    
-
-    
+     
 	
+	client.lvlFinished = ({ lvlId }) => {
+		console.debug("lvlFinished", lvlId); 
+	  };
+
+
     
 	
 
@@ -40,7 +45,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
 	const [tasks, setTasks] = useState(null);//варианты ответов
  
-	const [timeLeft, setTimeLeft] = useState(15); //время
+	const [timeLeft, setTimeLeft] = useState(2); //время
 	const [isCounting, setIsCounting] = useState(false); //время
 	
 

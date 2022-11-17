@@ -9,7 +9,7 @@ import '../Home.css';
 import { qsSign } from '../../../hooks/qs-sign';
 
 
-const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo}) => {
+const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo, themeColors}) => {
 	
  
 
@@ -50,10 +50,12 @@ const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo}) => {
 		<Card mode="shadow" className='long-card'>
 				<div style={{minHeight: 141}}>
 									
-					<Icon24ClockOutline width={24} height={24} className='long-card-icon'/>
+					<Icon24ClockOutline width={24} height={24} className='long-card-icon' style={{
+							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF'
+						}}/>
 						<Div>
 							<div>
-								<Title className='long-card-title'>
+								<Title className='long-card-title' style={{color: themeColors==='dark'?'#C4C8CC':'#2C2D2E'}}>
 									Попробуй 30-секундный режим
 								</Title>
 							</div>
@@ -75,7 +77,7 @@ const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo}) => {
 							}}
 							data-to='temporaryGame'
 							style={{
-							backgroundColor:'#F4F9FF',
+							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 							color:'#1984FF',
 							borderRadius:25
 							}}

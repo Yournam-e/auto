@@ -15,7 +15,7 @@ import {
  } from '@vkontakte/vkui';
 
 
- import bridge from '@vkontakte/vk-bridge';
+import bridge from '@vkontakte/vk-bridge';
 
 import Eyes from '../../../img/Eyes.png'
 
@@ -24,19 +24,107 @@ import '../Game.css'
 import axios from 'axios';
 import { qsSign } from '../../../hooks/qs-sign'; 
 
+import '../../../img/Fonts.css'
 
-const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActivePanel }) => {
+
+import { createCanvas, loadImage } from 'canvas';
+import { useUserId } from '../../../hooks/useUserId';
+
+const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }) => {
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
 	
-
+	 
 
 	const [lvlsInfo, setLvlsInfo] = useState(null)
+
+	const [rightAns, setRightAns] = useState()
 	
 
 	const [friendsIds, setFriendsIds] = useState(null) //id друзей юзера
 	const [friendsResult, setFriendsResult] = useState() //результаты друзей
 
 	const [tokenAvailability, setTokenAvailability] = useState(false)
+
+	
+	const userID = useUserId()
+
+	function decOfNum(number, titles, needNumber = true) {
+		if (number !== undefined) {
+			let decCache = [],
+				decCases = [2, 0, 1, 1, 1, 2];
+			if (!decCache[number]) decCache[number] = number % 100 > 4 && number % 100 < 20 ? 2 : decCases[Math.min(number % 10, 5)];
+			return (needNumber ? number + ' ' : '') + titles[decCache[number]];
+		}
+	}
+
+
+
+	function loadFonts(fonts = []) {
+		for (const font of fonts) {
+		const span = document.createElement('span');
+		span.style.position = 'absolute';
+		span.style.fontFamily = font;
+		span.style.opacity = '0';
+		span.innerText = '.';
+		document.body.appendChild(span);
+		span.onload = () => span.remove();
+		}
+	}
+
+
+	async function showStoryBox(count){
+
+		await loadFonts()
+		
+		// параметры url
+		function getUrlParams() {
+			return window.location.search.length > 0 && JSON.parse('{"' + decodeURI(window.location.search.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
+		}
+		
+		const background = await loadImage(require(`../../../img/story/story.png`));
+		const phrases = [
+			decOfNum(count, ['Математическую', 'Математические', 'Математических']),
+			decOfNum(count, ['задачу', 'задачи', 'задач']) + ' за ',
+			'30 секунд!'
+		];
+		var canvas = createCanvas(background.width, background.height);
+		const ctx = canvas.getContext('2d');
+		
+		ctx.drawImage(background, 0, 0);
+		
+		ctx.font = '700 189px Space Grotesk';
+		ctx.fillStyle = '#1A84FF';
+		ctx.textAlign = 'center';
+		ctx.fillText(count, 540, 709 + 133);
+		
+		ctx.font = '500 63px Manrope';
+		ctx.fillStyle = '#333333';
+		ctx.textAlign = 'center';
+		ctx.fillText(phrases[0], 540, 1032 + 52);
+		
+		const
+			width1 = ctx.measureText(phrases[1] + phrases[2]).width,
+			width2 = ctx.measureText(phrases[1]).width
+		;
+		ctx.textAlign = 'left';
+		ctx.fillText(phrases[1], (background.width - width1) / 2, 1118 + 48);
+		ctx.font = '800 63px Manrope';
+		ctx.fillStyle = '#1A84FF';
+		ctx.fillText(phrases[2], (background.width - width1) / 2 + width2, 1118 + 48);
+
+
+		await bridge.send('VKWebAppShowStoryBox', {
+			background_type: 'image',
+			blob: canvas.toDataURL('image/png'),
+			attachment: {
+				url: `https://vk.com/app${getUrlParams().vk_app_id}`,
+				text: 'go_to',
+				type: 'url'
+			}
+		});
+
+		setPopout(null)
+	}
 
 
 	 
@@ -52,8 +140,7 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 			if(item.lvlType === 'single30'){
 				axios.delete(`https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`)
 				.then(async function (response) {
-					console.log(response.data.data)
-					console.log('ЩЩЩЩЩЩЩЩЩЩЩ')
+					console.log(response.data.data) 
 					setPopout(null)
 				})
 				.catch(function (error) {
@@ -140,6 +227,8 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 
 	
 	useEffect(()=>{
+
+		
 		
 		
 
@@ -150,6 +239,14 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 			.then(async function (response) {
 				console.log(response.data)
 				setFriendsResult(response.data)
+				for await (const item of response.data.data){ 
+
+					if(item.user.userId === userID){
+						console.log('поставил ' + item.rightResults)
+						setRightAns(item.rightResults)
+						
+					}
+				}
 				
 			})
 			.catch(function (error) {
@@ -164,6 +261,7 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 	
 	
 	useEffect(()=>{ 
+		loadFonts()
 		getFriendsAndCheck()
 
 		axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
@@ -193,17 +291,17 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 
 	return(
 
+
+		
  
 		<Panel id={id} className='resultPagePanel'>
-			
-
 			
 			<Div className='check-circle-outline'>
 				<div>
 					<Icon56CheckCircleOutline fill="#1A84FF" style={{marginLeft: 'auto', marginRight: 'auto'}}/>
 				</div>
 				<div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
-					<Title className='result-task-title'>{count *12} задач</Title>
+					<Title className='result-task-title'>{ decOfNum(rightAns, ['задачу', 'задачи', 'задач'])}</Title>
 				</div>
 
 				<div style={{marginLeft: 18, marginRight: 18, marginTop: 16}}>
@@ -212,6 +310,24 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 
 				<div className='result-task-button-div' style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
 					<Button 
+					onClick={async function (){ 
+
+						var localCount = 0
+						for await (const item of friendsResult.data){
+
+							console.log('llloooo')
+
+							 
+
+							if(item.user.userId === userID){
+								await showStoryBox(item.rightResults)
+								
+							}
+						}
+						
+						await setPopout(<ScreenSpinner size='large' />)
+						
+					}}
 					className='result-task-button'
 					style={{
 						backgroundColor:'#F4F9FF',
@@ -223,7 +339,7 @@ const ResultPage = ({ id, go, count, answer, setPopout, setSingleType, setActive
 					size='l'
 					>Поделиться в истории</Button>
 				</div>
-
+				<p className='hide'>content</p>
 				{tokenAvailability === true && 
 				<div>
 					<div className='result-task-resTitle-div'>

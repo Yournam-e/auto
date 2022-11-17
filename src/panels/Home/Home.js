@@ -13,6 +13,8 @@ import axios from 'axios';
 import { qsSign } from '../../hooks/qs-sign';
 import { useUserId } from '../../hooks/useUserId';
 
+import '../../img/Fonts.css';
+
 const Home = ({ 
 	id,
 	go,
@@ -24,7 +26,8 @@ const Home = ({
 	lvlData, 
 	setLvlNumber, 
 	setReady,
-	lvlNumber}) => {
+	lvlNumber,
+	themeColors}) => {
 
 	const [lvlsInfo, setLvlsInfo] = useState(null)
 
@@ -95,7 +98,8 @@ const Home = ({
 						setSingleType={setSingleType} 
 						setPopout={setPopout} 
 						lvlsInfo={lvlsInfo}
-						setLocalTask={setLocalTask}/>
+						setLocalTask={setLocalTask}
+						themeColors={themeColors}/>
 
 						 
 						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number)=>{
@@ -110,7 +114,8 @@ const Home = ({
 									setLvlData={setLvlData}
 									lvlData={lvlData}
 									setLvlNumber={setLvlNumber}
-									setReady={setReady} />
+									setReady={setReady}
+									themeColors={themeColors} />
 							)
 						})} 
 						

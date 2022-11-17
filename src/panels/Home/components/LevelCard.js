@@ -7,7 +7,9 @@ import '../Home.css';
 import { qsSign } from '../../../hooks/qs-sign';
 import axios from 'axios';
 
-const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, setReady}) => {
+import '../../../img/Fonts.css'
+
+const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, setReady, themeColors}) => {
 
 	 
 
@@ -45,6 +47,34 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 		  }
 
 	}
+
+
+	function info(){
+		switch (number) {
+			case 1:
+				return 'one'
+			case 2:
+				return 'two'
+			case 3:
+				return 'three'
+			case 4:
+				return 'four'
+			case 5:
+				return 'five'
+			case 6:
+				return 'six'
+			case 7:
+				return 'seven'
+			case 8:
+				return 'eight'
+			case 9:
+				return 'nine'
+			case 10:
+				return 'ten'
+		  }
+
+	}
+
 
 
 
@@ -105,11 +135,14 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 				<div className='lvl-card'>
 					
 					<div style={{width: 60, height: 60}}>
-						<Title level='1' className='lvl-card-title' style={{paddingLeft:16, paddingTop: 16}}>#{number}</Title>
+						<Title level='1' className='lvl-card-title' style={{paddingLeft:16, paddingTop: 16,
+						color:themeColors==='dark'?'#E1E3E6':'#000000',}}>#{number}</Title>
 					</div>
 
 					<div className='lvl-card-icon-div' style={{marginTop: -48}}>
-						<Icon16Done className='lvl-card-icon'/>
+						<Icon16Done className='lvl-card-icon' style={{
+							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF'
+						}}/>
 					</div>
 
 					<div style={{paddingTop: 1}}>
@@ -126,7 +159,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 					<Button
 						className='button-lvl'
 						style={{
-						backgroundColor:'#F4F9FF',
+						backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 						color:'#1984FF',
 						borderRadius:25
 						}}

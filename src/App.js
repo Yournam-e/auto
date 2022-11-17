@@ -5,6 +5,7 @@ import { View, ScreenSpinner, AdaptivityProvider, AppRoot, ConfigProvider, Split
 import { Icon28Users3Outline, Icon28FavoriteOutline } from '@vkontakte/icons';
 
 import '@vkontakte/vkui/dist/vkui.css';
+import './img/Fonts.css';
 
 import Home from './panels/Home/Home';
 import Multiplayer from './panels/Multiplayer/Multiplayer';
@@ -27,6 +28,8 @@ const App = () => {
 	const [activeStory, setActiveStory] = useState("single");
 	const [fetchedUser, setUser] = useState();
 	const [activeModal, setActiveModal] = useState(false);
+
+	const [themeColors, setThemeColors] = useState('light')
 
 
 	const [count, setCount] = useState(0); //баллы
@@ -107,6 +110,7 @@ const App = () => {
 	useEffect(() => {
 		bridge.subscribe(({ detail: { type, data }}) => {
 			if (type === 'VKWebAppUpdateConfig') {
+				setThemeColors('dark')
 				setScheme(data.scheme)
 			}
 		});
@@ -189,7 +193,8 @@ const App = () => {
 											setLvlData={setLvlData}
 											lvlData={lvlData} 
 											setLvlNumber={setLvlNumber}
-											setReady={setReady} />
+											setReady={setReady}
+											themeColors={themeColors} />
 										</View>
 										
 										<View id="multiplayer" activePanel="multiplayer">

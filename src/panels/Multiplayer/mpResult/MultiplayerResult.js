@@ -15,7 +15,8 @@ import {
  import { Icon56CheckCircleOutline, Icon24StoryOutline, Icon16Done } from '@vkontakte/icons';
  import '../../Game/Game.css'
 import { client } from '../../../sockets/receiver';
-import { leaveRoom } from '../../../sockets/game';
+import { createRoom, leaveRoom } from '../../../sockets/game';
+import { useUserId } from '../../../hooks/useUserId';
 
 
 const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel, joinCode,playersList }) => {
@@ -29,7 +30,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 	const [timeLeft, setTimeLeft] = useState(10); //время
 
 	useEffect(()=>{
-		timeLeft === 0?setActivePanel('multiplayer'):console.log()
+		timeLeft === 0?console.log(''):console.log()
 	}, [timeLeft])
 
 	
@@ -40,19 +41,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 	useEffect(()=>{
 
-		async function timeFunction(){
-			await setTimeout(() => 1000);
-		}
-
-		
-		
-
-		const interval = setInterval(()=>{
-			setTimeLeft((timeLeft)=> timeLeft >= 1 ? timeLeft - 1 :0)
-		}, 1000)
-		
-
-		timeFunction()
+		 
 	}, [])
 
 	return(
@@ -122,19 +111,23 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 				<ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
 					<div className="result-buttonRetry-div">
-						<Button size="l" style={{
+						<Button size="l"
+								onClick={()=>{
+									createRoom(fetchedUser.id, 'wrl8Uw')
+									
+								}}
+								 style={{
 								backgroundColor:'#1A84FF',
 								borderRadius:25
 								}} className="result-buttonGroup-retry" appearance="accent" stretched>
-							Сыграть снова {timeLeft}c
+							Сыграть снова 
 						</Button>
 					</div>
 					<div className="result-buttonNotNow-div">
 						<Button 
 							onClick={(e)=>{
 								go(e)
-								leaveRoom(joinCode, fetchedUser.id)
-								setActivePanel('multiplayer')
+								leaveRoom(joinCode, fetchedUser.id) 
 							}}
 							data-to='menu'
 							size="l"
