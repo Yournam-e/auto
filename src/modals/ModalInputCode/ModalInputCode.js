@@ -10,7 +10,7 @@ import {
 
  import { Icon16Clear } from '@vkontakte/icons';
  
-
+import './InputCode.css'
 
  import bridge from '@vkontakte/vk-bridge';
 
@@ -33,8 +33,11 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,
                 
                 <div><Title level="1" >Используйте все функции!</Title></div>
                 <div> <Title level="3" weight="3" >дай код</Title></div>
+
+                <input type="text" name="name" maxlength="5" className='input-code' autocomplete="off"/>
                 
                 <Input
+                    
                     getRef={textInput}
                     type="text"
                     placeholder="введи уже код"

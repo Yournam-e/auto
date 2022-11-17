@@ -24,13 +24,13 @@ import '../Game.css'
 import axios from 'axios';
 import { qsSign } from '../../../hooks/qs-sign'; 
 
-import '../../../img/Fonts.css'
+ 
 
 
 import { createCanvas, loadImage } from 'canvas';
 import { useUserId } from '../../../hooks/useUserId';
 
-const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }) => {
+const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, fetchedUser }) => {
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
 	
 	 
@@ -38,6 +38,9 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 	const [lvlsInfo, setLvlsInfo] = useState(null)
 
 	const [rightAns, setRightAns] = useState()
+
+
+	const [right, setRight] = useState()
 	
 
 	const [friendsIds, setFriendsIds] = useState(null) //id друзей юзера
@@ -74,7 +77,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 
 	async function showStoryBox(count){
 
-		await loadFonts()
+		//await loadFonts()
 		
 		// параметры url
 		function getUrlParams() {
@@ -113,15 +116,19 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 		ctx.fillText(phrases[2], (background.width - width1) / 2 + width2, 1118 + 48);
 
 
-		await bridge.send('VKWebAppShowStoryBox', {
-			background_type: 'image',
-			blob: canvas.toDataURL('image/png'),
-			attachment: {
-				url: `https://vk.com/app${getUrlParams().vk_app_id}`,
-				text: 'go_to',
-				type: 'url'
-			}
-		});
+		try{
+			await bridge.send('VKWebAppShowStoryBox', {
+				background_type: 'image',
+				blob: canvas.toDataURL('image/png'),
+				attachment: {
+					url: `https://vk.com/app${getUrlParams().vk_app_id}`,
+					text: 'go_to',
+					type: 'url'
+				}
+			});
+		}catch(e){
+			setPopout(null)
+		}
 
 		setPopout(null)
 	}
@@ -211,7 +218,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 				{}
 			)
 
-			params.vk_access_token_settings.includes('friends')?resolve(true): resolve(false);
+			params.vk_access_token_settings.includes('friends')?resolve(true): resolve(true);
 				
 		  });
 		  promise.then(result => result === true? getIds(result):setPopout(null))
@@ -239,10 +246,8 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 			.then(async function (response) {
 				console.log(response.data)
 				setFriendsResult(response.data)
-				for await (const item of response.data.data){ 
-
-					if(item.user.userId === userID){
-						console.log('поставил ' + item.rightResults)
+				for await (const item of response.data.data){
+					if(item.user.userId === fetchedUser.id){
 						setRightAns(item.rightResults)
 						
 					}
@@ -261,7 +266,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 	
 	
 	useEffect(()=>{ 
-		loadFonts()
+		//loadFonts()
 		getFriendsAndCheck()
 
 		axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
@@ -270,22 +275,31 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 			"answers": answer.answers,
 		  })
 		.then(async function (response) {
-			console.log(response)
+			
+			axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
+			.then(async function (res) {
+				await setLvlsInfo(res.data.data)
+				for await (const item of res.data.data){
+					if(item.lvlType=== 'single30'){
+						setRight(item.rightResults)
+						
+					}
+				}
+				await console.log(res.data.data)
+				await setPopout(null)
+			})
+			.catch(function (error) {
+				console.warn(error);
+			});
 			
 		})
 		.catch(function (error) {
 			console.warn(error);
 		});
 
-		axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
-		.then(async function (response) {
-			await setLvlsInfo(response.data.data)
-			await console.log(response.data.data)
-			await setPopout(null)
-		})
-		.catch(function (error) {
-			console.warn(error);
-		});
+
+
+
 
 	}, [])
 
@@ -301,7 +315,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 					<Icon56CheckCircleOutline fill="#1A84FF" style={{marginLeft: 'auto', marginRight: 'auto'}}/>
 				</div>
 				<div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
-					<Title className='result-task-title'>{ decOfNum(rightAns, ['задачу', 'задачи', 'задач'])}</Title>
+					{right &&<Title className='result-task-title'>{right} задач</Title>}
 				</div>
 
 				<div style={{marginLeft: 18, marginRight: 18, marginTop: 16}}>
@@ -312,17 +326,8 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel }
 					<Button 
 					onClick={async function (){ 
 
-						var localCount = 0
-						for await (const item of friendsResult.data){
-
-							console.log('llloooo')
-
-							 
-
-							if(item.user.userId === userID){
-								await showStoryBox(item.rightResults)
-								
-							}
+						if(right){
+							showStoryBox(right)
 						}
 						
 						await setPopout(<ScreenSpinner size='large' />)

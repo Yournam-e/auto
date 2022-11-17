@@ -12,7 +12,8 @@ import '../../../img/Fonts.css'
 const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, setReady, themeColors}) => {
 
 	 
-
+	const [complete, setComplete] = useState(false)
+		
 
 	useEffect(()=>{
 
@@ -47,34 +48,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 		  }
 
 	}
-
-
-	function info(){
-		switch (number) {
-			case 1:
-				return 'one'
-			case 2:
-				return 'two'
-			case 3:
-				return 'three'
-			case 4:
-				return 'four'
-			case 5:
-				return 'five'
-			case 6:
-				return 'six'
-			case 7:
-				return 'seven'
-			case 8:
-				return 'eight'
-			case 9:
-				return 'nine'
-			case 10:
-				return 'ten'
-		  }
-
-	}
-
+	
 
 
 
@@ -116,17 +90,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 		promise.then(result =>setPopout(<ScreenSpinner size='large' />), setActivePanel('lvlGame') )
 
 
-		  }; 
-
-		
-	
-
-	useEffect(()=>{
-
-	
- 
-	}, [])
-
+		  };
 
 
 	return(
@@ -140,19 +104,23 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 					</div>
 
 					<div className='lvl-card-icon-div' style={{marginTop: -48}}>
-						<Icon16Done className='lvl-card-icon' style={{
+						{complete &&<Icon16Done className='lvl-card-icon' style={{
 							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF'
-						}}/>
+						}}/>}
 					</div>
 
 					<div style={{paddingTop: 1}}>
 						<div className='lvl-card-parametr-div' style={{width: 141, height: 30, paddingLeft: 16 }}>
 							<Icon24CheckCircleOutline className='lvl-card-parametr-icon' style={{display:'inline-block'}} width={20} height={20} />
-							<Text className='lvl-card-parametr-text' style={{display:'inline-block', verticalAlign: 'middle', paddingLeft:5}}>10 задач</Text>
+							<Text className='lvl-card-parametr-text' style={{display:'inline-block',
+							verticalAlign: 'middle',
+							paddingLeft:5}}>
+								{lvlsInfo && devideLvl(number)[0]}
+							</Text>
 						</div>
 						<div className='lvl-card-parametr-div' style={{width: 141, height: 30, paddingLeft: 16}}>
 							<Icon28RecentOutline className='lvl-card-parametr-icon' style={{display:'inline-block'}} width={20} height={20} />
-							<Text className='lvl-card-parametr-text' style={{display:'inline-block', verticalAlign: 'middle', paddingLeft:5}}>30 секунд</Text>
+							<Text className='lvl-card-parametr-text' style={{display:'inline-block', verticalAlign: 'middle', paddingLeft:5}}>{lvlsInfo && devideLvl(number)[1]}</Text>
 						</div>
 					</div>
 

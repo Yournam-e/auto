@@ -32,26 +32,24 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
 
      
-	
-	client.lvlFinished = ({ lvlId }) => {
-		console.debug("lvlFinished", lvlId); 
-	  };
-
-
-    
+ 
 	
 
 	const [equation, setEquation] = useState([2, 2, '+', 4]); //задача
 
 	const [tasks, setTasks] = useState(null);//варианты ответов
  
-	const [timeLeft, setTimeLeft] = useState(2); //время
+	const [timeLeft, setTimeLeft] = useState(30); //время
 	const [isCounting, setIsCounting] = useState(false); //время
 	
 
 	const minutes = getPadTime(Math.floor(timeLeft/60)); //минуты
 
 	const seconds = getPadTime(timeLeft - minutes * 60); //секунды
+
+
+
+	
 
 	useEffect(()=>{
 		if(timeLeft === 0){
@@ -70,12 +68,6 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
 	useEffect(()=>{
 
-        
-        
-
-
-
-		
 
 		const interval = setInterval(()=>{
 			isCounting && setTimeLeft((timeLeft)=> timeLeft >= 1 ? timeLeft - 1 :0)

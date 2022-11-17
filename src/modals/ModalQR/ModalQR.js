@@ -15,19 +15,20 @@ import './ModalQR.css'
 
  import qr from '@vkontakte/vk-qr';
 
-const ModalQRCode = ({ id}) =>{
+const ModalQRCode = ({ id, joinCode}) =>{
 
     let options = {};   
 
     options.foregroundColor = '#0077FF';
     options.logoData = "https://i.ibb.co/xLkkGgd/vk-logo-3674340.png"; 
 
-    const qrSvg = qr.createQR('text', 230, 'qr-code', options);
+    const qrSvg = qr.createQR(`vk.com/app51451320/${joinCode}`, 230, 'qr-code', options);
+
+    
     
     return(
         
-        <ModalPage id={id} 
-        settlingHeight={122}>
+        <ModalPage id={id}>
             <div  >
                 <div  className='qr-code'>
                     <img src={`data:image/svg+xml;utf8,${encodeURIComponent(qrSvg)}`} />

@@ -55,6 +55,9 @@ const LvlGame = ({ id, go, count, setCount, setActivePanel, setPopout, lvlNumber
 
 
 
+
+
+
 	
 	function devideType(){
 		switch (lvlNumber) {

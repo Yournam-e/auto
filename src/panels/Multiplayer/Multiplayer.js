@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Panel, Div, Avatar, Title, Button, Separator, List, Cell, ButtonGroup,PanelHeader, PanelHeaderButton } from '@vkontakte/vkui';
+import { Panel, Div, Avatar, Title, Button, Separator, List, Cell, ButtonGroup,PanelHeader, PanelHeaderButton,ScreenSpinner } from '@vkontakte/vkui';
 
 import './Multiplayer.css';
 import { Icon20Sync, Icon20QrCodeOutline, Icon24Cancel,Icon20DoorArrowRightOutline } from '@vkontakte/icons';
@@ -27,7 +27,8 @@ const Multiplayer = ({
 	setActivePanel,
 	setAnswersInfo,
 	setTaskInfo,
-	connectType,setConnectType
+	connectType,setConnectType,
+	setPopout
 	
  }) => {
 
@@ -48,29 +49,34 @@ const Multiplayer = ({
 
 
 
-	function joinToYourRoom(){
+	function joinToYourRoom(i){
 		
 			
 		axios.post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
 		.then(async function (response) {
 			console.log(response.data.data)
 			await setJoinCode(response.data.data)
+			
+			await setGameInfo({ ...gameInfo, roomId: response.data.data})
 			if(firstStart){
 				await connectRoom(qsSign, response.data.data, userId);
 			}else{
-				await joinRoom(response.data.data, userId)
+				await joinRoom(response.data.data, userId);
 
 			}
 			
-			
-			console.log('12')
-			await setGameInfo({ ...gameInfo, roomId: response.data.data})
 			setFirstStart(false)
 			
 		})
 		.catch(function (error) {
 			console.warn(error);
 		});
+
+		
+
+		
+
+
 	}
 
 
@@ -78,6 +84,22 @@ const Multiplayer = ({
 		joinToYourRoom()
 
 	}, []);
+	useEffect(() => {
+		joinToYourRoom()
+
+	}, [joinCode]);
+
+	client.gameStarted = ({ answers, task, id }) => {
+		console.debug("gameStarted", answers, task, id);
+		setTaskInfo(task)
+		setAnswersInfo(answers)
+		async function lol(){
+			setGameInfo({ ...gameInfo, taskId: id})
+		}
+		lol()
+		setActivePanel('multiplayerGame')
+	};
+
 
 
 
@@ -138,7 +160,23 @@ const Multiplayer = ({
 
 						<Icon20Sync className='multiplayer-title-return'
 							fill='#1A84FF'
-							onClick={()=>{}}
+							onClick={async function(){
+								await setPopout(<ScreenSpinner size='large' />)
+								await leaveRoom(joinCode,userId)
+								const promise = new Promise((resolve, reject) => {
+									const oldCode = joinCode
+									createRoom(userId, joinCode)
+									
+									resolve()
+						
+								})
+					
+								promise.then(result =>setPopout(null) )
+
+								
+								
+								
+							}}
 							style={{
 								display: 'inline-block',
 								paddingLeft: 5,

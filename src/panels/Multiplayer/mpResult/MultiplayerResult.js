@@ -26,6 +26,38 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 	console.log(playersList)
 
+	const [place, setPlace] = useState(5)
+
+	useEffect(()=>{
+		if(mpGameResults){
+			devideArray()
+		}
+	},[mpGameResults])
+
+	
+
+
+	function devideArray(){
+
+		const newArr = mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? 1 : -1);
+		console.log("ниже")
+		console.log(newArr)
+
+		newArr.map((item, index)=>{
+			console.log(item)
+			console.log(fetchedUser.id)
+			console.log(item.userId)
+			console.log(index)
+			if(item.userId === fetchedUser.id){
+				const f = index+1
+				console.log(f)
+				setPlace(index)
+			}
+
+		})
+		
+	}
+
 
 	const [timeLeft, setTimeLeft] = useState(10); //время
 
@@ -37,6 +69,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 	if(mpGameResults){
 		friendList = mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? 1 : -1);
 	}
+
  
 
 	useEffect(()=>{
@@ -54,7 +87,9 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 			<Div  className='check-circle-outline'>
 				<div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
 
-					<Title className='result-task-title'>Вы заняли <span style={{color: '#1984FF', paddingRight:5, paddingLeft:5}}>2-е</span>  место</Title>
+					<Title className='result-task-title'>
+						Вы заняли<span style={{color: '#1984FF', paddingRight:5, paddingLeft:5}}>{mpGameResults && place+1} -e место!</span>
+					</Title>
 
 				</div>
 
@@ -82,9 +117,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 						<div style={{height: 65,  marginLeft: 16}}>
 						{mpGameResults && playersList.map((inItem, index)=>{
-						if(item.userId === inItem.userId){
-
-							
+						if(item.userId === inItem.userId){ 
 								return(
 								<div key={inItem}>
 								<Title style={{paddingBottom: 8,}}>{inItem.name}</Title>

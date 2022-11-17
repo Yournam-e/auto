@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import bridge from '@vkontakte/vk-bridge';
 import { View, ScreenSpinner, AdaptivityProvider, AppRoot, ConfigProvider, SplitLayout, SplitCol, TabbarItem, Tabbar, Epic, Panel, ModalRoot  } from '@vkontakte/vkui';
 
@@ -20,6 +20,7 @@ import { client } from './sockets/receiver';
 import MultiplayerResult from './panels/Multiplayer/mpResult/MultiplayerResult';
 import LobbyForGuest from './panels/Multiplayer/LobbyForGuest/LobbyForGuest';
 import TemporaryGame from './panels/Game/TemporaryGame';
+import { qsSign } from './hooks/qs-sign';
 
 const App = () => {
 	const [scheme, setScheme] = useState('bright_light')
@@ -92,15 +93,20 @@ const App = () => {
 			setPlayersId([...playersId, item.userId]);
 		})
 
-		 
-
 	  };
 
-	 
+	  client.roomCreated = (roomId) =>{
 
-	  client.lvlFinished = ({ lvlId }) => {
-		console.debug("lvlFinished", lvlId); 
+		console.debug('room create' + roomId)
 	  };
+	  
+	client.roomCreated = ({ roomId }) => {
+		console.debug('room create' + roomId)
+		setJoinCode(roomId)
+	};
+
+
+	  
 
 
 
@@ -108,10 +114,15 @@ const App = () => {
 	
 
 	useEffect(() => {
+ 
+
 		bridge.subscribe(({ detail: { type, data }}) => {
 			if (type === 'VKWebAppUpdateConfig') {
-				setThemeColors('dark')
 				setScheme(data.scheme)
+
+				if(data.scheme ==='vkcom_dark' || data.scheme === 'space_gray'){
+					setThemeColors('dark')
+				}
 			}
 		});
 
@@ -134,8 +145,19 @@ const App = () => {
 
 	const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
 
+
+	const inputRef = useRef(null);
+
+	const handleOpen = React.useCallback((id) => {
+	  if (id === "inputCodeQR" && inputRef.current) {
+		inputRef.current.focus();
+	  }
+	}, []);
+
 	const modal = (
-		<ModalRoot activeModal={activeModal} onClose={()=>{
+		<ModalRoot 
+		onOpened={handleOpen}
+		activeModal={activeModal} onClose={()=>{
 			setActiveModal(null);
 		}}>
 		  <ModalInputCode 
@@ -146,7 +168,7 @@ const App = () => {
 		  playersList={playersList}
 		  setConnectType={setConnectType}
 		  setJoinCode={setJoinCode} />
-		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal}/>
+		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal} joinCode={joinCode}/>
 		</ModalRoot>
 	  );
 
@@ -257,7 +279,8 @@ const App = () => {
 								setAnswer={setAnswer} 
 								setPopout={setPopout}
 								setSingleType={setSingleType}
-								setActivePanel={setActivePanel}/>
+								setActivePanel={setActivePanel}
+								fetchedUser={fetchedUser}/>
 								
 								<MultiplayerGame  
 								id='multiplayerGame' 

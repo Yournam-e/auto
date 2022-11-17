@@ -33,34 +33,11 @@ const Home = ({
 
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
 
+	const [completeArray, setCompleteArray] = useState([false,false,false,false,false,false,false,false,false,false])
 
 
-		
-	function devideLvl(){
-		switch (lvlNumber) {
-			case 1:
-				return ['40 секунд', '10 задач']
-			case 2:
-				return ['40 секунд', '10 задач']
-			case 3:
-				return ['30 секунд', '10 задач']
-			case 4:
-				return ['30 секунд', '15 задач']
-			case 5:
-				return ['1 минута', '15 задач']
-			case 6:
-				return ['1 минута', '15 задач']
-			case 7:
-				return ['1 минута', '15 задач']
-			case 8:
-				return ['1 минута', '15 задач']
-			case 9:
-				return ['25 секунд', '15 задач']
-			case 10:
-				return ['20 секунд', '20 задач']
-		  }
 
-	}
+
 
 	
 	
@@ -69,13 +46,51 @@ const Home = ({
 		.then(async function (response) {
 			await setLvlsInfo(response.data.data)
 			await console.log(response.data.data)
+			response.data.data.map((item, index)=>{
+
+				if(item.lvlType === 'one'){
+					
+				}
+
+			})
 			await setPopout(null)
 		})
 		.catch(function (error) {
 			console.warn(error);
 		});
 
-
+		function devideLvl(numberId){
+			switch (numberId) {
+				case 1:
+					lvlsInfo.map((item, index)=>{
+						if(item.lvlType == 'one'){
+								if(item.rightResults >8){
+									//setComplete(true)
+								}
+						}
+					})
+					return ['40 секунд', '10 задач']
+				case 2:
+					return ['40 секунд', '10 задач']
+				case 3:
+					return ['30 секунд', '10 задач']
+				case 4:
+					return ['30 секунд', '15 задач']
+				case 5:
+					return ['1 минута', '15 задач']
+				case 6:
+					return ['1 минута', '15 задач']
+				case 7:
+					return ['1 минута', '15 задач']
+				case 8:
+					return ['1 минута', '15 задач']
+				case 9:
+					return ['25 секунд', '15 задач']
+				case 10:
+					return ['20 секунд', '20 задач']
+			  }
+	
+		}
 		
 
 
