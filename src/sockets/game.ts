@@ -7,7 +7,7 @@ let connected = false;
 
 let socket: Socket;
 
-export const connectRoom = (query: string, roomId: string, userId: number) => {
+export const connectRoom = (query: string, roomId: string) => {
   console.log("connecting");
   if (connected) return;
   socket = io(ns, {
@@ -22,7 +22,7 @@ export const connectRoom = (query: string, roomId: string, userId: number) => {
     initCallbacks(socket);
     connected = true;
 
-    joinRoom(roomId, userId);
+    joinRoom(roomId);
   });
   socket.on("disconnect", () => {
     console.debug("ws disconnected");
@@ -30,28 +30,22 @@ export const connectRoom = (query: string, roomId: string, userId: number) => {
   });
 };
 
-export const joinRoom = (roomId: string, userId: number) => {
-  socket.emit("joinRoom", { roomId, userId });
+export const joinRoom = (roomId: string) => {
+  socket.emit("joinRoom", { roomId });
 };
-export const leaveRoom = (roomId: string, userId: number) => {
-  socket.emit("leaveRoom", { roomId, userId });
+export const leaveRoom = (roomId: string) => {
+  socket.emit("leaveRoom", { roomId });
 };
-export const createRoom = (userId: number, prevRoomId: string) => {
-  socket.emit("createRoom", { userId, prevRoomId });
+export const createRoom = (prevRoomId: string) => {
+  socket.emit("createRoom", { prevRoomId });
 };
 export const startGame = (
   roomId: string,
-  userId: number,
   difficulty: "easy" | "mid" | "hard",
   userIds: number[]
 ) => {
-  socket.emit("startGame", { roomId, userId, difficulty, userIds });
+  socket.emit("startGame", { roomId, difficulty, userIds });
 };
-export const answerTask = (
-  roomId: string,
-  userId: number,
-  answer: number,
-  taskId: string
-) => {
-  socket.emit("answerTask", { roomId, userId, answer, taskId });
+export const answerTask = (roomId: string, answer: number, taskId: string) => {
+  socket.emit("answerTask", { roomId, answer, taskId });
 };

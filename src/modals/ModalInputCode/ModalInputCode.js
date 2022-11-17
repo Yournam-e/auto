@@ -1,83 +1,82 @@
 import React, { useEffect, useState } from 'react';
 
-import { 
-	Input,
-	ModalPage, 
-	Button,
-	Title, 
-	IconButton
- } from '@vkontakte/vkui';
+import {
+    Input,
+    ModalPage,
+    Button,
+    Title,
+    IconButton
+} from '@vkontakte/vkui';
 
- import { Icon16Clear } from '@vkontakte/icons';
- 
+import { Icon16Clear } from '@vkontakte/icons';
+
 import './InputCode.css'
 
- import bridge from '@vkontakte/vk-bridge';
+import bridge from '@vkontakte/vk-bridge';
 
- import { qsSign } from '../../hooks/qs-sign';
+import { qsSign } from '../../hooks/qs-sign';
 
- import { joinRoom } from '../../sockets/game';
+import { joinRoom } from '../../sockets/game';
 
-const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,setActiveModal}) =>{
+const ModalInputCode = ({ id, setGameInfo, gameInfo, setJoinCode, setConnectType, setActiveModal }) => {
 
     const textInput = React.createRef();
 
- 
 
-    return(
-        
-        <ModalPage id={id} 
-        settlingHeight={100}>
-                
-                <div >
-                
+
+    return (
+
+        <ModalPage id={id}
+            settlingHeight={100}>
+
+            <div >
+
                 <div><Title level="1" >Используйте все функции!</Title></div>
                 <div> <Title level="3" weight="3" >дай код</Title></div>
 
-                <input type="text" name="name" maxlength="5" className='input-code' autocomplete="off"/>
-                
+                <input type="text" name="name" maxlength="5" className='input-code' autocomplete="off" />
+
                 <Input
-                    
+
                     getRef={textInput}
                     type="text"
                     placeholder="введи уже код"
                     defaultValue=""
                     after={
                         <IconButton
-                        hoverMode="opacity"
-                        aria-label="Очистить поле"
-                        onClick={(e)=>{
-                            
-                            async function getId(){
-                                const user = await bridge.send('VKWebAppGetUserInfo'); 
-                                //await connectRoom(qsSign, textInput.current.value, user.id);
-                                joinRoom(textInput.current.value, user.id)
-                                setGameInfo({ ...gameInfo, roomId: textInput.current.value})
-                                setConnectType('join')
-                                setJoinCode(textInput.current.value)
-                                setActiveModal(null)
-                            }
+                            hoverMode="opacity"
+                            aria-label="Очистить поле"
+                            onClick={(e) => {
 
-                            getId()
-                            
+                                async function getId() {
+                                    //await connectRoom(qsSign, textInput.current.value, user.id);
+                                    joinRoom(textInput.current.value)
+                                    setGameInfo({ ...gameInfo, roomId: textInput.current.value })
+                                    setConnectType('join')
+                                    setJoinCode(textInput.current.value)
+                                    setActiveModal(null)
+                                }
 
-                        }}
-                        data-to='lobbyForGuest'
+                                getId()
+
+
+                            }}
+                            data-to='lobbyForGuest'
                         >
-                        <Icon16Clear />
+                            <Icon16Clear />
                         </IconButton>
                     }
                 />
-                
-                
-                </div>
-     
-            
-            
-              
+
+
+            </div>
+
+
+
+
         </ModalPage>
-        
-      );
+
+    );
 }
 
 
