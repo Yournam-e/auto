@@ -16,7 +16,7 @@
 }
 
 .multiplayer-div{
-  margin-top: 50px;
+  margin-top: 5%;
 }
 
 .multiplayer-title-div{
@@ -109,7 +109,7 @@
   justify-content: center;
 }
 
-.complexity-button-on{
+.complexity-button-on-light{
   padding-top: 6px;
   padding-bottom: 4px;
   padding-right: 10px;
@@ -121,12 +121,24 @@
   margin-right: 2px;
 }
 
-.complexity-button-off{
+.complexity-button-on-dark{
   padding-top: 6px;
   padding-bottom: 4px;
   padding-right: 10px;
   padding-left: 10px;
 	color:#1984FF;
+  background-color: #1D2D41;
+	border-radius:25px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.complexity-button-off{
+  padding-top: 6px;
+  padding-bottom: 4px;
+  padding-right: 10px;
+  padding-left: 10px;
+	color:#ffffff;
 	border-radius:25px;
   margin-left: 2px;
   margin-right: 2px;
@@ -140,8 +152,8 @@
 .multiplayer-play-button{
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-right: 30%;
-  padding-left: 30%;
+  margin-left:10px;
+  margin-right:10px;
 	color:#1984FF;
 	border-radius:25px;
 }
@@ -176,6 +188,8 @@
   color:#99A2AD;
 }
 
-.vkuiPanelHeader--vkcom.vkuiPanelHeader--sizeX-regular:not(.vkuiModalPageHeader__in):after{
-  background-color: #ebedf0;
+
+
+.game-div-margin{
+  margin-top: 25%;
 }

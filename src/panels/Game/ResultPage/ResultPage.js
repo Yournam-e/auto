@@ -30,7 +30,7 @@ import { qsSign } from '../../../hooks/qs-sign';
 import { createCanvas, loadImage } from 'canvas';
 import { useUserId } from '../../../hooks/useUserId';
 
-const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, fetchedUser }) => {
+const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, fetchedUser,themeColors }) => {
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
 	
 	 
@@ -218,7 +218,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				{}
 			)
 
-			params.vk_access_token_settings.includes('friends')?resolve(true): resolve(true);
+			params.vk_access_token_settings.includes('friends')?resolve(true): resolve(false);
 				
 		  });
 		  promise.then(result => result === true? getIds(result):setPopout(null))
@@ -335,7 +335,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					}}
 					className='result-task-button'
 					style={{
-						backgroundColor:'#F4F9FF',
+						backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 						color:'#1984FF',
 						borderRadius:25
 						}}
@@ -354,19 +354,19 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					<List className='result-friendList' style={{marginTop:8}}>
 						{friendsResult && friendsResult.data.map((item, idx) => (
 							<Cell
-								style={{marginLeft:28, marginRight:28}}
+								style={{marginLeft:5, marginRight:5}}
 								key={idx}
 								before={<div style={{width:100}}><Avatar size={56} className='friendsAvatar' src={item.user.avatar} /> <Title style={{ verticalAlign: 'middle'}} className='result-friend-position'>#{idx +1}</Title></div>} 
 								>
 								<div style={{height: 65,  marginLeft: 16}}>
 
-									<Title style={{paddingBottom: 8,}}>{item.user.name}</Title>
+									<Title level="3"  style={{paddingBottom: 8,}}>{item.user.name}</Title>
 
 									
 									<Button className='friendsPoint'
 										before={<Icon16Done />}
 										style={{ 
-										backgroundColor:'#F4F9FF',
+										backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 										color:'#1984FF',
 										borderRadius:25}}>{item.rightResults}</Button>
 								</div>
@@ -376,8 +376,8 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					</List>
 				</div>}
 				
-				{tokenAvailability === false && 
-				<div className='notFriend-div' style={{width: 440, marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}}>
+				{tokenAvailability === false  && 
+				<div className='notFriend-div' style={{  marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}}>
 					<img className='eyes-photo' style={{marginTop: 16}} src={Eyes} width={44} height={44}></img>
 
 					<Title level="3" style={{textAlign: 'center'}}>Тут никого нет</Title>
@@ -392,7 +392,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 						getFriendsAndCheck()
 					}}
 					style={{
-						backgroundColor:'#F4F9FF',
+						backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 						color:'#1984FF',
 						borderRadius:25,
 						marginBottom: 24
@@ -414,7 +414,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 								borderRadius:25
 								}} 
 								className="result-buttonGroup-retry"
-								appearance="accent" 
+								appearance="accent"
 								onClick={async function(e){
 									await setSingleType('single30')
 									await setPopout(<ScreenSpinner size='large' />)

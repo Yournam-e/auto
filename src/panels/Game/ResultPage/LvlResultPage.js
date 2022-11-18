@@ -18,13 +18,17 @@ import {
 import { qsSign } from '../../../hooks/qs-sign';
 import axios from 'axios';
 
+
+
  
-const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFinish,setLvlNumber,setActivePanel,setReady }) => {
+const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFinish,setLvlNumber,setActivePanel,setReady, themeColors }) => {
 
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
      
 
     const [complete, setComplete] = useState([false, 'notRight'])
+
+    const [finishedTime, setFinishedTime] = useState()
 
 
     let findArr = false
@@ -145,6 +149,7 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                 console.log(rightResults);
                 await setPopout(null); 
                 console.log(timeStarted)  
+                setFinishedTime(timeFinish - new Date(timeStarted).getTime())
                 if(rightResults> lvlResult.answers.length-1){
                     if(timeFinish - new Date(timeStarted).getTime()< 30000){
                         setComplete([true, 'right'])
@@ -185,7 +190,7 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                             }}
                         />}
 
-                <Title className='lvl-res-title-div'>Уровень {complete[0]?'пройден!':'провален'}</Title>
+                <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>Уровень {complete[0]?'пройден!':'провален'}</Title>
                 
                 <Title  className='lvl-res-sub-title-div' weight="1" >{complete[0]?'Неплохо!':complete[1] === "beOnTime"?'Вы не успели':'Вы ошблись'}</Title>
 
@@ -207,7 +212,7 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                             color: '#99A2AD',
                             fontSize: 14
                             }}
-                    >1:12</Title>
+                    >{finishedTime && finishedTime/1000}</Title>
 					
 			    </div>
 

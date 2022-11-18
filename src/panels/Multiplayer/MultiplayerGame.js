@@ -21,7 +21,15 @@ import { client } from '../../sockets/receiver';
 import { useUserId } from '../../hooks/useUserId';
 
 
-const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout, gameInfo, setGameInfo, taskInfo, setTaskInfo, setAnswersInfo, answersInfo, setMpGameResults}) => {
+const MultiplayerGame = ({ id,
+	go, count,
+	fetchedUser, setActivePanel,
+	setPopout, 
+	gameInfo, setGameInfo, 
+	taskInfo, setTaskInfo, 
+	setAnswersInfo, answersInfo, 
+	setMpGameResults,
+	themeColors}) => {
 	
 
 	
@@ -79,10 +87,10 @@ const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout
  
 		<Panel id={id}>
 
-			<div>
+			<div className='game-div-margin'>
 			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
 			<div className='equationDiv'>
-			{taskInfo&& <Title level="1" className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span></Title>}
+			{taskInfo&& <Title style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}} level="1" className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span></Title>}
 			</div>
 
 	 
@@ -119,6 +127,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout
 						className='item'
 						id={'button' + index} 
 						key={index}
+						style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33', color:  themeColors === 'light'?'#2E2E33':'#fff'}}
 						onPointerDown={(e)=>{
 							
 							

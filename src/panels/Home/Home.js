@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react'; 
 
 
-import { Panel, Title, CardGrid, Button, Card, Cell, Div, Avatar } from '@vkontakte/vkui';
+import { Panel, Title, CardGrid, Button, Card, Cell, Div, PanelHeader } from '@vkontakte/vkui';
 import { Icon24Play, Icon24ClockOutline } from '@vkontakte/icons';
 import bridge from '@vkontakte/vk-bridge';
 
-import './Home.css';  
+import './Home.css';
+
+
+
 import LevelCard from './components/LevelCard';
 import LongCard from './components/LongCard';
 import { connectRoom } from '../../sockets/game';
 import axios from 'axios';
 import { qsSign } from '../../hooks/qs-sign';
 import { useUserId } from '../../hooks/useUserId';
+
+ 
 
 import '../../img/Fonts.css';
 
@@ -36,17 +41,95 @@ const Home = ({
 	const [completeArray, setCompleteArray] = useState([false,false,false,false,false,false,false,false,false,false])
 
 
+	const [completeLvls, setCompleteLvls] = useState([
+		{id: 'one',
+		complete: false,
+		needComplete: 8},
+		{id: 'two',
+		complete: false,
+		needComplete: 8},
+		{id: 'three',
+		complete: false,
+		needComplete: 8},
+	])
 
+	 
+		
+	function devideType(i){
+		switch (i) {
+			case 'one':
+				return 1
+			case 'two':
+				return 2
+			case  'three':
+				return 3
+			case 'four':
+				return 4
+			case 'five':
+				return 5
+			case 'six':
+				return 6
+			case 'seven':
+				return 7
+			case 'eight':
+				return 8
+			case 'nine':
+				return 9
+			case  'ten':
+				return 10
+		  }
+
+	}
+	
+
+	function devideLvl(numberId){
+		switch (numberId) {
+			case 1:
+				return ['40 секунд', '10 задач']
+			case 2:
+				return ['40 секунд', '10 задач']
+			case 3:
+				return ['30 секунд', '10 задач']
+			case 4:
+				return ['30 секунд', '15 задач']
+			case 5:
+				return ['1 минута', '15 задач']
+			case 6:
+				return ['1 минута', '15 задач']
+			case 7:
+				return ['1 минута', '15 задач']
+			case 8:
+				return ['1 минута', '15 задач']
+			case 9:
+				return ['25 секунд', '15 задач']
+			case 10:
+				return ['20 секунд', '20 задач']
+		  }
+
+	}
 
 
 	
 	
 	useEffect(()=>{
+
+		 
+
+		document.body.classList.add("body-dark")
 		axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
 		.then(async function (response) {
 			await setLvlsInfo(response.data.data)
 			await console.log(response.data.data)
 			response.data.data.map((item, index)=>{
+				setCompleteLvls([
+					...completeLvls.map((todo) =>
+						item.lvlType === todo.id &&item.rightResults>todo.needComplete ? { ...todo, complete: !todo.complete} : {...todo}
+					)
+				])
+
+
+  
+				
  
 
 			})
@@ -56,38 +139,7 @@ const Home = ({
 			console.warn(error);
 		});
 
-		function devideLvl(numberId){
-			switch (numberId) {
-				case 1:
-					lvlsInfo.map((item, index)=>{
-						if(item.lvlType == 'one'){
-								if(item.rightResults >8){
-									//setComplete(true)
-								}
-						}
-					})
-					return ['40 секунд', '10 задач']
-				case 2:
-					return ['40 секунд', '10 задач']
-				case 3:
-					return ['30 секунд', '10 задач']
-				case 4:
-					return ['30 секунд', '15 задач']
-				case 5:
-					return ['1 минута', '15 задач']
-				case 6:
-					return ['1 минута', '15 задач']
-				case 7:
-					return ['1 минута', '15 задач']
-				case 8:
-					return ['1 минута', '15 задач']
-				case 9:
-					return ['25 секунд', '15 задач']
-				case 10:
-					return ['20 секунд', '20 задач']
-			  }
-	
-		}
+
 		
 
 
@@ -102,7 +154,8 @@ const Home = ({
 
 	return(
 		<Panel id={id}> 
-			<Title level="1" className='lvl-title'>Уровни</Title>
+			<PanelHeader
+				style={{backgroundColor: 'transparent' }} >Уровни </PanelHeader>
 				<div className='long-card-div'>
 					<CardGrid size="l" style={{marginBottom:56}}>
 						
@@ -127,7 +180,11 @@ const Home = ({
 									lvlData={lvlData}
 									setLvlNumber={setLvlNumber}
 									setReady={setReady}
-									themeColors={themeColors} />
+									themeColors={themeColors}
+									devideLvl={devideLvl}
+									completeArray={completeArray}
+									completeLvls={completeLvls} />
+									
 							)
 						})} 
 						

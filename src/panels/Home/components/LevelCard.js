@@ -9,17 +9,44 @@ import axios from 'axios';
 
 import '../../../img/Fonts.css'
 
-const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, setReady, themeColors}) => {
+const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, setReady, themeColors, devideLvl, completeLvls}) => {
 
 	 
 	const [complete, setComplete] = useState(false)
+	const completeArray = [true, true, true, true,true, true,true, true,true, true,true, true,]
+
+	function devideTypes(i){
+		switch (i) {
+			case 'one':
+				return 1
+			case 'two':
+				return 2
+			case  'three':
+				return 3
+			case 'four':
+				return 4
+			case 'five':
+				return 5
+			case 'six':
+				return 6
+			case 'seven':
+				return 7
+			case 'eight':
+				return 8
+			case 'nine':
+				return 9
+			case  'ten':
+				return 10
+		  }
+
+	}
 		
 
 	useEffect(()=>{
 
-		console.log(lvlsInfo)
+		console.log(completeLvls)
 		
-	}, [lvlsInfo])
+	}, [completeLvls])
 
 	
 	
@@ -104,7 +131,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 					</div>
 
 					<div className='lvl-card-icon-div' style={{marginTop: -48}}>
-						{complete &&<Icon16Done className='lvl-card-icon' style={{
+						{completeArray[number-1] &&<Icon16Done className='lvl-card-icon' style={{
 							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF'
 						}}/>}
 					</div>

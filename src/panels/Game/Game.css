@@ -1,16 +1,5 @@
  
 
-body {
-  --background_content: #F7F7FA; 
-  background-color: #F7F7FA;
-  background: #F7F7FA;
-    
-}
-
-.vkuiPanel .vkuiPanel__in, .vkuiPanel:after {
-  background-color: #F7F7FA;
-  background-color: #F7F7FA;
-}
 
 @keyframes pulsing-heart {
   0% { transform: none; }
@@ -59,6 +48,27 @@ body {
   letter-spacing: 2px; 
 
   background: #F0F1F5;
+  border-radius: 20px;
+}
+
+.equation-dark{ /*пример*/
+
+
+
+  font-family: 'SF Pro Rounded';
+  font-style: normal;
+  font-weight: 600;
+  margin-left: auto;
+  margin-right: auto;
+  width: 155px;
+  padding: 16px;
+  text-align: center;
+  font-size: 35px;
+  line-height: 22px;
+  
+  letter-spacing: 2px; 
+
+  background: #2E2E33;
   border-radius: 20px;
 }
 
@@ -147,7 +157,7 @@ body {
 }
 
 .check-circle-outline{
-  margin-top: 10%;
+  margin-top: 25%;
   
 }
 
@@ -218,6 +228,8 @@ body {
 
 .result-task-resTitle-div{
   margin-left: 10%;
+
+  width: 10%;
  
   display: flex;
   align-items: center;
@@ -317,14 +329,7 @@ body {
   margin-left: 16px;
 }
 
-.vkuiTabbarItem--selected .vkuiTabbarItem__icon {
-  color: #000000;
-  color: #000000;
-}
-
-.vkuiTabbarItem--selected { 
-  color: #000000;
-}
+ 
 
 .result-getFriend-button{
   font-family: 'SF Pro Text';
@@ -382,3 +387,6 @@ body {
 }
 
 
+.game-div-margin{
+  margin-top: 25%
+}

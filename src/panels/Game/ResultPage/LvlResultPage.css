@@ -1,5 +1,9 @@
 .lvl-res-headDiv{
-    margin-top: 15%;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
 }
 
 .lvl-res-title-div{
@@ -54,6 +58,5 @@
     height: 20%;
     bottom: 0;
     backdrop-filter: blur(1.5px);
-    background: rgba(247, 247, 250, 0.8)
     
   }

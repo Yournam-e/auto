@@ -19,7 +19,7 @@ import { Icon16ClockCircleFill } from '@vkontakte/icons';
 import { qsSign } from '../../hooks/qs-sign';
 import axios from 'axios';
 
-const LvlGame = ({ id, go, count, setCount, setActivePanel, setPopout, lvlNumber, ready, setLvlResult, lvlResult, setTimeFinish }) => {
+const LvlGame = ({ id, go, count, setCount, setActivePanel, setPopout, lvlNumber, ready, setLvlResult, lvlResult, setTimeFinish,themeColors }) => {
 	
 	 
 	
@@ -164,11 +164,11 @@ const LvlGame = ({ id, go, count, setCount, setActivePanel, setPopout, lvlNumber
  
 		<Panel id={id}>
 
-			<div>
+			<div className='game-div-margin'>
 				
 			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
 			<div className='equationDiv'>
-			<Title level="1" className='equation'>
+			<Title level="1" className='equation' style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
 				{lvlData && lvlData.tasks[taskNumber].task[0]}
 				{lvlData && lvlData.tasks[taskNumber].task[2]}
 				{lvlData && lvlData.tasks[taskNumber].task[1]}
@@ -211,6 +211,7 @@ const LvlGame = ({ id, go, count, setCount, setActivePanel, setPopout, lvlNumber
 						className='item'
 						id={'button' + index} 
 						key={index}
+						style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33', color:  themeColors === 'light'?'#F0F1F5':'#fff'}}
 						onPointerDown={(e)=>{
 							
 							
@@ -260,7 +261,7 @@ const LvlGame = ({ id, go, count, setCount, setActivePanel, setPopout, lvlNumber
 					})}
 
 				</Div>
-				</div>
+			</div>
 						
 		</Panel>
 	);

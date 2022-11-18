@@ -29,8 +29,8 @@ const App = () => {
 	const [activeStory, setActiveStory] = useState("single");
 	const [fetchedUser, setUser] = useState();
 	const [activeModal, setActiveModal] = useState(false);
-
 	const [themeColors, setThemeColors] = useState('light')
+	const [platform, setPlatform] = useState(null)
 
 
 	const [count, setCount] = useState(0); //баллы
@@ -50,6 +50,9 @@ const App = () => {
 	const [firstStart, setFirstStart] = useState(true) //первый старт
 	const [playersList, updatePlayersList] = useState([]); //информация о юзерах в лобби
 	const [connectType, setConnectType] = useState('host')
+
+
+	const [haveHash, setHaveHash] = useState(false)
 
 
 
@@ -100,31 +103,42 @@ const App = () => {
 		console.debug('room create' + roomId)
 	  };
 	  
-	client.roomCreated = ({ roomId }) => {
-		console.debug('room create' + roomId)
-		setJoinCode(roomId)
-	};
+
 
 
 	  
+	useEffect(()=>{
 
+		if(themeColors === 'light'){
+			console.log('светлая')
+		}else{
+			console.log('темная')
+		}
+
+	}, [themeColors])
 
 
 
 	
 
 	useEffect(() => {
- 
+
 
 		bridge.subscribe(({ detail: { type, data }}) => {
 			if (type === 'VKWebAppUpdateConfig') {
 				setScheme(data.scheme)
-
+				
 				if(data.scheme ==='vkcom_dark' || data.scheme === 'space_gray'){
 					setThemeColors('dark')
+					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "dark", "action_bar_color": "#fff"});
+				}else{
+					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "light", "action_bar_color": "#000"});
+					setThemeColors('light')
 				}
 			}
-		});
+		});  
+
+		
 
 		 
 
@@ -134,9 +148,36 @@ const App = () => {
 			await setUser(user)
 			await setGameInfo({ ...gameInfo, userId: user.id})
 
+			bridge.send('VKWebAppGetClientVersion')
+			.then((data) => { 
+				if (data.platform) {
+					setPlatform(data.platform)
+				}
+			})
+			.catch((error) => {
+				// Ошибка
+				console.log(error);
+			});
+
 			await console.log(user) 
 		}
 		fetchData();
+
+
+		if(!window.location.hash ||window.location.hash === '#'){
+			setHaveHash(false)
+		}else{
+			async function startToHash(){ 
+				await setHaveHash(true)
+				await setConnectType('join')
+				await setActiveStory('multiplayer')
+				
+			}
+			startToHash()
+		}
+		console.log(window.location.hash)
+
+
 	}, []);
 
 	const go = e => {
@@ -148,11 +189,16 @@ const App = () => {
 
 	const inputRef = useRef(null);
 
+
+
+
 	const handleOpen = React.useCallback((id) => {
 	  if (id === "inputCodeQR" && inputRef.current) {
 		inputRef.current.focus();
 	  }
 	}, []);
+
+
 
 	const modal = (
 		<ModalRoot 
@@ -167,7 +213,8 @@ const App = () => {
 		  setGameInfo={setGameInfo}  
 		  playersList={playersList}
 		  setConnectType={setConnectType}
-		  setJoinCode={setJoinCode} />
+		  setJoinCode={setJoinCode}
+		  platform={platform}/>
 		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal} joinCode={joinCode}/>
 		</ModalRoot>
 	  );
@@ -181,64 +228,67 @@ const App = () => {
 						<SplitCol>
 							<View activePanel={activePanel}>
 								<Panel id='menu'>
+									<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+										<Epic
+											activeStory={activeStory}
+											tabbar={
+												<Tabbar>
+													<TabbarItem
+														onClick={onStoryChange}
+														selected={activeStory === "single"}
+														data-story="single"
+														text="Уровни">
+															<Icon28FavoriteOutline />
+													</TabbarItem>
+													<TabbarItem
+														onClick={onStoryChange}
+														selected={activeStory === "multiplayer"}
+														data-story="multiplayer"
+														text="Онлайн">
+															<Icon28Users3Outline />
+													</TabbarItem>
+												</Tabbar>
+											
+										}>
 
-									<Epic
-										activeStory={activeStory}
-										tabbar={
-											<Tabbar>
-												<TabbarItem
-													onClick={onStoryChange}
-													selected={activeStory === "single"}
-													data-story="single"
-													text="Уровни">
-														<Icon28FavoriteOutline />
-												</TabbarItem>
-												<TabbarItem
-													onClick={onStoryChange}
-													selected={activeStory === "multiplayer"}
-													data-story="multiplayer"
-													text="Онлайн">
-														<Icon28Users3Outline />
-												</TabbarItem>
-											</Tabbar>
+											<View id="single" activePanel="single">
+												<Home 
+												id='single' 
+												go={go} 
+												setActivePanel={setActivePanel}
+												setPopout={setPopout}
+												setSingleType={setSingleType}
+												setLocalTask={setLocalTask} 
+												setLvlData={setLvlData}
+												lvlData={lvlData} 
+												setLvlNumber={setLvlNumber}
+												setReady={setReady}
+												themeColors={themeColors} />
+											</View>
+											
+											<View id="multiplayer" activePanel="multiplayer">
+												<Multiplayer 
+												setActivePanel={setActivePanel}
+												id='multiplayer'
+												go={go} 
+												connectType={connectType}
+												setPopout={setPopout} 
+												fetchedUser={fetchedUser}
+												gameInfo={gameInfo} setGameInfo={setGameInfo}
+												setActiveModal={setActiveModal}
+												playersId={playersId} setPlayersId={setPlayersId}
+												joinCode={joinCode} setJoinCode={setJoinCode}
+												firstStart={firstStart} setFirstStart={setFirstStart}
+												playersList={playersList}
+												setTaskInfo={setTaskInfo}
+												setAnswersInfo={setAnswersInfo}
+												setConnectType={setConnectType}
+												themeColors={themeColors}
+												haveHash={haveHash}/>
+											</View>
 										
-									}>
-
-										<View id="single" activePanel="single">
-											<Home 
-											id='single' 
-											go={go} 
-											setActivePanel={setActivePanel}
-											setPopout={setPopout}
-											setSingleType={setSingleType}
-											setLocalTask={setLocalTask} 
-											setLvlData={setLvlData}
-											lvlData={lvlData} 
-											setLvlNumber={setLvlNumber}
-											setReady={setReady}
-											themeColors={themeColors} />
-										</View>
-										
-										<View id="multiplayer" activePanel="multiplayer">
-											<Multiplayer 
-											setActivePanel={setActivePanel}
-											id='multiplayer'
-											go={go} 
-											connectType={connectType}
-											setPopout={setPopout} 
-											fetchedUser={fetchedUser}
-											gameInfo={gameInfo} setGameInfo={setGameInfo}
-											setActiveModal={setActiveModal}
-											playersId={playersId} setPlayersId={setPlayersId}
-											joinCode={joinCode} setJoinCode={setJoinCode}
-											firstStart={firstStart} setFirstStart={setFirstStart}
-											playersList={playersList}
-											setTaskInfo={setTaskInfo}
-											setAnswersInfo={setAnswersInfo}
-											setConnectType={setConnectType}/>
-										</View>
-									
-									</Epic>
+										</Epic>
+									</div>
 								</Panel>
 								<Panel id='lvlGame'>
 									<LvlGame 
@@ -268,7 +318,8 @@ const App = () => {
 									setLocalTask={setLocalTask}
 									localTask={localTask}
 									answer={answer}
-									setAnswer={setAnswer}/> 
+									setAnswer={setAnswer}
+									themeColors={themeColors}/> 
 
 								
 								<ResultPage
@@ -280,7 +331,8 @@ const App = () => {
 								setPopout={setPopout}
 								setSingleType={setSingleType}
 								setActivePanel={setActivePanel}
-								fetchedUser={fetchedUser}/>
+								fetchedUser={fetchedUser}
+								themeColors={themeColors}/>
 								
 								<MultiplayerGame  
 								id='multiplayerGame' 
@@ -294,7 +346,8 @@ const App = () => {
 								setActivePanel={setActivePanel}
 								setMpGameResults={setMpGameResults}
 								fetchedUser={fetchedUser}
-								connectType={connectType}/>
+								connectType={connectType}
+								themeColors={themeColors}/>
 
 								
 								<LvlResultPage id='resultLvl'
@@ -306,7 +359,8 @@ const App = () => {
 								setLvlNumber={setLvlNumber}
 								lvlNumber={lvlNumber}
 								setReady={setReady}
-								setActivePanel={setActivePanel}/>
+								setActivePanel={setActivePanel}
+								themeColors={themeColors}/>
 								
 
 								<MultiplayerResult 
@@ -318,7 +372,8 @@ const App = () => {
 								joinCode={joinCode} 
 								setActiveStory={setActiveStory}
 								setPlayersId={setPlayersId} 
-								playersList={playersList} />
+								playersList={playersList}
+								themeColors={themeColors} />
 
 								<LobbyForGuest 
 								id='lobbyForGuest'
@@ -334,6 +389,7 @@ const App = () => {
 								setTaskInfo={setTaskInfo}
 								setAnswersInfo={setAnswersInfo}
 								setActivePanel={setActivePanel}
+								themeColors={themeColors}
 								/>
 								
 

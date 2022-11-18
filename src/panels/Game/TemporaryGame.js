@@ -22,7 +22,7 @@ import { client } from '../../sockets/receiver';
 
 import '../../img/Fonts.css'
 
-const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, singleType, answer, setAnswer }) => {
+const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, singleType, answer, setAnswer,themeColors }) => {
 
     const [first, setFirst] = useState(true) //первый запуск
 
@@ -112,10 +112,11 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
  
 		<Panel id={id}>
 
-			<div> 
+			<div className='game-div-margin'> 
 			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
 			<div className='equationDiv'>
-			{gameData&&<Title level="1" className='equation'>
+			{gameData&&<Title level="1" className='equation'
+			style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
                 {gameData.tasks[taskNumber].task[0]}
                 {gameData.tasks[taskNumber].task[2]}
                 {gameData.tasks[taskNumber].task[1]}
@@ -125,7 +126,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
             {!gameData &&
             <div className='equationDiv'>
-			<Title level="1" className='equation'>
+			<Title level="1" className='equation' style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
                 1+2
                 =<span className='equationMark'>?</span>
                 </Title>
@@ -165,6 +166,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 						mode="neutral" 
 						className='item'
 						id={'button' + index} 
+						style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33', color:  themeColors === 'light'?'#F0F1F5':'#fff'}}
 						key={index}
 						onClick={()=>{
                             if(first){
@@ -192,8 +194,10 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 							
 							setIsCounting(true)
 						}} >
+							<Title>
 							{gameData&&gameData.tasks[taskNumber].answers[index]}
                             {!gameData&&index+1}
+							</Title>
 						</Button>
 						
 

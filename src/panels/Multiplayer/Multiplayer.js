@@ -28,7 +28,9 @@ const Multiplayer = ({
 	setAnswersInfo,
 	setTaskInfo,
 	connectType,setConnectType,
-	setPopout
+	setPopout,
+	haveHash,
+	themeColors
 	
  }) => {
 
@@ -47,7 +49,11 @@ const Multiplayer = ({
 		setActivePanel('multiplayerGame')
 	};
 
-
+	client.roomCreated = ({ roomId }) => {
+		console.debug('room create' + roomId)
+		joinRoom(roomId, userId)
+		setJoinCode(roomId)
+	};
 
 	function joinToYourRoom(i){
 		
@@ -81,13 +87,17 @@ const Multiplayer = ({
 
 
 	useEffect(() => {
-		joinToYourRoom()
 
-	}, []);
-	useEffect(() => {
-		joinToYourRoom()
+		if(haveHash){
+			setJoinCode(window.location.hash.slice(1))
+			connectRoom(qsSign, window.location.hash.slice(1), userId);
 
-	}, [joinCode]);
+		}else{
+			joinToYourRoom()
+		}
+		
+
+	}, []); 
 
 	client.gameStarted = ({ answers, task, id }) => {
 		console.debug("gameStarted", answers, task, id);
@@ -116,7 +126,6 @@ const Multiplayer = ({
 			style={{backgroundColor: 'transparent' }}
 				before={
 					<PanelHeaderButton onClick={()=>{
-						leaveRoom(joinCode, userId)
 						setConnectType('host')
 						joinToYourRoom()
 					}} >
@@ -132,8 +141,14 @@ const Multiplayer = ({
 	}
 
 
+			<PanelHeader
+			style={{backgroundColor: 'transparent' }} >
+			
+			</PanelHeader>
+
+
 	
-			<Div className='multiplayer-div'>
+			<Div className='multiplayer-div' >
 
 				
 			
@@ -162,9 +177,7 @@ const Multiplayer = ({
 							fill='#1A84FF'
 							onClick={async function(){
 								await setPopout(<ScreenSpinner size='large' />)
-								await leaveRoom(joinCode,userId)
 								const promise = new Promise((resolve, reject) => {
-									const oldCode = joinCode
 									createRoom(userId, joinCode)
 									
 									resolve()
@@ -188,7 +201,8 @@ const Multiplayer = ({
 					<div className='multiplayer-qr-button-div'>
 						<Button
 							className='multiplayer-qr-button'
-							style={{ backgroundColor: '#ECF1FA' }}
+							style={{backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
+							color:'#1984FF'}}
 							onClick={()=>{
 								setActiveModal('inputCodeQR')
 							}}
@@ -214,11 +228,11 @@ const Multiplayer = ({
 					<div className='multiplayer-qr-button-div'>
 						<Button
 							className='multiplayer-code-button'
-							style={{ backgroundColor: '#ECF1FA' }}
+							style={{backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
+							color:'#1984FF'}}
 							onClick={()=>{
 								setActiveModal('inputCode')
-							}}
-
+							}} 
 							mode='secondary'>Присоединиться по коду</Button>
 					</div>
 						</div>}
@@ -251,7 +265,8 @@ const Multiplayer = ({
 								appearance="accent"
 								mode="tertiary"
 								gap='m'
-								className={complexity === 'easy' ? 'complexity-button-on' : 'complexity-button-off'}
+								style={{color:complexity === 'easy' ?'#1984FF':'#99A2AD'}}
+								className={complexity === 'easy' ? themeColors === 'light'? 'complexity-button-on-light':'complexity-button-on-dark' : 'complexity-button-off'}
 								onClick={() => {
 									setComplexity("easy")
 								}}
@@ -263,7 +278,8 @@ const Multiplayer = ({
 								appearance="accent"
 								mode="tertiary"
 								gap='m'
-								className={complexity === 'mid' ? 'complexity-button-on' : 'complexity-button-off'}
+								style={{color:complexity === 'mid' ?'#1984FF':'#99A2AD'}}
+								className={complexity === 'mid' ? themeColors === 'light'? 'complexity-button-on-light':'complexity-button-on-dark' : 'complexity-button-off'}
 								onClick={() => {
 									setComplexity("mid")
 								}}
@@ -274,7 +290,8 @@ const Multiplayer = ({
 								appearance="accent"
 								mode="tertiary"
 								gap='m'
-								className={complexity === "hard" ? 'complexity-button-on' : 'complexity-button-off'}
+								style={{color:complexity === 'hard' ?'#1984FF':'#99A2AD'}}
+								className={complexity === 'hard' ? themeColors === 'light'? 'complexity-button-on-light':'complexity-button-on-dark' : 'complexity-button-off'}
 								onClick={() => {
 									setComplexity("hard")
 								}}
@@ -285,9 +302,12 @@ const Multiplayer = ({
 					</Div>}
 
 					<ButtonGroup gap="space" style={{ marginTop: 10 }} className='multiplayer-play-div'>
-						<Button size="s" className='multiplayer-play-button' appearance="accent"
+						<Button size="l" 
+						className='multiplayer-play-button' appearance="accent"
 						loading={connectType==='host'?false:true}
 						disabled={connectType==='host'?false:true}
+						style={{background:'#1A84FF'}}
+						stretched
 						onClick={()=>{
 							startGame(joinCode, userId, complexity, playersId)
 						}}>Играть</Button>
