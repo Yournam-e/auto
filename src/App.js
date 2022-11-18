@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import bridge from '@vkontakte/vk-bridge';
-import { View, ScreenSpinner, AdaptivityProvider, AppRoot, ConfigProvider, SplitLayout, SplitCol, TabbarItem, Tabbar, Epic, Panel, ModalRoot  } from '@vkontakte/vkui';
+import { View, ScreenSpinner, AdaptivityProvider, AppRoot, Alert, ConfigProvider, SplitLayout, SplitCol, TabbarItem, Tabbar, Epic, Panel, ModalRoot  } from '@vkontakte/vkui';
 
 import { Icon28Users3Outline, Icon28FavoriteOutline } from '@vkontakte/icons';
 
@@ -21,6 +21,7 @@ import MultiplayerResult from './panels/Multiplayer/mpResult/MultiplayerResult';
 import LobbyForGuest from './panels/Multiplayer/LobbyForGuest/LobbyForGuest';
 import TemporaryGame from './panels/Game/TemporaryGame';
 import { qsSign } from './hooks/qs-sign';
+import { leaveRoom } from './sockets/game';
 
 const App = () => {
 	const [scheme, setScheme] = useState('bright_light')
@@ -55,6 +56,9 @@ const App = () => {
 	const [haveHash, setHaveHash] = useState(false)
 
 
+	const [panelsHistory, setPanelsHistory] = useState([])
+
+
 
 	//single 
 	const [singleType, setSingleType] = useState()
@@ -84,7 +88,16 @@ const App = () => {
 
 
 
-	
+
+
+
+
+	  bridge.subscribe((e) => {
+		if (e.detail.type === 'VKWebAppChangeFragment') {
+			console.log(e.detail.data.location)
+		}
+	  });
+
 
 	client.joinedRoom = ({ users }) => {
 		console.debug("joinedRoom", users);
@@ -98,13 +111,22 @@ const App = () => {
 
 	  };
 
-	  client.roomCreated = (roomId) =>{
 
-		console.debug('room create' + roomId)
-	  };
 	  
 
+	  
+	client.gameStarted = ({task, answers, id }) => {
+		console.debug("gameStarted", answers, task, id);
+		setTaskInfo(task)
+		setAnswersInfo(answers)
+		async function lol(){
+			setGameInfo({ ...gameInfo, taskId: id})
+		}
+		lol()
+		setActivePanel('multiplayerGame')
+	};
 
+ 
 
 	  
 	useEffect(()=>{
@@ -117,11 +139,112 @@ const App = () => {
 
 	}, [themeColors])
 
+	window.addEventListener('popstate', e => {
+		
+		switch (activePanel) {
+			case 'multiplayerGame':
+				setPopout(
+					<Alert
+					  actions={[
+						{
+						  title: "Завершить",
+						  mode: "destructive",
+						  autoclose: true,
+						  action: () => setActivePanel('menu') && setActiveStory('multiplayer'),
+						},
+						{
+						  title: "Отмена",
+						  autoclose: true,
+						  mode: "cancel",
+						},
+					  ]}
+					  actionsLayout="vertical"
+					  onClose={()=>{
+						setPopout(null)
+					  }}
+					  header="Подтвердите действие"
+					  text="Вы уверены, что хотите завершить игру?"
+					/>
+				  );
+			  	break;
+			case 'temporaryGame':
+				setPopout(
+					<Alert
+					  actions={[
+						{
+						  title: "Завершить",
+						  mode: "destructive",
+						  autoclose: true,
+						  action: () => setActivePanel('menu') && setActiveStory('single'),
+						},
+						{
+						  title: "Отмена",
+						  autoclose: true,
+						  mode: "cancel",
+						},
+					  ]}
+					  actionsLayout="vertical"
+					  onClose={()=>{
+						setPopout(null)
+					  }}
+					  header="Подтвердите действие"
+					  text="Вы уверены, что хотите завершить игру?"
+					/>
+				  );
+			 	break;
+			case 'lvlGame':
+				setPopout(
+					<Alert
+					  actions={[
+						{
+						  title: "Завершить",
+						  mode: "destructive",
+						  autoclose: true,
+						  action: () => setActivePanel('menu') && setActiveStory('single') &&leaveRoom(joinCode),
+						},
+						{
+						  title: "Отмена",
+						  autoclose: true,
+						  mode: "cancel",
+						},
+					  ]}
+					  actionsLayout="vertical"
+					  onClose={()=>{
+						setPopout(null)
+					  }}
+					  header="Подтвердите действие"
+					  text="Вы уверены, что хотите завершить игру?"
+					/>
+				  );
+			  	break;
+			case 'multiplayerResult':
+				setActivePanel('menu')
+				setActiveStory('multiplayer')
+				break;
+			case 'resultLvl':
+				setActivePanel('menu')
+				setActiveStory('single')
+				break;
+			case 'result':
+				setActivePanel('menu')
+				setActiveStory('single')
+				break;
+			case 'lobbyForGuest':
+				setActivePanel('menu')
+				setActiveStory('multiplayer')
+				break;
+		  }
+		e.preventDefault();
+		
+		
+		
+	});
 
-
-	
 
 	useEffect(() => {
+
+		window.history.pushState({activePanel: 'panesl'}, 'Titlees');
+		
 
 
 		bridge.subscribe(({ detail: { type, data }}) => {
@@ -130,7 +253,7 @@ const App = () => {
 				
 				if(data.scheme ==='vkcom_dark' || data.scheme === 'space_gray'){
 					setThemeColors('dark')
-					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "dark", "action_bar_color": "#fff"});
+					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "dark", "action_bar_color": "#1D1D20"});
 				}else{
 					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "light", "action_bar_color": "#000"});
 					setThemeColors('light')
@@ -162,6 +285,9 @@ const App = () => {
 			await console.log(user) 
 		}
 		fetchData();
+
+
+		
 
 
 		if(!window.location.hash ||window.location.hash === '#'){
@@ -202,7 +328,7 @@ const App = () => {
 
 	const modal = (
 		<ModalRoot 
-		onOpened={handleOpen}
+		
 		activeModal={activeModal} onClose={()=>{
 			setActiveModal(null);
 		}}>
@@ -214,8 +340,9 @@ const App = () => {
 		  playersList={playersList}
 		  setConnectType={setConnectType}
 		  setJoinCode={setJoinCode}
-		  platform={platform}/>
-		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal} joinCode={joinCode}/>
+		  platform={platform}
+		  onOpened={handleOpen}/>
+		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal} joinCode={joinCode} onOpened={handleOpen}/>
 		</ModalRoot>
 	  );
 
@@ -263,7 +390,10 @@ const App = () => {
 												lvlData={lvlData} 
 												setLvlNumber={setLvlNumber}
 												setReady={setReady}
-												themeColors={themeColors} />
+												themeColors={themeColors}
+												setPanelsHistory={setPanelsHistory}
+												activePanel={activePanel}
+												panelsHistory={panelsHistory} />
 											</View>
 											
 											<View id="multiplayer" activePanel="multiplayer">
@@ -284,14 +414,18 @@ const App = () => {
 												setAnswersInfo={setAnswersInfo}
 												setConnectType={setConnectType}
 												themeColors={themeColors}
-												haveHash={haveHash}/>
+												haveHash={haveHash}
+												setPanelsHistory={setPanelsHistory}
+												activePanel={activePanel}
+												panelsHistory={panelsHistory}/>
 											</View>
 										
 										</Epic>
 									</div>
 								</Panel>
-								<Panel id='lvlGame'>
+								 
 									<LvlGame 
+									id='lvlGame'
 									setCount={setCount} 
 									count={count} 
 									setActivePanel={setActivePanel} 
@@ -304,9 +438,10 @@ const App = () => {
 									lvlResult={lvlResult}
 									setCompleteLvl={setCompleteLvl}
 									setTimeFinish={setTimeFinish}
-									timeFinish={timeFinish} />
+									timeFinish={timeFinish}
+									themeColors={themeColors} />
 									
-								</Panel>
+								
 
 
 								<TemporaryGame id='temporaryGame'
@@ -347,7 +482,10 @@ const App = () => {
 								setMpGameResults={setMpGameResults}
 								fetchedUser={fetchedUser}
 								connectType={connectType}
-								themeColors={themeColors}/>
+								themeColors={themeColors}
+								setPopout={setPopout}
+								joinCode={joinCode}
+								setActiveStory={setActiveStory}/>
 
 								
 								<LvlResultPage id='resultLvl'

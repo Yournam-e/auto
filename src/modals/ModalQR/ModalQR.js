@@ -5,10 +5,14 @@ import {
 	ModalPage, 
 	Button,
 	ButtonGroup, 
-	Div
+	Div,
+  usePlatform,
+  PanelHeaderButton,
+  ModalPageHeader,
+  PanelHeaderClose
  } from '@vkontakte/vkui';
  
- import { Icon24ShareOutline } from '@vkontakte/icons';
+ import { Icon24ShareOutline, Icon24Dismiss } from '@vkontakte/icons';
 
  import bridge from '@vkontakte/vk-bridge';
 import './ModalQR.css'
@@ -19,10 +23,13 @@ const ModalQRCode = ({ id, joinCode, setActiveModal}) =>{
 
     let options = {};   
 
+
+    const platform = usePlatform()
+
     options.foregroundColor = '#0077FF';
     options.logoData = "https://i.ibb.co/xLkkGgd/vk-logo-3674340.png"; 
 
-    const qrSvg = qr.createQR(`vk.com/app51451320/${joinCode}`, 230, 'qr-code', options);
+    const qrSvg = qr.createQR(`vk.com/app51451320#${joinCode}`, 230, 'qr-code', options);
 
     function share(){
         bridge.send('VKWebAppShare', {
@@ -37,20 +44,49 @@ const ModalQRCode = ({ id, joinCode, setActiveModal}) =>{
               // Ошибка
               console.log(error);
             });
+            
     }
+
+    useEffect(()=>{
+      console.log(platform)
+    }, [])
     
     return(
         
-        <ModalPage id={id}>
+        <ModalPage id={id}
+          header={
+            <ModalPageHeader
+            before={
+              platform === 'android' && <PanelHeaderClose onClick={()=>[
+                console.log('ool')
+              ]} />
+            }
+            after={
+              platform === 'ios' && (
+                <PanelHeaderButton onClick={()=>{
+                  console.log('ool')
+                }}>
+                  <Icon24Dismiss />
+                </PanelHeaderButton>
+              )
+            }
+          >
+            
+          </ModalPageHeader>}
+        >
+
+          
+
+
             <Div>
 
-            <Div  >
-                <div style={{margin:100}} className='qr-code'>
+            <Div>
+                <div style={{margin:10}} className='qr-code'>
                     <img src={`data:image/svg+xml;utf8,${encodeURIComponent(qrSvg)}`} />
                 </div>
             </Div>
 
-            <ButtonGroup  style={{  marginBottom: 120}}  gap="space" className='qr-code-share-button-div'>
+            <ButtonGroup  style={{ marginTop:20, marginBottom: 10}}  gap="space" className='qr-code-share-button-div'>
 				<Button stretched size="s" before={<Icon24ShareOutline />}
                 className='qr-code-share-button'
                 appearance="accent"

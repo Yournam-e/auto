@@ -149,7 +149,8 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                 console.log(rightResults);
                 await setPopout(null); 
                 console.log(timeStarted)  
-                setFinishedTime(timeFinish - new Date(timeStarted).getTime())
+                const timeMs = timeFinish - new Date(timeStarted).getTime()
+                setFinishedTime(timeMs/1000)
                 if(rightResults> lvlResult.answers.length-1){
                     if(timeFinish - new Date(timeStarted).getTime()< 30000){
                         setComplete([true, 'right'])
@@ -175,6 +176,8 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
 	return( 
 		<Panel id={id}>
 
+        <div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+
             <div className='lvl-res-headDiv'>
                 {complete[0]?<Icon56CheckCircleOutline 
                 fill="#1A84FF" 
@@ -192,7 +195,7 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
 
                 <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>Уровень {complete[0]?'пройден!':'провален'}</Title>
                 
-                <Title  className='lvl-res-sub-title-div' weight="1" >{complete[0]?'Неплохо!':complete[1] === "beOnTime"?'Вы не успели':'Вы ошблись'}</Title>
+                <Title  className='lvl-res-sub-title-div' weight="1" >{complete[0]?'Неплохо!':complete[1] === "beOnTime"?'Вы не успели':'Вы ошиблись'}</Title>
 
                 <div style={{height: 30, marginTop: 12}} className='lvl-res-clock-div'>
 					<Icon16ClockCircleFill 
@@ -212,7 +215,7 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                             color: '#99A2AD',
                             fontSize: 14
                             }}
-                    >{finishedTime && finishedTime/1000}</Title>
+                    >{finishedTime && Math.round(finishedTime)} сек</Title>
 					
 			    </div>
 
@@ -234,7 +237,7 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                                 className="result-buttonGroup-retry" 
                                 appearance="accent" 
                                 stretched
-                                before={complete?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
+                                before={complete[0]?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
                             {complete[0]?"Следующий уровень":"Попробовать снова"}
                         </Button>
                     </div>
@@ -261,7 +264,7 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
             </div>
 			
 
-			
+		</div>
 			 
 
 			

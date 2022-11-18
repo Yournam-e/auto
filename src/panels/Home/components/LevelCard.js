@@ -131,7 +131,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 					</div>
 
 					<div className='lvl-card-icon-div' style={{marginTop: -48}}>
-						{completeArray[number-1] &&<Icon16Done className='lvl-card-icon' style={{
+						{false &&<Icon16Done className='lvl-card-icon' style={{
 							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF'
 						}}/>}
 					</div>

@@ -26,13 +26,15 @@ const Home = ({
 	setPopout,
 	setSingleType, 
 	setLocalTask, 
-	setActivePanel, 
+	setActivePanel, activePanel,
 	setLvlData, 
 	lvlData, 
 	setLvlNumber, 
 	setReady,
 	lvlNumber,
-	themeColors}) => {
+	themeColors,
+	setPanelsHistory,
+	panelsHistory}) => {
 
 	const [lvlsInfo, setLvlsInfo] = useState(null)
 
@@ -51,9 +53,30 @@ const Home = ({
 		{id: 'three',
 		complete: false,
 		needComplete: 8},
+		{id: 'four',
+		complete: false,
+		needComplete: 8},
+		{id: 'five',
+		complete: false,
+		needComplete: 8},
+		{id: 'six',
+		complete: false,
+		needComplete: 8},
+		{id: 'seven',
+		complete: false,
+		needComplete: 8},
+		{id: 'eight',
+		complete: false,
+		needComplete: 8},
+		{id: 'nine',
+		complete: false,
+		needComplete: 8},
+		{id: 'ten',
+		complete: false,
+		needComplete: 8},
 	])
 
-	 
+	
 		
 	function devideType(i){
 		switch (i) {
@@ -113,7 +136,9 @@ const Home = ({
 	
 	useEffect(()=>{
 
-		 
+		setPanelsHistory([...panelsHistory, activePanel])
+
+		window.history.pushState({activePanel: 'panel'}, 'Title');
 
 		document.body.classList.add("body-dark")
 		axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
@@ -123,7 +148,7 @@ const Home = ({
 			response.data.data.map((item, index)=>{
 				setCompleteLvls([
 					...completeLvls.map((todo) =>
-						item.lvlType === todo.id &&item.rightResults>todo.needComplete ? { ...todo, complete: !todo.complete} : {...todo}
+						item.lvlType === todo.id &&item.rightResults>todo.needComplete ? { ...todo, complete: true} : {...todo}
 					)
 				])
 

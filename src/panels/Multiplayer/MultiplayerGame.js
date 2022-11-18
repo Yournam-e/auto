@@ -6,7 +6,10 @@ import {
 	ScreenSpinner,
 	Button,
 	Title,
-	Div
+	Div,
+	Alert,
+	PanelHeaderBack,
+	PanelHeader
 } from '@vkontakte/vkui';
 
 import '../Game/Game.css';
@@ -16,27 +19,18 @@ import '../Game/Game.css';
 import ExmpleGeneration from '../../scripts/ExmpleGeneration';
 import { getPadTime } from '../../scripts/getPadTime';
 import { Icon16ClockCircleFill } from '@vkontakte/icons';
-import { answerTask } from '../../sockets/game';
+import { answerTask, leaveRoom } from '../../sockets/game';
 import { client } from '../../sockets/receiver';
 import { useUserId } from '../../hooks/useUserId';
 
 
-<<<<<<< HEAD
-const MultiplayerGame = ({ id,
-	go, count,
-	fetchedUser, setActivePanel,
-	setPopout, 
-	gameInfo, setGameInfo, 
-	taskInfo, setTaskInfo, 
-	setAnswersInfo, answersInfo, 
-	setMpGameResults,
-	themeColors}) => {
-	
-=======
-const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout, gameInfo, setGameInfo, taskInfo, setTaskInfo, setAnswersInfo, answersInfo, setMpGameResults }) => {
+const MultiplayerGame = ({ id, go, count, fetchedUser,
+	setActivePanel, setPopout, gameInfo, setGameInfo,
+	taskInfo, setTaskInfo, setAnswersInfo, answersInfo,
+	setMpGameResults,themeColors,joinCode,
+	setActiveStory }) => {
 
 
->>>>>>> ca7c792bbea3d6a8a045a11152e053bdcc669240
 
 
 	//const [equation, setEquation] = useState([2, 2, '+', 4]); //задача
@@ -92,19 +86,49 @@ const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout
 
 		<Panel id={id}>
 
-<<<<<<< HEAD
+		<PanelHeader 
+		style={{backgroundColor: 'transparent' }} 
+		transparent={true}
+		shadow={false}
+		separator={false}before={<PanelHeaderBack onClick={()=>{
+			setPopout(
+				<Alert
+				  actions={[
+					{
+					  title: "Завершить",
+					  mode: "destructive",
+					  autoclose: true,
+					  action: () => setActivePanel('menu') && setActiveStory('multiplayer') &&leaveRoom(joinCode),
+					},
+					{
+					  title: "Отмена",
+					  autoclose: true,
+					  mode: "cancel",
+					},
+				  ]}
+				  actionsLayout="vertical"
+				  onClose={()=>{
+					setPopout(null)
+				  }}
+				  header="Подтвердите действие"
+				  text="Вы уверены, что хотите завершить игру?"
+				/>
+			  );
+		
+		}} />}>
+		</PanelHeader>
+
+
+			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+
 			<div className='game-div-margin'>
-			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
-			<div className='equationDiv'>
-			{taskInfo&& <Title style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}} level="1" className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span></Title>}
-			</div>
-=======
-			<div>
 				<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
 				<div className='equationDiv'>
-					{taskInfo && <Title level="1" className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span></Title>}
+					{taskInfo && <Title 
+					level="1"
+					style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}
+					className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span></Title>}
 				</div>
->>>>>>> ca7c792bbea3d6a8a045a11152e053bdcc669240
 
 
 				<div style={{ height: 30, marginTop: 12 }} className='single-clock-div'>
@@ -130,35 +154,6 @@ const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout
 
 				<Div className='container'>
 
-<<<<<<< HEAD
-					{answersInfo&& answersInfo.map((value, index)=>{
-						return(
-						
-						<Button 
-						stretched 
-						size="l" 
-						sizeY='regular' 
-						mode="neutral" 
-						className='item'
-						id={'button' + index} 
-						key={index}
-						style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33', color:  themeColors === 'light'?'#2E2E33':'#fff'}}
-						onPointerDown={(e)=>{
-							
-							
-						}} 
-						onClick={()=>{
-							//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
-							console.log(gameInfo)
-							console.log('aaaaa')
-							console.log(answersInfo) 
-							answerTask(gameInfo.roomId, fetchedUser.id, value, gameInfo.taskId)
-							//setIsCounting(true)
-						}} >
-							{answersInfo[index]}
-						</Button>
-						
-=======
 					{answersInfo && answersInfo.map((value, index) => {
 						return (
 
@@ -170,6 +165,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout
 								className='item'
 								id={'button' + index}
 								key={index}
+								style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33',  color:  themeColors === 'light'?'#000':'#F0F1F5'}}
 								onPointerDown={(e) => {
 
 
@@ -186,7 +182,6 @@ const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout
 							</Button>
 
 
->>>>>>> ca7c792bbea3d6a8a045a11152e053bdcc669240
 
 						)
 
@@ -195,7 +190,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser, setActivePanel, setPopout
 
 				</Div>
 			</div>
-
+			</div>
 		</Panel>
 	);
 }

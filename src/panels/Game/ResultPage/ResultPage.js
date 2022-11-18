@@ -165,7 +165,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 		if(result === true){
 			bridge.send('VKWebAppGetAuthToken', { 
 				app_id: 51451320, 
-				scope: 'friends,status'
+				scope: 'friends'
 				})
 				.then((data) => { 
 				  if (data.access_token) {
@@ -181,23 +181,52 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 								console.log(friendsData.response)
 								setFriendsIds(friendsData.response)
 								setTokenAvailability(true)
-								setPopout(false)
+								
 							  }
 							})
 						.catch((error) => {
 							  // Ошибка
-							console.log(error)
+							  setPopout(false)
 						});
 					  }
 					})
 					.catch((error) => {
 					  // Ошибка
-						console.log(error)
+					 	 setPopout(false)
 					});
 			
 		}
 
 	} ///получи id
+
+
+	async function сheckFriends(){
+
+			var params = window
+			.location
+			.search
+			.replace('?','')
+			.split('&')
+			.reduce(
+				function(p,e){
+					var a = e.split('=');
+					p[ decodeURIComponent(a[0])] = decodeURIComponent(a[1]); 
+					return p;
+				},
+				{}
+			)
+
+			return params.vk_access_token_settings.includes('friends')
+			 
+		
+
+
+		
+
+		
+
+
+	}
 
 
 	async function getFriendsAndCheck(){
@@ -218,7 +247,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				{}
 			)
 
-			params.vk_access_token_settings.includes('friends')?resolve(true): resolve(false);
+			params.vk_access_token_settings.includes('friends')?resolve(false): resolve(true);
 				
 		  });
 		  promise.then(result => result === true? getIds(result):setPopout(null))
@@ -267,7 +296,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 	
 	useEffect(()=>{ 
 		//loadFonts()
-		getFriendsAndCheck()
+		сheckFriends()
 
 		axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
 			"id": answer.id,
@@ -309,6 +338,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 		
  
 		<Panel id={id} className='resultPagePanel'>
+			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
 			
 			<Div className='check-circle-outline'>
 				<div>
@@ -377,7 +407,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				</div>}
 				
 				{tokenAvailability === false  && 
-				<div className='notFriend-div' style={{  marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}}>
+				<div className='notFriend-div' style={{  marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}} >
 					<img className='eyes-photo' style={{marginTop: 16}} src={Eyes} width={44} height={44}></img>
 
 					<Title level="3" style={{textAlign: 'center'}}>Тут никого нет</Title>
@@ -451,7 +481,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 			</Div>
 
 
-			
+			</div>
 
 			
 			

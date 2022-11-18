@@ -15,11 +15,11 @@ import {
 import { Icon56CheckCircleOutline, Icon24StoryOutline, Icon16Done } from '@vkontakte/icons';
 import '../../Game/Game.css'
 import { client } from '../../../sockets/receiver';
-import { createRoom, leaveRoom } from '../../../sockets/game';
+import { createRoom, joinRoom, leaveRoom } from '../../../sockets/game';
 import { useUserId } from '../../../hooks/useUserId';
 
 
-const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel, joinCode, playersList }) => {
+const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel, joinCode, playersList,themeColors }) => {
 
 	let friendList = null
 	console.log(mpGameResults)
@@ -72,15 +72,22 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 
 
-	useEffect(() => {
+	client.roomCreated = ({roomId}) =>{
 
-
-	}, [])
+		async function kek (){
+			await joinRoom(roomId)
+			await setActivePanel('menu')
+		}
+		kek()
+		
+	  };
 
 	return (
 
 
 		<Panel id={id} className='resultPagePanel'>
+
+		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
 
 
 
@@ -144,19 +151,20 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 				<div className='result-absolute-div'>
 
 					<ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
+						{true &&
 						<div className="result-buttonRetry-div">
-							<Button size="l"
-								onClick={() => {
-									createRoom('wrl8Uw')
+						<Button size="l"
+							onClick={() => {
+								createRoom(joinCode)
 
-								}}
-								style={{
-									backgroundColor: '#1A84FF',
-									borderRadius: 25
-								}} className="result-buttonGroup-retry" appearance="accent" stretched>
-								Сыграть снова
-							</Button>
-						</div>
+							}}
+							style={{
+								backgroundColor: '#1A84FF',
+								borderRadius: 25
+							}} className="result-buttonGroup-retry" appearance="accent" stretched>
+							Сыграть снова
+						</Button>
+					</div>}
 						<div className="result-buttonNotNow-div">
 							<Button
 								onClick={(e) => {
@@ -185,7 +193,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 
 
-
+		</div>
 
 
 		</Panel>

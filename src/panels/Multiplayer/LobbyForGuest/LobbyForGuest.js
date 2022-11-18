@@ -28,7 +28,8 @@ const LobbyForGuest = ({
 	playersList,
     setTaskInfo,
     setAnswersInfo,
-    setActivePanel}) => {
+    setActivePanel,
+	themeColors}) => {
 
 	
 
@@ -75,6 +76,7 @@ const LobbyForGuest = ({
 
 	return (
 		<Panel id={id}>
+			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
 
 			<Div className='multiplayer-div'>
 				<div style={{ paddingLeft: 'auto', paddingRight: 'auto' }}>
@@ -137,7 +139,7 @@ const LobbyForGuest = ({
 
 			</Div>
 
-
+			</div>
 		</Panel>
 	)
 

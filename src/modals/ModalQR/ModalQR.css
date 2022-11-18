@@ -1,14 +1,14 @@
 .qr-code{
     display: flex;
     justify-content: center; 
-    padding-top: 25px;
-    margin-bottom: 50px;
+    padding-top: 10px;
+    margin-bottom: 25px;
 }
 
 .qr-code-share-button{
     padding-top: 10px;
     padding-bottom: 10px;
-    margin-bottom: 120px;
+    margin-bottom: 30px;
     margin-left:10px;
     margin-right:10px;
     color:#1984FF;

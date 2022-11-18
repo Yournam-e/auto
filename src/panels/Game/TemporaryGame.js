@@ -6,7 +6,10 @@ import {
 	ScreenSpinner, 
 	Button,
 	Title, 
-	Div
+	Div,
+	PanelHeader,
+	PanelHeaderBack,
+	Alert
  } from '@vkontakte/vkui';
 
 import './Game.css';  
@@ -87,6 +90,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 	
 
 
+
     function createLvl(){
         axios.post(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
             "lvlType": "single30"
@@ -111,6 +115,41 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
  
 		<Panel id={id}>
+
+		<PanelHeader 
+		style={{backgroundColor: 'transparent' }} 
+		transparent={true}
+		shadow={false}
+		separator={false}before={<PanelHeaderBack onClick={()=>{
+			setPopout(
+				<Alert
+				  actions={[
+					{
+					  title: "Завершить",
+					  mode: "destructive",
+					  autoclose: true,
+					  action: () => setActivePanel('menu') ,
+					},
+					{
+					  title: "Отмена",
+					  autoclose: true,
+					  mode: "cancel",
+					},
+				  ]}
+				  actionsLayout="vertical"
+				  onClose={()=>{
+					setPopout(null)
+				  }}
+				  header="Подтвердите действие"
+				  text="Вы уверены, что хотите завершить игру?"
+				/>
+			  );
+		
+		}} />}>
+		</PanelHeader>
+
+		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+
 
 			<div className='game-div-margin'> 
 			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
@@ -166,7 +205,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 						mode="neutral" 
 						className='item'
 						id={'button' + index} 
-						style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33', color:  themeColors === 'light'?'#F0F1F5':'#fff'}}
+						style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33', color:  themeColors === 'light'?'#000':'#F0F1F5'}}
 						key={index}
 						onClick={()=>{
                             if(first){
@@ -208,8 +247,8 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 					})}
 
 				</Div>
-				</div>
-						
+			</div>
+		</div>			
 		</Panel>
 	);
 }

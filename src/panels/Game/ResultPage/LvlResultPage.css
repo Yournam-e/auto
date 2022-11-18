@@ -51,7 +51,8 @@
 }
 
 .lvl-res-absolute-div{
-    margin-bottom: 12px;
+    padding-bottom: 5%;
+    margin-bottom: 5%;
     position: fixed;
     left: 0;
     right: 0;
