@@ -181,7 +181,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 								console.log(friendsData.response)
 								setFriendsIds(friendsData.response)
 								setTokenAvailability(true)
-								
+								setPopout(null)
 							  }
 							})
 						.catch((error) => {
@@ -197,7 +197,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 			
 		}
 
-	} ///получи id
+	} ///получи id друзей
 
 
 	async function сheckFriends(){
@@ -216,7 +216,11 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				{}
 			)
 
-			return params.vk_access_token_settings.includes('friends')
+			console.log( params.vk_access_token_settings.includes('friends'))
+
+			if(params.vk_access_token_settings.includes('friends') === true){
+				getIds(true)
+			}
 			 
 		
 
@@ -226,7 +230,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 		
 
 
-	}
+	} //в useEffect
 
 
 	async function getFriendsAndCheck(){
@@ -258,16 +262,11 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 		
 
 
-	} //// получи друзей и чекай token'ы
+	} //// получи друзей и чекай token'ы (при нажатии)
 	
 
 	
 	useEffect(()=>{
-
-		
-		
-		
-
 		if(friendsIds){
 			axios.post(`https://showtime.app-dich.com/api/plus-plus/rating/friends${qsSign}`,{
 			"ids": friendsIds.items
@@ -295,8 +294,8 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 	
 	
 	useEffect(()=>{ 
-		//loadFonts()
 		сheckFriends()
+		
 
 		axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
 			"id": answer.id,
@@ -345,7 +344,8 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					<Icon56CheckCircleOutline fill="#1A84FF" style={{marginLeft: 'auto', marginRight: 'auto'}}/>
 				</div>
 				<div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
-					{right &&<Title className='result-task-title'>{right} задач</Title>}
+					{<Title className='result-task-title'>{right?`${right} задач`:'0 задач'}</Title>}
+					
 				</div>
 
 				<div style={{marginLeft: 18, marginRight: 18, marginTop: 16}}>
@@ -392,13 +392,13 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 
 									<Title level="3"  style={{paddingBottom: 8,}}>{item.user.name}</Title>
 
-									
 									<Button className='friendsPoint'
 										before={<Icon16Done />}
 										style={{ 
 										backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 										color:'#1984FF',
-										borderRadius:25}}>{item.rightResults}</Button>
+										borderRadius:25}}><p style={{textAlign: 'center'}}>{item.rightResults}</p>
+									</Button>
 								</div>
 							</Cell>
 						
@@ -407,7 +407,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				</div>}
 				
 				{tokenAvailability === false  && 
-				<div className='notFriend-div' style={{  marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}} >
+				<div className='notFriend-div' style={{ marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}} >
 					<img className='eyes-photo' style={{marginTop: 16}} src={Eyes} width={44} height={44}></img>
 
 					<Title level="3" style={{textAlign: 'center'}}>Тут никого нет</Title>
@@ -455,7 +455,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 							Попробовать снова
 						</Button>
 					</div>
-					<div className="result-buttonNotNow-div">
+					<div className="result-buttonNotNow-div" >
 						<Button 
 							onClick={(e)=>{
 								go(e)

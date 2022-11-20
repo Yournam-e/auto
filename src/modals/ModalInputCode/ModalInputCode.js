@@ -27,6 +27,16 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,
 
     const textInput = React.createRef();
 
+    
+    async function getId(){
+        const user = await bridge.send('VKWebAppGetUserInfo'); 
+        //await connectRoom(qsSign, textInput.current.value, user.id);
+        joinRoom(textInput.current.state.value, user.id)
+        setGameInfo({ ...gameInfo, roomId: textInput.current.state.value})
+        setConnectType('join')
+        setJoinCode(textInput.current.state.value)
+        setActiveModal(null)
+    }
  
 
     return(
@@ -51,6 +61,11 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,
                         ref={textInput}
                         maxLength={6}
                         onChange={value => console.log(value)}
+                        onKeyUp={e => {
+                            if (e.key === 'Enter' || e.keyCode === 13) {
+                                getId()
+                            }
+                        }}
 
                         />
                     </div>
@@ -61,16 +76,6 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,
                         <Button
                         stretched 
                         onClick={()=>{
-                            async function getId(){
-                                const user = await bridge.send('VKWebAppGetUserInfo'); 
-                                //await connectRoom(qsSign, textInput.current.value, user.id);
-                                joinRoom(textInput.current.state.value, user.id)
-                                setGameInfo({ ...gameInfo, roomId: textInput.current.state.value})
-                                setConnectType('join')
-                                setJoinCode(textInput.current.state.value)
-                                setActiveModal(null)
-                            }
-
                             getId()
                             console.log()
                         }}

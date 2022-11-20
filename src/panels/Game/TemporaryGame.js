@@ -16,7 +16,7 @@ import './Game.css';
 
 
 
-import ExmpleGeneration from '../../scripts/ExmpleGeneration';
+import ExmpleGeneration from '../../scripts/decideTask';
 import { getPadTime } from '../../scripts/getPadTime';
 import { Icon16ClockCircleFill } from '@vkontakte/icons';
 import { qsSign } from '../../hooks/qs-sign';
@@ -97,6 +97,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
           })
         .then(async function (response) {
             console.log(response.data.data)
+			setIsCounting(true)
             setAnswer({
                 "id": response.data.data.id,
                 "lvlType": "single30",
@@ -152,7 +153,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
 
 			<div className='game-div-margin'> 
-			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
+			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>{!gameData &&'Выбери любой ответ, чтобы начать' ||gameData &&'Выбери правильный ответ:'}</Title>
 			<div className='equationDiv'>
 			{gameData&&<Title level="1" className='equation'
 			style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
@@ -231,7 +232,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
                             setFirst(false)
                             setTaskNumber(taskNumber+1)
 							
-							setIsCounting(true)
+							//setIsCounting(true)
 						}} >
 							<Title>
 							{gameData&&gameData.tasks[taskNumber].answers[index]}

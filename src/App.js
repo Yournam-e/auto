@@ -50,7 +50,7 @@ const App = () => {
 	const [playersId, setPlayersId] = useState([]) //список id участников
 	const [firstStart, setFirstStart] = useState(true) //первый старт
 	const [playersList, updatePlayersList] = useState([]); //информация о юзерах в лобби
-	const [connectType, setConnectType] = useState('host')
+	const [connectType, setConnectType] = useState('host') //тип подключения, host или join
 
 
 	const [haveHash, setHaveHash] = useState(false)
@@ -140,8 +140,15 @@ const App = () => {
 	}, [themeColors])
 
 	window.addEventListener('popstate', e => {
+
+		console.log(activePanel)
 		
 		switch (activePanel) {
+
+			case 'menu':
+				setActivePanel('menu')
+				setActiveStory('single')
+				break;
 			case 'multiplayerGame':
 				setPopout(
 					<Alert
@@ -166,7 +173,7 @@ const App = () => {
 					  text="Вы уверены, что хотите завершить игру?"
 					/>
 				  );
-			  	break;
+				break;
 			case 'temporaryGame':
 				setPopout(
 					<Alert
@@ -191,7 +198,7 @@ const App = () => {
 					  text="Вы уверены, что хотите завершить игру?"
 					/>
 				  );
-			 	break;
+				break;
 			case 'lvlGame':
 				setPopout(
 					<Alert
@@ -216,7 +223,7 @@ const App = () => {
 					  text="Вы уверены, что хотите завершить игру?"
 					/>
 				  );
-			  	break;
+				break;
 			case 'multiplayerResult':
 				setActivePanel('menu')
 				setActiveStory('multiplayer')
@@ -230,6 +237,15 @@ const App = () => {
 				setActiveStory('single')
 				break;
 			case 'lobbyForGuest':
+				setActivePanel('menu')
+				setActiveStory('multiplayer')
+				break;
+
+			case 'single':
+				setActivePanel('menu')
+				setActiveStory('single')
+				break;
+			case 'multiplayer':
 				setActivePanel('menu')
 				setActiveStory('multiplayer')
 				break;
@@ -253,9 +269,9 @@ const App = () => {
 				
 				if(data.scheme ==='vkcom_dark' || data.scheme === 'space_gray'){
 					setThemeColors('dark')
-					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "dark", "action_bar_color": "#1D1D20"});
+					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "light", "action_bar_color": "#1D1D20"});
 				}else{
-					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "light", "action_bar_color": "#000"});
+					bridge.send("VKWebAppSetViewSettings", {"status_bar_style": "dark", "action_bar_color": "#fff"});
 					setThemeColors('light')
 				}
 			}

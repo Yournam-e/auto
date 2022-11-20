@@ -227,9 +227,8 @@
 }
 
 .result-task-resTitle-div{
-  margin-left: 10%;
 
-  width: 10%;
+  margin-left: 10px;
  
   display: flex;
   align-items: center;
@@ -265,7 +264,7 @@
   right: 0;
   height: 20%;
   bottom: 0;
-  backdrop-filter: blur(1.5px); 
+  backdrop-filter: blur(1.5px);
   
 }
 
@@ -274,6 +273,7 @@
   align-items: center;
   margin-left: 5%;
   margin-right: 5%;
+  margin-bottom: 5%;
 }
 
 .result-buttonRetry-div{

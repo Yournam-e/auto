@@ -33,7 +33,7 @@ const ModalQRCode = ({ id, joinCode, setActiveModal}) =>{
 
     function share(){
         bridge.send('VKWebAppShare', {
-            link: `vk.com/app51451320/${joinCode}`
+            link: `https://vk.com/app51451320#${joinCode}`
             })
             .then((data) => { 
               if (data.result) {
@@ -58,13 +58,13 @@ const ModalQRCode = ({ id, joinCode, setActiveModal}) =>{
             <ModalPageHeader
             before={
               platform === 'android' && <PanelHeaderClose onClick={()=>[
-                console.log('ool')
+                setActiveModal(null)
               ]} />
             }
             after={
               platform === 'ios' && (
                 <PanelHeaderButton onClick={()=>{
-                  console.log('ool')
+                  setActiveModal(null)
                 }}>
                   <Icon24Dismiss />
                 </PanelHeaderButton>

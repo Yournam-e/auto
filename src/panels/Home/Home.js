@@ -108,23 +108,23 @@ const Home = ({
 	function devideLvl(numberId){
 		switch (numberId) {
 			case 1:
-				return ['40 секунд', '10 задач']
+				return ['30 секунд', '10 задач']
 			case 2:
-				return ['40 секунд', '10 задач']
+				return ['30 секунд', '10 задач']
 			case 3:
 				return ['30 секунд', '10 задач']
 			case 4:
 				return ['30 секунд', '15 задач']
 			case 5:
-				return ['1 минута', '15 задач']
+				return ['30 секунд', '15 задач']
 			case 6:
-				return ['1 минута', '15 задач']
+				return ['30 секунд', '15 задач']
 			case 7:
-				return ['1 минута', '15 задач']
+				return ['30 секунд', '15 задач']
 			case 8:
-				return ['1 минута', '15 задач']
+				return ['30 секунд', '15 задач']
 			case 9:
-				return ['25 секунд', '15 задач']
+				return ['30 секунд', '15 задач']
 			case 10:
 				return ['20 секунд', '20 задач']
 		  }

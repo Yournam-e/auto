@@ -16,7 +16,7 @@ import '../Game/Game.css';
 
 
 
-import ExmpleGeneration from '../../scripts/ExmpleGeneration';
+import ExmpleGeneration from '../../scripts/decideTask';
 import { getPadTime } from '../../scripts/getPadTime';
 import { Icon16ClockCircleFill } from '@vkontakte/icons';
 import { answerTask, leaveRoom } from '../../sockets/game';

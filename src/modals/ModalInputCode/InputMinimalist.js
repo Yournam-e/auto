@@ -13,7 +13,7 @@ class InputMinimalist extends React.Component {
     }
 
     onChange(e) {
-        const value = e.target.value.toUpperCase();
+        const value = e.target.value;
         this.setState({value});
         if (this.props.onChange && typeof this.props.onChange === 'function')
             this.props.onChange(value);
@@ -22,11 +22,12 @@ class InputMinimalist extends React.Component {
     render() {
         const
             {value} = this.state,
-            {placeholder, defaultValue, maxLength} = this.props
+            {placeholder, defaultValue, maxLength, onKeyUp} = this.props
         ;
         return <Input
             value={value}
             onChange={this.onChange}
+			onKeyUp={onKeyUp}
             placeholder={placeholder}
             defaultValue={defaultValue}
             maxLength={maxLength}
@@ -34,5 +35,6 @@ class InputMinimalist extends React.Component {
     }
 
 }
+
 
 export default InputMinimalist

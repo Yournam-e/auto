@@ -21,7 +21,12 @@ import { useUserId } from '../../../hooks/useUserId';
 
 const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel, joinCode, playersList,themeColors }) => {
 
-	let friendList = null
+	//let friendList = null
+	const [friendList, setFriendList] = useState(null)
+
+
+
+
 	console.log(mpGameResults)
 
 	console.log(playersList)
@@ -29,6 +34,11 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 	const [place, setPlace] = useState(5)
 
 	useEffect(() => {
+		if (mpGameResults) {
+			setFriendList( mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? 1 : -1))
+		}
+
+
 		if (mpGameResults) {
 			devideArray()
 		}
@@ -44,10 +54,6 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 		console.log(newArr)
 
 		newArr.map((item, index) => {
-			console.log(item)
-			console.log(fetchedUser.id)
-			console.log(item.userId)
-			console.log(index)
 			if (item.userId === fetchedUser.id) {
 				const f = index + 1
 				console.log(f)
@@ -66,9 +72,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 	}, [timeLeft])
 
 
-	if (mpGameResults) {
-		friendList = mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? 1 : -1);
-	}
+
 
 
 
@@ -130,11 +134,11 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 												<Title style={{ paddingBottom: 8, }}>{inItem.name}</Title>
 												<Button className='friendsPoint'
 													before={<Icon16Done />}
-													style={{
-														backgroundColor: '#F4F9FF',
-														color: '#1984FF',
-														borderRadius: 25
-													}}>{item.rightResults}</Button>
+													style={{ 
+														backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
+														color:'#1984FF',
+														borderRadius:25
+													}}><p style={{textAlign: 'center'}}>{item.rightResults}</p></Button>
 											</div>
 										)
 									}
@@ -165,7 +169,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 							Сыграть снова
 						</Button>
 					</div>}
-						<div className="result-buttonNotNow-div">
+						<div className="result-buttonNotNow-div" style={{paddingBottom:21}}>
 							<Button
 								onClick={(e) => {
 									go(e)

@@ -12,11 +12,11 @@ import {
 	PanelHeader
  } from '@vkontakte/vkui';
 
-import './Game.css';  
+import './Game.css'; 
+
+import decideTask from '../../scripts/decideTask';
 
 
-
-import ExmpleGeneration from '../../scripts/ExmpleGeneration';
 import { getPadTime } from '../../scripts/getPadTime';
 import { Icon16ClockCircleFill } from '@vkontakte/icons';
 import { qsSign } from '../../hooks/qs-sign';
@@ -45,7 +45,7 @@ const LvlGame = ({ id, go,
 	 
  
 	const [timeLeft, setTimeLeft] = useState(60); //время
-	const [isCounting, setIsCounting] = useState(false); //время
+	const [isCounting, setIsCounting] = useState(false); //начать счет?
 	
 
 	const minutes = getPadTime(Math.floor(timeLeft/60)); //минуты
@@ -60,12 +60,6 @@ const LvlGame = ({ id, go,
 		}
 
 	}, [lvlData])
-
-
-
-
-
-
 	
 	function devideType(){
 		switch (lvlNumber) {
@@ -93,7 +87,6 @@ const LvlGame = ({ id, go,
 
 	}
 
-
 	function createLvl(){
         axios.post(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
             "lvlType": devideType()
@@ -112,10 +105,6 @@ const LvlGame = ({ id, go,
             console.warn(error);
         });
     }
-
-
-
-
 
 	useEffect(()=>{
 		timeLeft === 0?setActivePanel('resultLvl'):console.log()
@@ -165,8 +154,14 @@ const LvlGame = ({ id, go,
 		}, 1000)
 		
 	},[isCounting])
-
 	//код времени не мой кст :)
+
+
+	useEffect(()=>{
+
+
+
+	}, [taskNumber])
 	
  
 	return(
@@ -208,7 +203,7 @@ const LvlGame = ({ id, go,
 			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
 
 				<div className='game-div-margin'>
-				<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
+				<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>{!lvlData &&'Выбери любой ответ, чтобы начать' ||lvlData &&'Выбери правильный ответ:'}</Title>
 				<div className='equationDiv'>
 				<Title level="1" className='equation' style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
 					{lvlData && lvlData.tasks[taskNumber].task[0]}
@@ -242,7 +237,7 @@ const LvlGame = ({ id, go,
 				
 					<Div className='container'>
 	
-						{ [0,1,2,3].map((value, index)=>{
+						{[0,1,2,3].map((value, index)=>{
 							return(
 							
 							<Button 
@@ -267,14 +262,15 @@ const LvlGame = ({ id, go,
 									if(lvlData.tasks.length-1 === taskNumber ){
 										setPopout(<ScreenSpinner size='large' />)
 										setTimeFinish(Date.now() )
-										console.log(Date.now() )
-										setActivePanel('resultLvl') 
-										console.log( 'emd' + taskNumber)
-										console.log( 'emd' + lvlData.tasks.length)
+										setActivePanel('resultLvl')
 									}else{ 
+
+										console.log(lvlData.tasks[taskNumber].task[1])
+										console.log(decideTask(taskNumber, lvlData.tasks[taskNumber].task[0],
+											lvlData.tasks[taskNumber].task[1], lvlData.tasks[taskNumber].task[2],
+											lvlData.tasks[taskNumber].answers[index]))
+
 										setTaskNumber(taskNumber+1)
-										console.log(taskNumber)
-										console.log(lvlData.tasks.length)
 	
 										const newItem = {
 											"id": lvlData.tasks[taskNumber].id,
@@ -282,9 +278,9 @@ const LvlGame = ({ id, go,
 										}
 	
 										const copy  = Object.assign({}, lvlResult);
-										copy.answers = [...lvlResult.answers, newItem]
+										copy.answers = [...lvlResult.answers, newItem];
 										setLvlResult(copy);
-										console.log(lvlResult)
+										console.log(lvlResult);
 	
 									}
 								}
@@ -292,7 +288,7 @@ const LvlGame = ({ id, go,
 								setIsCounting(true)
 							}} >
 								{lvlData && lvlData.tasks[taskNumber].answers[index]}
-								{!lvlData && value }
+								{!lvlData && value}
 							</Button>
 							
 	
