@@ -164,7 +164,7 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 							}}
 							style={{
 								backgroundColor: '#1A84FF',
-								borderRadius: 25
+								borderRadius: 100
 							}} className="result-buttonGroup-retry" appearance="accent" stretched>
 							Сыграть снова
 						</Button>

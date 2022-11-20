@@ -441,7 +441,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					<div className="result-buttonRetry-div">
 						<Button size="l" style={{
 								backgroundColor:'#1A84FF',
-								borderRadius:25
+								borderRadius:100
 								}} 
 								className="result-buttonGroup-retry"
 								appearance="accent"

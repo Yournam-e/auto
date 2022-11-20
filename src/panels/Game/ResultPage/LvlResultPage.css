@@ -1,9 +1,10 @@
 .lvl-res-headDiv{
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%)
+    margin-top: 10%;
+}
+
+.main-div-resilt-page{
+    display: flex;
+    justify-content: center;
 }
 
 .lvl-res-title-div{
@@ -61,3 +62,29 @@
     backdrop-filter: blur(1.5px);
     
   }
+
+.all-task-list{
+    margin-bottom: 110%;
+    margin-left: -30%;
+}
+
+.all-task-cell{
+    width:100%;
+}
+
+.inCell{
+}
+
+.lvl-res-list-icon{
+    padding: 10px;
+    border-radius: 100px;
+    margin-right: 120px;
+    margin-left: 10px;
+}
+
+.not-right-button{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}

@@ -12,16 +12,26 @@ import {
 	ButtonGroup,
     ScreenSpinner
  } from '@vkontakte/vkui';
-
- import { Icon56CheckCircleOutline, Icon56CancelCircleOutline, Icon20ArrowRightOutline, Icon16ClockCircleFill, Icon24RefreshOutline } from '@vkontakte/icons';
- import './LvlResultPage.css'
+import { Icon56CheckCircleOutline, 
+    Icon56CancelCircleOutline, 
+    Icon20ArrowRightOutline, 
+    Icon16ClockCircleFill, 
+    Icon24RefreshOutline,
+    Icon24DoneOutline,
+    Icon24CancelOutline,
+    Icon20Cancel } from '@vkontakte/icons';
+import './LvlResultPage.css'
 import { qsSign } from '../../../hooks/qs-sign';
 import axios from 'axios';
 
-
-
  
-const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFinish,setLvlNumber,setActivePanel,setReady, themeColors }) => {
+const LvlResultPage = ({ id, go,
+    count, lvlResult, 
+    setPopout, lvlNumber, 
+    timeFinish,setLvlNumber, 
+    setActivePanel,setReady, 
+    themeColors, allTasks,
+    setAllTasks }) => {
 
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
      
@@ -131,6 +141,8 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
     useEffect(()=>{
         setReady(false)
 
+        console.log(allTasks)
+
         
         axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
             "id": lvlResult.id,
@@ -176,8 +188,11 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
 	return( 
 		<Panel id={id}>
 
+ 
+
         <div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
 
+            <div className='main-div-resilt-page'>
             <div className='lvl-res-headDiv'>
                 {complete[0]?<Icon56CheckCircleOutline 
                 fill="#1A84FF" 
@@ -195,9 +210,23 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
 
                 <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>Уровень {complete[0]?'пройден!':'провален'}</Title>
                 
-                <Title  className='lvl-res-sub-title-div' weight="1" >{complete[0]?'Неплохо!':complete[1] === "beOnTime"?'Вы не успели':'Вы ошиблись'}</Title>
+                {complete[0] && <Title  className='lvl-res-sub-title-div' weight="1" >Неплохо!</Title>}
+                {complete[1] === "beOnTime" && <Title  className='lvl-res-sub-title-div' weight="1" >Вы не успели</Title>}
+                <div className="not-right-button" >
+
+                    <Button 
+                    before={<Icon20Cancel fill='#FF2525'/>} 
+                    style={{
+                    backgroundColor:"#F7ECEF", 
+                    color:"#FF2525",
+                    padding:10,
+                    borderRadius:50}}
+                    >Вы ошиблись</Button>
+                
+                </div>
 
                 <div style={{height: 30, marginTop: 12}} className='lvl-res-clock-div'>
+                    
 					<Icon16ClockCircleFill 
                         className='multiplayer-title-return'
                         width={16} height={16}
@@ -217,9 +246,49 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                             }}
                     >{finishedTime && Math.round(finishedTime)} сек</Title>
 					
-			    </div>
-
+			    </div>	
+                                
+                <List className='all-task-list'>
+                    {allTasks && allTasks.map((item, idx) =>{
+                        if(item.id){
+                            return(
+                                <Cell
+                                className='all-task-cell'
+                                key={idx}
+                                before={<div style={{width: 44, height: 44, paddingRight:20}}>
+                                    {item.complete?
+                                        <Icon24DoneOutline
+                                        fill='#2BD328'
+                                        className='lvl-res-list-icon'
+                                        style={{backgroundColor:'#EDF5F0'}}/>
+                                        :
+                                        <Icon24CancelOutline
+                                        fill='#FF2525'
+                                        className='lvl-res-list-icon'
+                                        style={{backgroundColor:'#F7ECEF'}}/>}
+                                </div>}
+                                subtitle={'Твой ответ:' + item.answer}
+                                
+                                >
+                                
+                                <Title level='2'className='inCell'>{item.number1}{item.sign}{item.number3}={item.pcAnswer}</Title>
+                                </Cell>
+                            )
+                        }
+                        
+                    })}
+                </List>
             </div>
+
+                            
+            </div>
+
+
+
+
+
+    
+
 
 
 
@@ -228,11 +297,15 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                     <div className="result-buttonRetry-div">
                         <Button size="l" 
                                 onClick={()=>{
-                                    playNext()
+                                    async function deleteAndStart(){
+                                        await setAllTasks([{}])
+                                        playNext()
+                                    }
+                                    deleteAndStart()
                                 }}
                                 style={{
                                 backgroundColor:'#1A84FF',
-                                borderRadius:25
+                                borderRadius:100
                                 }} 
                                 className="result-buttonGroup-retry" 
                                 appearance="accent" 
@@ -244,8 +317,8 @@ const LvlResultPage = ({ id, go, count, lvlResult, setPopout, lvlNumber ,timeFin
                     <div className="result-buttonNotNow-div">
                         <Button 
                             onClick={(e)=>{
+                                setAllTasks([{}])
                                 go(e)
-                                console.log('ask')
                             }}
                             data-to='menu'
                             size="l"

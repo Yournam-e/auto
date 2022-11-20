@@ -10,10 +10,10 @@ function decideTask(id, oneNumber, twoNumberm, sign, userAnswer){
 				pcAnswer = oneNumber + twoNumberm
 				if(pcAnswer === userAnswer){
 					console.log('все правильно')
-					return 'true'
+					return [true, pcAnswer]
 				}else{
 					console.log('не правильно')
-					return 'false'
+					return [false, pcAnswer]
 				}
 				break;
 
@@ -21,20 +21,20 @@ function decideTask(id, oneNumber, twoNumberm, sign, userAnswer){
 				pcAnswer = oneNumber - twoNumberm
 				if(pcAnswer === userAnswer){
 					console.log('все правильно')
-					return true
+					return [true, pcAnswer]
 				}else{
 					console.log('не правильно')
-					return 'false'
+					return [false, pcAnswer]
 				}
 				break;
 			case '*':
 				pcAnswer = oneNumber * twoNumberm
 				if(pcAnswer === userAnswer){
 					console.log('все правильно')
-					return 'true'
+					return [true, pcAnswer]
 				}else{
 					console.log('не правильно')
-					return 'false'
+					return [false, pcAnswer]
 				}
 				break;
 

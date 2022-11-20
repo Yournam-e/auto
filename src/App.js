@@ -72,6 +72,8 @@ const App = () => {
 
 	const [completeLvl, setCompleteLvl] = useState()
 
+	const [allTasks, setAllTasks] = useState([{}])
+
 	const [lvlResult, setLvlResult] = useState({
 		"id": null,
 		"lvlType": null,
@@ -91,13 +93,7 @@ const App = () => {
 
 
 
-
-	  bridge.subscribe((e) => {
-		if (e.detail.type === 'VKWebAppChangeFragment') {
-			console.log(e.detail.data.location)
-		}
-	  });
-
+ 
 
 	client.joinedRoom = ({ users }) => {
 		console.debug("joinedRoom", users);
@@ -141,7 +137,6 @@ const App = () => {
 
 	window.addEventListener('popstate', e => {
 
-		console.log(activePanel)
 		
 		switch (activePanel) {
 
@@ -317,7 +312,6 @@ const App = () => {
 			}
 			startToHash()
 		}
-		console.log(window.location.hash)
 
 
 	}, []);
@@ -455,7 +449,9 @@ const App = () => {
 									setCompleteLvl={setCompleteLvl}
 									setTimeFinish={setTimeFinish}
 									timeFinish={timeFinish}
-									themeColors={themeColors} />
+									themeColors={themeColors}
+									allTasks={allTasks}
+									setAllTasks={setAllTasks} />
 									
 								
 
@@ -514,7 +510,9 @@ const App = () => {
 								lvlNumber={lvlNumber}
 								setReady={setReady}
 								setActivePanel={setActivePanel}
-								themeColors={themeColors}/>
+								themeColors={themeColors}
+								setAllTasks={setAllTasks}
+								allTasks={allTasks}/>
 								
 
 								<MultiplayerResult 
