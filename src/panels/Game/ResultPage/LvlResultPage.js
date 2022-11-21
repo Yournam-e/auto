@@ -36,7 +36,7 @@ const LvlResultPage = ({ id, go,
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
      
 
-    const [complete, setComplete] = useState([false, 'notRight'])
+    const [complete, setComplete] = useState()
 
     const [finishedTime, setFinishedTime] = useState()
 
@@ -159,18 +159,21 @@ const LvlResultPage = ({ id, go,
                 let rightResults = items.find(one => one.lvlType === searchTerm).rightResults
                 let timeStarted = items.find(one => one.lvlType === searchTerm).started
                 console.log(rightResults);
-                await setPopout(null); 
+                
                 console.log(timeStarted)  
                 const timeMs = timeFinish - new Date(timeStarted).getTime()
                 setFinishedTime(timeMs/1000)
                 if(rightResults> lvlResult.answers.length-1){
                     if(timeFinish - new Date(timeStarted).getTime()< 30000){
-                        setComplete([true, 'right'])
+                        await setComplete([true, 'right'])
+                        await setPopout(null); 
                     }else{
-                        setComplete([false, 'beOnTime'])
+                        await setComplete([false, 'beOnTime'])
+                        await setPopout(null); 
                     }
                 }else{
-                    setComplete([false, 'notright'])
+                    await setComplete([false, 'notright'])
+                    await setPopout(null); 
                 }
             })
             .catch(function (error) {
@@ -194,7 +197,7 @@ const LvlResultPage = ({ id, go,
 
             <div className='main-div-resilt-page'>
             <div className='lvl-res-headDiv'>
-                {complete[0]?<Icon56CheckCircleOutline 
+                {complete&& complete[0]?<Icon56CheckCircleOutline 
                 fill="#1A84FF" 
                 style={{
                     marginLeft: 'auto', 
@@ -208,20 +211,22 @@ const LvlResultPage = ({ id, go,
                             }}
                         />}
 
-                <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>Уровень {complete[0]?'пройден!':'провален'}</Title>
+                <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>Уровень {complete&& complete[0]?'пройден!':'провален'}</Title>
                 
-                {complete[0] && <Title  className='lvl-res-sub-title-div' weight="1" >Неплохо!</Title>}
-                {complete[1] === "beOnTime" && <Title  className='lvl-res-sub-title-div' weight="1" >Вы не успели</Title>}
+                {complete && complete[0] && <Title  className='lvl-res-sub-title-div' weight="1" >Неплохо!</Title>}
+                {complete && complete[1] === "beOnTime" && <Title  className='lvl-res-sub-title-div' weight="1" >Вы не успели</Title>}
                 <div className="not-right-button" >
 
-                    <Button 
+                {complete&& !complete[0] &&  <Button 
                     before={<Icon20Cancel fill='#FF2525'/>} 
                     style={{
-                    backgroundColor:"#F7ECEF", 
+                    backgroundColor:themeColors === "light"? "#F7ECEF":"#3F1E21", 
                     color:"#FF2525",
                     padding:10,
                     borderRadius:50}}
-                    >Вы ошиблись</Button>
+                    hasActive={false}
+                    hasHover={false}
+                    >Вы ошиблись</Button>}
                 
                 </div>
 
@@ -267,7 +272,7 @@ const LvlResultPage = ({ id, go,
                                         className='lvl-res-list-icon'
                                         style={{backgroundColor:'#F7ECEF'}}/>}
                                 </div>}
-                                subtitle={'Твой ответ:' + item.answer}
+                                subtitle={'Твой ответ: ' + item.answer}
                                 
                                 >
                                 
@@ -310,8 +315,8 @@ const LvlResultPage = ({ id, go,
                                 className="result-buttonGroup-retry" 
                                 appearance="accent" 
                                 stretched
-                                before={complete[0]?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
-                            {complete[0]?"Следующий уровень":"Попробовать снова"}
+                                before={complete && complete[0]?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
+                            {complete && complete[0]?"Следующий уровень":"Попробовать снова"}
                         </Button>
                     </div>
                     <div className="result-buttonNotNow-div">

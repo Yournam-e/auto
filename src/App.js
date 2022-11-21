@@ -84,16 +84,11 @@ const App = () => {
 		"id": null,
 		"lvlType": null,
 		"answers": []
-	  }) //body содержащий ответы
+	}) //body содержащий ответы
 
-	  const [lvlData, setLvlData] = useState()
+	const [lvlData, setLvlData] = useState()
+	  
 
-
-
-
-
-
- 
 
 	client.joinedRoom = ({ users }) => {
 		console.debug("joinedRoom", users);

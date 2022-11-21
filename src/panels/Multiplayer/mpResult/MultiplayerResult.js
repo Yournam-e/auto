@@ -134,6 +134,8 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 												<Title style={{ paddingBottom: 8, }}>{inItem.name}</Title>
 												<Button className='friendsPoint'
 													before={<Icon16Done />}
+													hasActive={false}
+													hasHover={false}
 													style={{ 
 														backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 														color:'#1984FF',

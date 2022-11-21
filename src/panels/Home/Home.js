@@ -76,6 +76,10 @@ const Home = ({
 		needComplete: 8},
 	])
 
+	useEffect(()=>{
+
+	}, [completeLvls])
+
 	
 		
 	function devideType(i){
@@ -126,7 +130,7 @@ const Home = ({
 			case 9:
 				return ['30 секунд', '15 задач']
 			case 10:
-				return ['20 секунд', '20 задач']
+				return ['30 секунд', '20 задач']
 		  }
 
 	}
@@ -146,6 +150,8 @@ const Home = ({
 			await setLvlsInfo(response.data.data)
 			await console.log(response.data.data)
 			response.data.data.map((item, index)=>{
+				console.log(item)
+				console.log(completeLvls[index])
 				setCompleteLvls([
 					...completeLvls.map((todo) =>
 						item.lvlType === todo.id &&item.rightResults>todo.needComplete ? { ...todo, complete: true} : {...todo}

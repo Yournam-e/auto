@@ -45,7 +45,7 @@ const LvlGame = ({ id, go,
 	const [first, setFirst] = useState(true)
 	 
  
-	const [timeLeft, setTimeLeft] = useState(60); //время
+	const [timeLeft, setTimeLeft] = useState(30); //время
 	const [isCounting, setIsCounting] = useState(false); //начать счет?
 	
 

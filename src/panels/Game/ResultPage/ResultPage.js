@@ -394,6 +394,8 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 
 									<Button className='friendsPoint'
 										before={<Icon16Done />}
+										hasActive={false}
+										hasHover={false}
 										style={{ 
 										backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 										color:'#1984FF',

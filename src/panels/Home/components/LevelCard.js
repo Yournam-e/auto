@@ -12,8 +12,10 @@ import '../../../img/Fonts.css'
 const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, setReady, themeColors, devideLvl, completeLvls}) => {
 
 	 
-	const [complete, setComplete] = useState(false)
+	
 	const completeArray = [true, true, true, true,true, true,true, true,true, true,true, true,]
+
+	const [thisLvl, setThisLvl] = useState(null)
 
 	function devideTypes(i){
 		switch (i) {
@@ -42,14 +44,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 	}
 		
 
-	useEffect(()=>{
-
-		console.log(completeLvls)
 		
-	}, [completeLvls])
-
-	
-	
 	function devideType(){
 		switch (number) {
 			case 1:
@@ -75,6 +70,28 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 		  }
 
 	}
+
+	useEffect(()=>{
+		try{
+			let inf = lvlsInfo
+			let searchTerm = devideType(number);
+			let findedLevel = inf.find(lvl => lvl.lvlType === searchTerm)
+			setThisLvl(findedLevel)
+			console.log(findedLevel.rightResults) 
+			
+			console.log(findedLevel);
+		}catch(e){
+		}
+	}, [lvlsInfo])
+
+	useEffect(()=>{
+
+		console.log(completeLvls)
+		
+	}, [completeLvls])
+
+	
+
 	
 
 
@@ -131,7 +148,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 					</div>
 
 					<div className='lvl-card-icon-div' style={{marginTop: -48}}>
-						{false &&<Icon16Done className='lvl-card-icon' style={{
+						{thisLvl && thisLvl.rightResults === thisLvl.totalResults &&<Icon16Done className='lvl-card-icon' style={{
 							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF'
 						}}/>}
 					</div>
@@ -165,7 +182,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 						before={<Icon24Play height={16} width={16} />}
 						mode='accent'
 						size='s'
-						>Играть</Button>
+						>{thisLvl && thisLvl.rightResults === thisLvl.totalResults?'Перепройти':"Играть"}</Button>
 					
 					
 				</div>
