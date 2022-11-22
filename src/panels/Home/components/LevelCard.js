@@ -169,7 +169,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 					</div>
 
 					<Button
-						className='button-lvl'
+						className={thisLvl && thisLvl.rightResults === thisLvl.totalResults?'button-lvl-complete':'button-lvl'}
 						style={{
 						backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 						color:'#1984FF',
