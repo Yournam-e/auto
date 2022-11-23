@@ -47,7 +47,11 @@ const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo, themeColo
 		<div className='long-card-div-div'>
 
 		
-		<Card mode="shadow" className='long-card'>
+		<Card
+			style={{
+				backgroundColor:themeColors==='dark'?'#2C2C31':'#FFFFFF',
+				borderRadius: 24}}
+			className='long-card'>
 				<div style={{minHeight: 141}}>
 									
 					<Icon24ClockOutline width={24} height={24} className='long-card-icon' style={{

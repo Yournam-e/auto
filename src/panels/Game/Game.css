@@ -12,11 +12,17 @@
   100% { transform: none; }
 }
 
+
+.temporaryGame--inDiv{
+
+
+}
 .equationDiv{ /*div для примера*/
   margin: 10px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  text-align: center; 
+  
+  justify-content: center;
+
 }
 
 
@@ -32,19 +38,19 @@
 
 .equation{ /*пример*/
 
+  display: inline-block;
 
 
   font-family: 'SF Pro Rounded';
   font-style: normal;
   font-weight: 600;
-  margin-left: auto;
-  margin-right: auto;
-  width: 155px;
-  padding: 16px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  padding-left: 20px;
+  padding-right: 20px;
   text-align: center;
   font-size: 35px;
   line-height: 22px;
-  
   letter-spacing: 2px; 
 
   background: #F0F1F5;

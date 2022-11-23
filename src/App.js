@@ -51,6 +51,7 @@ const App = () => {
 	const [firstStart, setFirstStart] = useState(true) //первый старт
 	const [playersList, updatePlayersList] = useState([]); //информация о юзерах в лобби
 	const [connectType, setConnectType] = useState('host') //тип подключения, host или join
+	const [itAgain, setAgain] = useState(false)
 
 
 	const [haveHash, setHaveHash] = useState(false)
@@ -422,7 +423,8 @@ const App = () => {
 												haveHash={haveHash}
 												setPanelsHistory={setPanelsHistory}
 												activePanel={activePanel}
-												panelsHistory={panelsHistory}/>
+												panelsHistory={panelsHistory}
+												itAgain={itAgain}/>
 											</View>
 										
 										</Epic>
@@ -520,7 +522,12 @@ const App = () => {
 								setActiveStory={setActiveStory}
 								setPlayersId={setPlayersId} 
 								playersList={playersList}
-								themeColors={themeColors} />
+								themeColors={themeColors}
+								setAgain={setAgain}
+								connectType={connectType}
+								setJoinCode={setJoinCode}
+								setConnectType={setConnectType}
+								 />
 
 								<LobbyForGuest 
 								id='lobbyForGuest'

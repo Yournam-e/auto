@@ -26,7 +26,6 @@ import { qsSign } from '../../../hooks/qs-sign';
 
  
 
-
 import { createCanvas, loadImage } from 'canvas';
 import { useUserId } from '../../../hooks/useUserId';
 
@@ -390,7 +389,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 								>
 								<div style={{height: 65,  marginLeft: 16}}>
 
-									<Title level="3"  style={{paddingBottom: 8,}}>{item.user.name}</Title>
+									<Title level="3" style={{paddingBottom: 8,}}>{item.user.name}</Title>
 
 									<Button className='friendsPoint'
 										before={<Icon16Done />}

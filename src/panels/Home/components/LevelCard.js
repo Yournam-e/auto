@@ -139,7 +139,12 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 
 	return(
         <div className='lvl-card-div'>
-			<Card key ={number} mode="shadow" style={{borderRadius: 24}}>
+			<Card 
+				className='home--level_card' 
+				style={{
+					backgroundColor:themeColors==='dark'?'#2C2C31':'#FFFFFF',
+					borderRadius: 24}}
+				key={number}>
 				<div className='lvl-card'>
 					
 					<div style={{width: 60, height: 60}}>

@@ -32,7 +32,8 @@ const Multiplayer = ({
 	haveHash,
 	themeColors,
 	setPanelsHistory,
-	panelsHistory
+	panelsHistory,
+	itAgain
 	
  }) => {
 
@@ -96,7 +97,12 @@ const Multiplayer = ({
 			setJoinCode(window.location.hash.slice(1))
 			connectRoom(qsSign, window.location.hash.slice(1), userId);
 
-		}else{
+		}else if(itAgain){
+			
+			setGameInfo({ ...gameInfo, roomId: joinCode})
+			connectRoom(qsSign, joinCode, userId);
+		}
+		else{
 			joinToYourRoom()
 		}
 		
@@ -253,7 +259,7 @@ const Multiplayer = ({
 					{fetchedUser && [0,1,2,3].map((item, index) => (
 						<Cell
 							key={index}
-							mode={index === 0 ? false : 'removable'|| playersList[index]?false:'removable'}
+							mode={false}
 							before={playersList[index]?<Avatar src={playersList[index].avatar} />:<div className='noneUser' />  }
 							disabled={index === 0 ? true : false || playersList[index]?false:true}
 							after={index === 0 ?false: playersList[index]?<Icon24Cancel fill='#99A2AD'/>:false}
@@ -319,7 +325,11 @@ const Multiplayer = ({
 						style={{background:'#1A84FF'}}
 						stretched
 						onClick={()=>{
-							startGame(joinCode,complexity, playersId)
+							console.log(joinCode)
+							console.log(complexity)
+							console.log(playersId)
+							startGame(joinCode, complexity, playersId)
+
 						}}>Играть</Button>
 					</ButtonGroup>
 				</div>

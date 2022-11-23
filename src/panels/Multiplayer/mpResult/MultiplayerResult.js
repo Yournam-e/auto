@@ -19,7 +19,13 @@ import { createRoom, joinRoom, leaveRoom } from '../../../sockets/game';
 import { useUserId } from '../../../hooks/useUserId';
 
 
-const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel, joinCode, playersList,themeColors }) => {
+const MultiplayerResult = ({ id, go,
+	mpGameResults, fetchedUser, 
+	setActivePanel, joinCode, 
+	playersList,themeColors,
+	setAgain, connectType,
+	setJoinCode,setActiveStory,
+	setConnectType }) => {
 
 	//let friendList = null
 	const [friendList, setFriendList] = useState(null)
@@ -35,28 +41,36 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 	useEffect(() => {
 		if (mpGameResults) {
-			setFriendList( mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? 1 : -1))
+			const newArr = mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? -1 : 1);
+			console.log(newArr)
+			setFriendList(newArr)
 		}
 
+		console.log(friendList)
 
-		if (mpGameResults) {
+
+		
+	}, [mpGameResults])
+
+
+	useEffect(()=>{
+
+		console.log(friendList)
+		if (friendList) {
 			devideArray()
 		}
-	}, [mpGameResults])
+
+	}, [friendList])
 
 
 
 
 	function devideArray() {
 
-		const newArr = mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? 1 : -1);
-		console.log("ниже")
-		console.log(newArr)
 
-		newArr.map((item, index) => {
+		friendList.map((item, index) => {
 			if (item.userId === fetchedUser.id) {
-				const f = index + 1
-				console.log(f)
+				console.log(index)
 				setPlace(index)
 			}
 
@@ -78,11 +92,12 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 	client.roomCreated = ({roomId}) =>{
 
-		async function kek (){
+		async function onRoomCreate (){
 			await joinRoom(roomId)
+			setJoinCode(roomId)
 			await setActivePanel('menu')
 		}
-		kek()
+		onRoomCreate()
 		
 	  };
 
@@ -120,18 +135,23 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 					{friendList && friendList.map((item, idx) => (
 
-						<Cell
-							style={{ marginLeft: 28, marginRight: 28 }}
-							key={idx}
-							before={<div style={{ width: 100 }}><Avatar size={56} className='friendsAvatar' /> <Title style={{ verticalAlign: 'middle' }} className='result-friend-position'>#{idx + 1}</Title></div>}
-						>
+
 
 							<div style={{ height: 65, marginLeft: 16 }}>
 								{mpGameResults && playersList.map((inItem, index) => {
 									if (item.userId === inItem.userId) {
 										return (
+											<Cell
+												style={{ marginLeft: 28, marginRight: 28 }}
+												key={idx}
+												before={<div style={{ width: 100 }}>
+											<Avatar size={56} className='friendsAvatar' src={inItem.avatar} />
+											<Title style={{ verticalAlign: 'middle' }} className='result-friend-position'>
+												#{idx + 1}
+											</Title></div>}
+											>
 											<div key={inItem}>
-												<Title style={{ paddingBottom: 8, }}>{inItem.name}</Title>
+												<Title level="3" style={{ paddingBottom: 8, marginLeft:10}}>{inItem.name}</Title>
 												<Button className='friendsPoint'
 													before={<Icon16Done />}
 													hasActive={false}
@@ -139,9 +159,12 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 													style={{ 
 														backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 														color:'#1984FF',
-														borderRadius:25
+														borderRadius:25,
+														marginLeft:10
 													}}><p style={{textAlign: 'center'}}>{item.rightResults}</p></Button>
 											</div>
+											
+											</Cell>
 										)
 									}
 
@@ -149,7 +172,6 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 
 							</div>
 
-						</Cell>
 
 					))}
 				</List>
@@ -161,7 +183,9 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 						<div className="result-buttonRetry-div">
 						<Button size="l"
 							onClick={() => {
-								createRoom(joinCode)
+								setConnectType('host')
+								setActivePanel('menu')
+								setActiveStory('multiplayer')
 
 							}}
 							style={{
@@ -174,6 +198,8 @@ const MultiplayerResult = ({ id, go, mpGameResults, fetchedUser, setActivePanel,
 						<div className="result-buttonNotNow-div" style={{paddingBottom:21}}>
 							<Button
 								onClick={(e) => {
+									setActiveStory('single')
+									setConnectType('host')
 									go(e)
 									leaveRoom(joinCode, fetchedUser.id)
 								}}

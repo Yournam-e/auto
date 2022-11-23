@@ -9,7 +9,8 @@ import {
 	Div,
 	PanelHeader,
 	PanelHeaderBack,
-	Alert
+	Alert,
+	PanelHeaderButton
  } from '@vkontakte/vkui';
 
 import './Game.css';  
@@ -18,10 +19,12 @@ import './Game.css';
 
 import ExmpleGeneration from '../../scripts/decideTask';
 import { getPadTime } from '../../scripts/getPadTime';
-import { Icon16ClockCircleFill } from '@vkontakte/icons';
+import { Icon16ClockCircleFill, Icon28Cancel } from '@vkontakte/icons';
 import { qsSign } from '../../hooks/qs-sign';
 import axios from 'axios';
 import { client } from '../../sockets/receiver';
+
+import { ReactComponent as ClockIcon } from  '../../img/Сlock.svg';
 
 import '../../img/Fonts.css'
 
@@ -121,62 +124,72 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 		style={{backgroundColor: 'transparent' }} 
 		transparent={true}
 		shadow={false}
-		separator={false}before={<PanelHeaderBack onClick={()=>{
-			setPopout(
-				<Alert
-				  actions={[
-					{
-					  title: "Завершить",
-					  mode: "destructive",
-					  autoclose: true,
-					  action: () => setActivePanel('menu') ,
-					},
-					{
-					  title: "Отмена",
-					  autoclose: true,
-					  mode: "cancel",
-					},
-				  ]}
-				  actionsLayout="vertical"
-				  onClose={()=>{
-					setPopout(null)
-				  }}
-				  header="Подтвердите действие"
-				  text="Вы уверены, что хотите завершить игру?"
-				/>
-			  );
-		
-		}} />}>
+		separator={false}
+		before={
+			<PanelHeaderButton
+			onClick={()=>{
+				setPopout(
+					<Alert
+					  actions={[
+						{
+						  title: "Завершить",
+						  mode: "destructive",
+						  autoclose: true,
+						  action: () => setActivePanel('menu') ,
+						},
+						{
+						  title: "Отмена",
+						  autoclose: true,
+						  mode: "cancel",
+						},
+					  ]}
+					  actionsLayout="vertical"
+					  onClose={()=>{
+						setPopout(null)
+					  }}
+					  header="Подтвердите действие"
+					  text="Вы уверены, что хотите завершить игру?"
+					/>
+				  );
+			
+			}}>
+			  <Icon28Cancel />
+			</PanelHeaderButton>
+		  }>
 		</PanelHeader>
 
 		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
 
-
+		  	
 			<div className='game-div-margin'> 
 			<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>{!gameData &&'Выбери любой ответ, чтобы начать' ||gameData &&'Выбери правильный ответ:'}</Title>
 			<div className='equationDiv'>
-			{gameData&&<Title level="1" className='equation'
-			style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
-                {gameData.tasks[taskNumber].task[0]}
-                {gameData.tasks[taskNumber].task[2]}
-                {gameData.tasks[taskNumber].task[1]}
+			{gameData&&
+			<div className='temporaryGame--inDiv'>
+				<span level="1" className='equation'
+				style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
+					{gameData.tasks[taskNumber].task[0]}
+					{gameData.tasks[taskNumber].task[2]}
+					{gameData.tasks[taskNumber].task[1]}
                 =<span className='equationMark'>?</span>
-                </Title>}
+                </span>
+			</div>}
 			</div>
 
             {!gameData &&
             <div className='equationDiv'>
-			<Title level="1" className='equation' style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
+			<div className='temporaryGame--inDiv'>
+			<span level="1" className='equation' style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}>
                 1+2
                 =<span className='equationMark'>?</span>
-                </Title>
+                </span>
+			</div>
 			</div>}
 
 
 	 
 			<div style={{height: 30, marginTop: 12}} className='single-clock-div'>
-					<Icon16ClockCircleFill width={16} height={16} className='multiplayer-title-return'
-							fill='#99A2AD'
+					<ClockIcon width={16} height={16} className='multiplayer-title-return'
 							style={{
 								display:'inline-block', 
 								paddingLeft:5,

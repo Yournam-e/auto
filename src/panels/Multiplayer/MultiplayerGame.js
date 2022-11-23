@@ -8,20 +8,21 @@ import {
 	Title,
 	Div,
 	Alert,
-	PanelHeaderBack,
+	PanelHeaderButton,
 	PanelHeader
 } from '@vkontakte/vkui';
 
 import '../Game/Game.css';
 
-
-
 import ExmpleGeneration from '../../scripts/decideTask';
 import { getPadTime } from '../../scripts/getPadTime';
-import { Icon16ClockCircleFill } from '@vkontakte/icons';
+import { Icon16ClockCircleFill, Icon28Cancel } from '@vkontakte/icons';
 import { answerTask, leaveRoom } from '../../sockets/game';
 import { client } from '../../sockets/receiver';
 import { useUserId } from '../../hooks/useUserId';
+
+
+import { ReactComponent as ClockIcon } from  '../../img/Сlock.svg';
 
 
 const MultiplayerGame = ({ id, go, count, fetchedUser,
@@ -47,6 +48,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 	client.gameFinished = ({ game }) => {
 		console.debug("gameFinished", game);
+		setPopout(null)
 		setGameInfo(null)
 		setMpGameResults([])
 		setMpGameResults(game)
@@ -75,10 +77,18 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 
 	client.nextTask = ({ answers, task, id }) => {
-		console.debug("nextTask", answers, task, id);
-		setGameInfo({ ...gameInfo, taskId: id })
-		setAnswersInfo(answers);
-		setTaskInfo(task);
+		async function newTask(){
+			await console.debug("nextTask", answers, task, id);
+			await console.log('1')
+			await setGameInfo({ ...gameInfo, taskId: id })
+			await console.log('2')
+			await setAnswersInfo(answers);
+			await console.log('3')
+			await setTaskInfo(task);
+			await console.log('4')
+			setPopout(null)
+		}
+		newTask()
 	};
 
 	return (
@@ -90,32 +100,40 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 		style={{backgroundColor: 'transparent' }} 
 		transparent={true}
 		shadow={false}
-		separator={false}before={<PanelHeaderBack onClick={()=>{
-			setPopout(
-				<Alert
-				  actions={[
-					{
-					  title: "Завершить",
-					  mode: "destructive",
-					  autoclose: true,
-					  action: () => setActivePanel('menu') && setActiveStory('multiplayer') &&leaveRoom(joinCode),
-					},
-					{
-					  title: "Отмена",
-					  autoclose: true,
-					  mode: "cancel",
-					},
-				  ]}
-				  actionsLayout="vertical"
-				  onClose={()=>{
-					setPopout(null)
-				  }}
-				  header="Подтвердите действие"
-				  text="Вы уверены, что хотите завершить игру?"
-				/>
-			  );
-		
-		}} />}>
+		separator={false}
+		before={
+			<PanelHeaderButton
+			aria-label='Выйти из игры'
+			onClick={()=>{
+				setPopout(
+					<Alert
+					actions={[
+						{
+						title: "Завершить",
+						mode: "destructive",
+						autoclose: true,
+						action: () => setActivePanel('menu') && setActiveStory('multiplayer') &&leaveRoom(joinCode),
+						},
+						{
+						title: "Отмена",
+						autoclose: true,
+						mode: "cancel",
+						},
+					]}
+					actionsLayout="vertical"
+					onClose={()=>{
+						setPopout(null)
+					}}
+					header="Подтвердите действие"
+					text="Вы уверены, что хотите завершить игру?"
+					/>
+				  );
+			
+			}}>
+			  <Icon28Cancel />
+			</PanelHeaderButton>
+		  }
+		>
 		</PanelHeader>
 
 
@@ -124,16 +142,19 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 			<div className='game-div-margin'>
 				<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
 				<div className='equationDiv'>
-					{taskInfo && <Title 
+					{taskInfo &&
+					<div className='temporaryGame--inDiv'>
+					<span 
 					level="1"
 					style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}
-					className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span></Title>}
+					className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span>
+					</span>
+					</div>}
 				</div>
 
-
 				<div style={{ height: 30, marginTop: 12 }} className='single-clock-div'>
-					<Icon16ClockCircleFill width={16} height={16} className='multiplayer-title-return'
-						fill='#99A2AD'
+					
+					<ClockIcon width={16} height={16} className='multiplayer-title-return'
 						style={{
 							display: 'inline-block',
 							paddingLeft: 5,
@@ -172,10 +193,13 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 								}}
 								onClick={() => {
 									//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
-									console.log(gameInfo)
-									console.log('aaaaa')
-									console.log(answersInfo)
-									answerTask(gameInfo.roomId, value, gameInfo.taskId)
+									async function callNextTask(){
+										await console.log(gameInfo)
+										await console.log('aaaaa')
+										await console.log(answersInfo)
+										await answerTask(gameInfo.roomId, value, gameInfo.taskId)
+									}
+									callNextTask()
 									//setIsCounting(true)
 								}} >
 								{answersInfo[index]}

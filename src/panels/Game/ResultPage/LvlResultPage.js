@@ -23,6 +23,7 @@ import { Icon56CheckCircleOutline,
 import './LvlResultPage.css'
 import { qsSign } from '../../../hooks/qs-sign';
 import axios from 'axios';
+import { ReactComponent as ClockIcon } from  '../../../img/Сlock.svg';
 
  
 const LvlResultPage = ({ id, go,
@@ -232,7 +233,7 @@ const LvlResultPage = ({ id, go,
 
                 <div style={{height: 30, marginTop: 12}} className='lvl-res-clock-div'>
                     
-					<Icon16ClockCircleFill 
+					<ClockIcon 
                         className='multiplayer-title-return'
                         width={16} height={16}
 						fill='#99A2AD'
