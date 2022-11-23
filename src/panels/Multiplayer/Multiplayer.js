@@ -58,6 +58,8 @@ const Multiplayer = ({
 		setJoinCode(roomId)
 	};
 
+	
+
 	function joinToYourRoom(i){
 		
 			
@@ -93,6 +95,8 @@ const Multiplayer = ({
 		setPanelsHistory([...panelsHistory, activePanel])
 
 		window.history.pushState({activePanel: '231'}, 'Title');
+
+		
 		if(haveHash){
 			setJoinCode(window.location.hash.slice(1))
 			connectRoom(qsSign, window.location.hash.slice(1), userId);
@@ -100,7 +104,6 @@ const Multiplayer = ({
 		}else if(itAgain){
 			
 			setGameInfo({ ...gameInfo, roomId: joinCode})
-			connectRoom(qsSign, joinCode, userId);
 		}
 		else{
 			joinToYourRoom()
@@ -138,6 +141,7 @@ const Multiplayer = ({
 					<PanelHeaderButton onClick={()=>{
 						setConnectType('host')
 						joinToYourRoom()
+						leaveRoom(fetchedUser.id)
 					}} >
 					<Icon20DoorArrowRightOutline fill='#1A84FF' style={{marginLeft:25}}/>
 					</PanelHeaderButton>
@@ -258,11 +262,9 @@ const Multiplayer = ({
 				<List style={{ marginTop: 16, marginBottom: 16 }}>
 					{fetchedUser && [0,1,2,3].map((item, index) => (
 						<Cell
-							key={index}
-							mode={false}
+							key={index} 
 							before={playersList[index]?<Avatar src={playersList[index].avatar} />:<div className='noneUser' />  }
 							disabled={index === 0 ? true : false || playersList[index]?false:true}
-							after={index === 0 ?false: playersList[index]?<Icon24Cancel fill='#99A2AD'/>:false}
 						>
 							{playersList[index]? <Title level="3" weight="2" className='player-name-on'>{playersList[index].name}</Title> : <Title level="3" weight="3" className='player-name-off'>Пусто</Title>}
 						</Cell>

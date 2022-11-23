@@ -45,13 +45,17 @@ const App = () => {
 	});
 	const [taskInfo, setTaskInfo] = useState(); //данные о примере
 	const [answersInfo, setAnswersInfo] = useState(); // ответы
+
+
 	const [joinCode, setJoinCode] = useState(null) //код для подкл
 	const [mpGameResults, setMpGameResults] = useState(); //массив для резуьтатов
+
+
 	const [playersId, setPlayersId] = useState([]) //список id участников
 	const [firstStart, setFirstStart] = useState(true) //первый старт
 	const [playersList, updatePlayersList] = useState([]); //информация о юзерах в лобби
 	const [connectType, setConnectType] = useState('host') //тип подключения, host или join
-	const [itAgain, setAgain] = useState(false)
+	const [itAgain, setAgain] = useState(false) //перезапуск игры или нет
 
 
 	const [haveHash, setHaveHash] = useState(false)
@@ -96,13 +100,17 @@ const App = () => {
 	
 		users!==0? updatePlayersList(users): console.log('ok')
 
+		setPlayersId(null)
 		users && users.map((item, index)=>{
-			setPlayersId([])
 			setPlayersId([...playersId, item.userId]);
 		})
 
-	  };
+	};
 
+
+	client.leftRoom = ({ userId }) => {
+		console.debug("leftRoom", userId);
+	};
 
 	  
 

@@ -25,7 +25,7 @@ const MultiplayerResult = ({ id, go,
 	playersList,themeColors,
 	setAgain, connectType,
 	setJoinCode,setActiveStory,
-	setConnectType }) => {
+	setConnectType,setPlayersId }) => {
 
 	//let friendList = null
 	const [friendList, setFriendList] = useState(null)
@@ -77,24 +77,19 @@ const MultiplayerResult = ({ id, go,
 		})
 
 	}
-
-
-	const [timeLeft, setTimeLeft] = useState(10); //время
-
-	useEffect(() => {
-		timeLeft === 0 ? console.log('') : console.log()
-	}, [timeLeft])
-
-
+ 
 
 
 
 
 	client.roomCreated = ({roomId}) =>{
 
+		console.log('cоздана комната' + roomId)
+
 		async function onRoomCreate (){
+			await setAgain(true)
 			await joinRoom(roomId)
-			setJoinCode(roomId)
+			await setJoinCode(roomId)
 			await setActivePanel('menu')
 		}
 		onRoomCreate()
@@ -137,12 +132,12 @@ const MultiplayerResult = ({ id, go,
 
 
 
-							<div style={{ height: 65, marginLeft: 16 }}>
+							<div style={{ height: 65, marginLeft: 16, marginTop:25 }}>
 								{mpGameResults && playersList.map((inItem, index) => {
 									if (item.userId === inItem.userId) {
 										return (
 											<Cell
-												style={{ marginLeft: 28, marginRight: 28 }}
+												style={{ marginLeft: 5, marginRight: 5 }}
 												key={idx}
 												before={<div style={{ width: 100 }}>
 											<Avatar size={56} className='friendsAvatar' src={inItem.avatar} />
@@ -183,11 +178,12 @@ const MultiplayerResult = ({ id, go,
 						<div className="result-buttonRetry-div">
 						<Button size="l"
 							onClick={() => {
-								setConnectType('host')
-								setActivePanel('menu')
-								setActiveStory('multiplayer')
+								setPlayersId([])
+								createRoom(joinCode)
 
 							}}
+							loading={connectType === 'join'?true:false}
+							disabled={connectType === 'join'?true:false}
 							style={{
 								backgroundColor: '#1A84FF',
 								borderRadius: 100
@@ -198,10 +194,11 @@ const MultiplayerResult = ({ id, go,
 						<div className="result-buttonNotNow-div" style={{paddingBottom:21}}>
 							<Button
 								onClick={(e) => {
+									leaveRoom(joinCode, fetchedUser.id)
+									setAgain(false)
 									setActiveStory('single')
 									setConnectType('host')
 									go(e)
-									leaveRoom(joinCode, fetchedUser.id)
 								}}
 								data-to='menu'
 								size="l"
