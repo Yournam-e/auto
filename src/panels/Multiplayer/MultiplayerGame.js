@@ -198,6 +198,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 										await console.log('aaaaa')
 										await console.log(answersInfo)
 										await answerTask(gameInfo.roomId, value, gameInfo.taskId)
+										setPopout(<ScreenSpinner size='large' />)
 									}
 									callNextTask()
 									//setIsCounting(true)

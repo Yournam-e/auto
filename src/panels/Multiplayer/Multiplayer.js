@@ -99,7 +99,9 @@ const Multiplayer = ({
 		
 		if(haveHash){
 			setJoinCode(window.location.hash.slice(1))
+			console.log(gameInfo)
 			connectRoom(qsSign, window.location.hash.slice(1), userId);
+			console.log('agaaaaaaaain')
 
 		}else if(itAgain){
 			
@@ -117,7 +119,8 @@ const Multiplayer = ({
 		setTaskInfo(task)
 		setAnswersInfo(answers)
 		async function lol(){
-			setGameInfo({ ...gameInfo, taskId: id})
+			await setGameInfo({taskId: id, roomId: joinCode})
+			console.log(gameInfo)
 		}
 		lol()
 		setActivePanel('multiplayerGame')

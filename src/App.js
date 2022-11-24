@@ -39,7 +39,6 @@ const App = () => {
 
 	//muliplayer
 	const [gameInfo, setGameInfo] = useState({
-		userId: null,
 		roomId: null,
 		taskId: null
 	});
@@ -96,14 +95,29 @@ const App = () => {
 
 
 	client.joinedRoom = ({ users }) => {
-		console.debug("joinedRoom", users);
-	
-		users!==0? updatePlayersList(users): console.log('ok')
+		async function joinFunction(){
+			await setPopout(<ScreenSpinner size='large' />)
+			console.debug("joinedRoom", users);
+		
+			await users!==0? updatePlayersList(users): console.log('ok')
 
-		setPlayersId(null)
-		users && users.map((item, index)=>{
-			setPlayersId([...playersId, item.userId]);
-		})
+			await setPlayersId(null)
+
+
+
+			const newArr = []
+			for await (const item of users){
+				//setPlayersId([...playersId, item.userId]);
+				console.log(item)
+				console.log(item.userId)
+				newArr.push(item.userId)
+			}
+			await console.log(newArr)
+			await setPlayersId(newArr)
+			await setPopout(null)
+		}
+
+		joinFunction()
 
 	};
 
@@ -249,6 +263,8 @@ const App = () => {
 				setActiveStory('multiplayer')
 				break;
 		  }
+		  setActiveModal(null)
+
 		e.preventDefault();
 		
 		
@@ -309,6 +325,7 @@ const App = () => {
 			setHaveHash(false)
 		}else{
 			async function startToHash(){ 
+				await setGameInfo({ ...gameInfo, roomId: window.location.hash.slice(1)})
 				await setHaveHash(true)
 				await setConnectType('join')
 				await setActiveStory('multiplayer')
@@ -535,6 +552,7 @@ const App = () => {
 								connectType={connectType}
 								setJoinCode={setJoinCode}
 								setConnectType={setConnectType}
+								setHaveHash={setHaveHash}
 								 />
 
 								<LobbyForGuest 

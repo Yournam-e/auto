@@ -25,7 +25,8 @@ const MultiplayerResult = ({ id, go,
 	playersList,themeColors,
 	setAgain, connectType,
 	setJoinCode,setActiveStory,
-	setConnectType,setPlayersId }) => {
+	setConnectType,setPlayersId,
+	setHaveHash }) => {
 
 	//let friendList = null
 	const [friendList, setFriendList] = useState(null)
@@ -87,6 +88,7 @@ const MultiplayerResult = ({ id, go,
 		console.log('cоздана комната' + roomId)
 
 		async function onRoomCreate (){
+			await setHaveHash(false)
 			await setAgain(true)
 			await joinRoom(roomId)
 			await setJoinCode(roomId)

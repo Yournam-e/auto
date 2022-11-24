@@ -44,6 +44,36 @@ const LvlResultPage = ({ id, go,
 
     let findArr = false
 
+
+    
+	function devideLvl(numberId){
+		switch (numberId) {
+			case 1:
+				return ['30 секунд', '10 задач', 10]
+			case 2:
+				return ['30 секунд', '10 задач', 10]
+			case 3:
+				return ['30 секунд', '10 задач', 10]
+			case 4:
+				return ['30 секунд', '15 задач', 15]
+			case 5:
+				return ['30 секунд', '15 задач', 15]
+			case 6:
+				return ['30 секунд', '15 задач', 15]
+			case 7:
+				return ['30 секунд', '15 задач', 15]
+			case 8:
+				return ['30 секунд', '15 задач', 15]
+			case 9:
+				return ['30 секунд', '15 задач', 15]
+			case 10:
+				return ['30 секунд', '20 задач', 20]
+		  }
+
+	}
+
+
+
     	
 	function devideType(i){
 		switch (i) {
@@ -140,6 +170,8 @@ const LvlResultPage = ({ id, go,
     
 
     useEffect(()=>{
+
+        console.log('текущий уровень' + lvlNumber)
         setReady(false)
 
         console.log(allTasks)
@@ -190,7 +222,7 @@ const LvlResultPage = ({ id, go,
 
 	
 	return( 
-		<Panel id={id}>
+		<Panel id={id} style={{height: window.pageYOffset}}>
 
  
 
@@ -198,7 +230,7 @@ const LvlResultPage = ({ id, go,
 
             <div className='main-div-resilt-page'>
             <div className='lvl-res-headDiv'>
-                {complete&& complete[0]?<Icon56CheckCircleOutline 
+                {complete && allTasks.length>devideLvl(lvlNumber)[2]&& complete[0]?<Icon56CheckCircleOutline 
                 fill="#1A84FF" 
                 style={{
                     marginLeft: 'auto', 
@@ -212,13 +244,13 @@ const LvlResultPage = ({ id, go,
                             }}
                         />}
 
-                <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>Уровень {complete&& complete[0]?'пройден!':'провален'}</Title>
+                <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>Уровень {complete && allTasks.length>devideLvl(lvlNumber)[2]&& complete[0]?'пройден!':'провален'}</Title>
                 
-                {complete && complete[0] && <Title  className='lvl-res-sub-title-div' weight="1" >Неплохо!</Title>}
+                {complete && complete[0] && allTasks.length>devideLvl(lvlNumber)[2] && <Title  className='lvl-res-sub-title-div' weight="1">Неплохо!</Title>}
                 {complete && complete[1] === "beOnTime" && <Title  className='lvl-res-sub-title-div' weight="1" >Вы не успели</Title>}
                 <div className="not-right-button" >
 
-                {complete&& !complete[0] &&  <Button 
+                {complete&& !complete[0] && allTasks.length>10 &&  <Button 
                     before={<Icon20Cancel fill='#FF2525'/>} 
                     style={{
                     backgroundColor:themeColors === "light"? "#F7ECEF":"#3F1E21", 
@@ -301,24 +333,25 @@ const LvlResultPage = ({ id, go,
             <div className='lvl-res-absolute-div'>
                 <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
                     <div className="result-buttonRetry-div">
+                        {lvlNumber!==10&&
                         <Button size="l" 
-                                onClick={()=>{
-                                    async function deleteAndStart(){
-                                        await setAllTasks([{}])
-                                        playNext()
-                                    }
-                                    deleteAndStart()
-                                }}
-                                style={{
-                                backgroundColor:'#1A84FF',
-                                borderRadius:100
-                                }} 
-                                className="result-buttonGroup-retry" 
-                                appearance="accent" 
-                                stretched
-                                before={complete && complete[0]?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
-                            {complete && complete[0]?"Следующий уровень":"Попробовать снова"}
-                        </Button>
+                            onClick={()=>{
+                                async function deleteAndStart(){
+                                    await setAllTasks([{}])
+                                    playNext()
+                                }
+                                deleteAndStart()
+                            }}
+                            style={{
+                            backgroundColor:'#1A84FF',
+                            borderRadius:100
+                            }} 
+                            className="result-buttonGroup-retry" 
+                            appearance="accent" 
+                            stretched
+                            before={complete && complete[0]?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
+                        {complete && complete[0]?"Следующий уровень":"Попробовать снова"}
+                        </Button>}
                     </div>
                     <div className="result-buttonNotNow-div">
                         <Button 

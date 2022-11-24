@@ -85,8 +85,8 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 		
 		const background = await loadImage(require(`../../../img/story/story.png`));
 		const phrases = [
-			decOfNum(count, ['Математическую', 'Математические', 'Математических']),
-			decOfNum(count, ['задачу', 'задачи', 'задач']) + ' за ',
+			decOfNum(count, ['Математическую задачу', 'Математические задачи', 'Математических задач']),
+			' за ',
 			'30 секунд!'
 		];
 		var canvas = createCanvas(background.width, background.height);
