@@ -116,6 +116,18 @@ body {
     
 }
 
+.lvl-card-div-mini{
+    margin-top: 16px;
+    
+    width: 96%;
+     
+    border-radius: 24px;
+    margin-left: 1%;
+    margin-right: 1%;
+    padding-left: 1%;
+    padding-right: 1%;
+}
+
 .lvl-card{
     height: 182px;
     
@@ -172,8 +184,9 @@ body {
     font-size: 15px;
     line-height: 18px;
 
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 1%;
+    padding-right: 1%;
+  
   
     padding-top: 6px;
     padding-bottom: 6px;
@@ -204,4 +217,12 @@ body {
 .home--level_card{
     box-shadow: 0px 32px 52px 0px rgba(0, 0, 0, 0.03);
 
+}
+
+.not-Connection--main-div{
+    
+    left: 50%;
+    position: absolute;
+    top: 50%;                 
+    transform: translate(-50%, -50%);
 }

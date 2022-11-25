@@ -32,7 +32,7 @@ const LvlResultPage = ({ id, go,
     timeFinish,setLvlNumber, 
     setActivePanel,setReady, 
     themeColors, allTasks,
-    setAllTasks }) => {
+    setAllTasks,setTimeFinish }) => {
 
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
      
@@ -171,6 +171,10 @@ const LvlResultPage = ({ id, go,
 
     useEffect(()=>{
 
+        var lastTime = Date.now()
+
+        console.log(timeFinish)
+
         console.log('текущий уровень' + lvlNumber)
         setReady(false)
 
@@ -192,9 +196,15 @@ const LvlResultPage = ({ id, go,
                 let rightResults = items.find(one => one.lvlType === searchTerm).rightResults
                 let timeStarted = items.find(one => one.lvlType === searchTerm).started
                 console.log(rightResults);
-                
-                console.log(timeStarted)  
+                 
+                await timeFinish
+                console.log('a' + timeStarted)
+                console.log('b ' +timeFinish)
+                if(timeFinish === 0){
+                    
+                }
                 const timeMs = timeFinish - new Date(timeStarted).getTime()
+                console.log('c' + timeMs)  
                 setFinishedTime(timeMs/1000)
                 if(rightResults> lvlResult.answers.length-1){
                     if(timeFinish - new Date(timeStarted).getTime()< 30000){
@@ -226,7 +236,7 @@ const LvlResultPage = ({ id, go,
 
  
 
-        <div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+        <div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: document.body.pageYOffset}}>
 
             <div className='main-div-resilt-page'>
             <div className='lvl-res-headDiv'>
@@ -291,6 +301,7 @@ const LvlResultPage = ({ id, go,
                         if(item.id){
                             return(
                                 <Cell
+                                disabled={true}
                                 className='all-task-cell'
                                 key={idx}
                                 before={<div style={{width: 44, height: 44, paddingRight:20}}>
@@ -333,10 +344,12 @@ const LvlResultPage = ({ id, go,
             <div className='lvl-res-absolute-div'>
                 <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
                     <div className="result-buttonRetry-div">
-                        {lvlNumber!==10&&
+                        {
                         <Button size="l" 
                             onClick={()=>{
                                 async function deleteAndStart(){
+                                    
+                                    await setFinishedTime(0)
                                     await setAllTasks([{}])
                                     playNext()
                                 }
@@ -349,13 +362,15 @@ const LvlResultPage = ({ id, go,
                             className="result-buttonGroup-retry" 
                             appearance="accent" 
                             stretched
-                            before={complete && complete[0]?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
-                        {complete && complete[0]?"Следующий уровень":"Попробовать снова"}
+                            before={complete && lvlNumber!==10&& complete[0]?<Icon20ArrowRightOutline />:<Icon24RefreshOutline  width={20} height={20}/>}>
+                        {complete && lvlNumber!==10&& complete[0]?"Следующий уровень":"Попробовать снова"}
                         </Button>}
                     </div>
                     <div className="result-buttonNotNow-div">
                         <Button 
                             onClick={(e)=>{
+                                setFinishedTime(0)
+                                
                                 setAllTasks([{}])
                                 go(e)
                             }}

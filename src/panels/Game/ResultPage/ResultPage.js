@@ -413,7 +413,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 
 					<Title level="3" style={{textAlign: 'center'}}>Тут никого нет</Title>
 
-					<Text className='result-getFriend-text' style={{textAlign: 'center'}} >Разрешите доступ к списку друзей чтобы видеть их результаты</Text>
+					<Text className='result-getFriend-text' style={{textAlign: 'center'}} >Разрешите доступ к списку друзей, чтобы видеть их результаты</Text>
 					
 					<div className='result-task-button-div'>
 					<Button 

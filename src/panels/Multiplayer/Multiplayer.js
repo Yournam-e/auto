@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from 'react';
 
-import { Panel, Div, Avatar, Title, Button, Separator, List, Cell, ButtonGroup,PanelHeader, PanelHeaderButton,ScreenSpinner } from '@vkontakte/vkui';
+import { Panel, Div,
+	Avatar, Title,
+	Button, Separator,
+	List, Cell,
+	ButtonGroup,PanelHeader,
+	PanelHeaderButton,ScreenSpinner,
+	Alert } from '@vkontakte/vkui';
 
 import './Multiplayer.css';
-import { Icon20Sync, Icon20QrCodeOutline, Icon24Cancel,Icon20DoorArrowRightOutline } from '@vkontakte/icons';
+import { Icon20Sync, Icon20QrCodeOutline, Icon24Cancel,Icon20DoorArrowRightOutline, Icon16Spinner } from '@vkontakte/icons';
 
 import bridge from '@vkontakte/vk-bridge';
+
+
+
 
 import { connectRoom, createRoom, joinRoom, leaveRoom, startGame } from '../../sockets/game';
 import { client } from '../../sockets/receiver';
 import axios from 'axios';
 import { useUserId } from '../../hooks/useUserId';
 import { qsSign } from '../../hooks/qs-sign';
- 
+
 
 const Multiplayer = ({ 
 	id,
@@ -92,9 +101,9 @@ const Multiplayer = ({
 
 
 	useEffect(() => {
-		setPanelsHistory([...panelsHistory, activePanel])
 
-		window.history.pushState({activePanel: '231'}, 'Title');
+		window.history.pushState({activePanel: 'mp'}, 'mp'); 
+		setPanelsHistory([...panelsHistory, activePanel]) 
 
 		
 		if(haveHash){
@@ -129,6 +138,38 @@ const Multiplayer = ({
 
 
 
+
+	useEffect(()=>{
+		if(connectType === 'join' &&playersList.length===1){
+			setPopout(
+				<Alert
+				  actions={[
+					{
+					  title: "Выйти",
+					  mode: "destructive",
+					  autoclose: true,
+					  action: () => {
+						setConnectType('host')
+						joinToYourRoom()
+						leaveRoom(fetchedUser.id)
+					  },
+					},
+					{
+					  title: "Остаться",
+					  autoclose: true,
+					  mode: "cancel",
+					},
+				  ]}
+				  actionsLayout="vertical"
+				  onClose={()=>{
+					setPopout(null)
+				  }}
+				  header="Внимание"
+				  text="Лобби не существует или было удалено"
+				/>
+			  );
+		}
+	}, [playersList])
 	
 
 
@@ -196,16 +237,7 @@ const Multiplayer = ({
 							fill='#1A84FF'
 							onClick={async function(){
 								await setPopout(<ScreenSpinner size='large' />)
-								const promise = new Promise((resolve, reject) => {
-									createRoom(joinCode)
-									
-									resolve()
-						
-								})
-					
-								promise.then(result =>setPopout(null) )
-
-								
+								await createRoom(joinCode)
 								
 								
 							}}
@@ -321,13 +353,14 @@ const Multiplayer = ({
 							</Button>
 						</ButtonGroup>
 					</Div>}
-
 					<ButtonGroup gap="space" style={{ marginTop: 10 }} className='multiplayer-play-div'>
 						<Button size="l" 
 						className='multiplayer-play-button' appearance="accent"
-						loading={connectType==='host'?false:true}
-						disabled={connectType==='host'?false:true}
+						disabled={connectType==='host'?false:true} 
 						style={{background:'#1A84FF'}}
+						before={connectType==='host'?false:<div  className='loaderIcon'>
+							<Icon16Spinner/>
+						</div>}
 						stretched
 						onClick={()=>{
 							console.log(joinCode)
@@ -335,7 +368,7 @@ const Multiplayer = ({
 							console.log(playersId)
 							startGame(joinCode, complexity, playersId)
 
-						}}>Играть</Button>
+						}}>{connectType==='host'?'Играть':'Ожидание'}</Button>
 					</ButtonGroup>
 				</div>
 

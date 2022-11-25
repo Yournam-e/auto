@@ -12,8 +12,7 @@ import '../../../img/Fonts.css'
 const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, setReady, themeColors, devideLvl, completeLvls}) => {
 
 	 
-	
-	const completeArray = [true, true, true, true,true, true,true, true,true, true,true, true,]
+	const [cardsStyle, setCardsStyle] = useState(null)
 
 	const [thisLvl, setThisLvl] = useState(null)
 
@@ -77,22 +76,23 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 			let searchTerm = devideType(number);
 			let findedLevel = inf.find(lvl => lvl.lvlType === searchTerm)
 			setThisLvl(findedLevel)
-			console.log(findedLevel.rightResults) 
-			
-			console.log(findedLevel);
 		}catch(e){
 		}
 	}, [lvlsInfo])
 
+
+
+	
+
 	useEffect(()=>{
-
-		console.log(completeLvls)
-		
-	}, [completeLvls])
-
-	
-
-	
+		const pageWidth = document.documentElement.scrollWidth
+		if(pageWidth>350){
+			setCardsStyle('max')
+		}else{
+			setCardsStyle('min')
+		}
+		console.log(pageWidth)
+	}, [])
 
 
 
@@ -138,7 +138,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 
 
 	return(
-        <div className='lvl-card-div'>
+        <div  className={cardsStyle&& cardsStyle === 'max'? 'lvl-card-div':'lvl-card-div-mini'}>
 			<Card 
 				className='home--level_card' 
 				style={{

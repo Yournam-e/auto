@@ -23,9 +23,17 @@ import InputMinimalist from './InputMinimalist'
 import { joinRoom } from '../../sockets/game';
  
 
-const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,setActiveModal, platform}) =>{
+const ModalInputCode = ({ id, setGameInfo, gameInfo,
+    setJoinCode, setConnectType,
+    setActiveModal, platform,
+    joinCode}) =>{
 
     const textInput = React.createRef();
+
+
+    const [disabledButton, setDisabledButton] = useState(false)
+
+    
 
     
     async function getId(){
@@ -60,7 +68,13 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,
                         placeholder='XXXXXX'
                         ref={textInput}
                         maxLength={6}
-                        onChange={value => console.log(value)}
+                        onChange={value => {
+                            if(value === joinCode){
+                                setDisabledButton(true)
+                            }else{
+                                setDisabledButton(false)
+                            }
+                        }}
                         onKeyUp={e => {
                             if (e.key === 'Enter' || e.keyCode === 13) {
                                 getId()
@@ -74,7 +88,8 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,setJoinCode, setConnectType,
 
                     <Div style={{marginLeft: 20, marginTop: 30, marginRight: 20}}>
                         <Button
-                        stretched 
+                        stretched
+                        disabled={disabledButton} 
                         onClick={()=>{
                             getId()
                             console.log()

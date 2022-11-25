@@ -6,6 +6,7 @@ import { Icon28Users3Outline, Icon28FavoriteOutline } from '@vkontakte/icons';
 
 import '@vkontakte/vkui/dist/vkui.css';
 import './img/Fonts.css';
+import Eyes from './img/Eyes.png'
 
 import Home from './panels/Home/Home';
 import Multiplayer from './panels/Multiplayer/Multiplayer';
@@ -20,8 +21,10 @@ import { client } from './sockets/receiver';
 import MultiplayerResult from './panels/Multiplayer/mpResult/MultiplayerResult';
 import LobbyForGuest from './panels/Multiplayer/LobbyForGuest/LobbyForGuest';
 import TemporaryGame from './panels/Game/TemporaryGame';
-import { qsSign } from './hooks/qs-sign';
-import { leaveRoom } from './sockets/game';
+import NotConnection from './panels/NotConnection/NotConnection';
+
+
+import { useEventListener } from './scripts/useEventListener';
 
 const App = () => {
 	const [scheme, setScheme] = useState('bright_light')
@@ -93,11 +96,26 @@ const App = () => {
 	const [lvlData, setLvlData] = useState()
 	  
 
+	useEventListener("online", () => { 
+		console.log('online')
+	})
+
+
+
+	useEventListener("offline", () => {
+		setActivePanel('notConnection')
+	})
+
+
 
 	client.joinedRoom = ({ users }) => {
 		async function joinFunction(){
 			await setPopout(<ScreenSpinner size='large' />)
 			console.debug("joinedRoom", users);
+
+			if(connectType === 'join' &&  users.length === 1){
+				console.log('такого лобби не существует')
+			}
 		
 			await users!==0? updatePlayersList(users): console.log('ok')
 
@@ -108,13 +126,11 @@ const App = () => {
 			const newArr = []
 			for await (const item of users){
 				//setPlayersId([...playersId, item.userId]);
-				console.log(item)
-				console.log(item.userId)
 				newArr.push(item.userId)
 			}
 			await console.log(newArr)
 			await setPlayersId(newArr)
-			await setPopout(null)
+			setPopout(null)
 		}
 
 		joinFunction()
@@ -139,9 +155,6 @@ const App = () => {
 		lol()
 		setActivePanel('multiplayerGame')
 	};
-
- 
-
 	  
 	useEffect(()=>{
 
@@ -153,128 +166,69 @@ const App = () => {
 
 	}, [themeColors])
 
-	window.addEventListener('popstate', e => {
 
-		
-		switch (activePanel) {
+	useEffect(()=>{
+		console.log(activePanel)
+	}, [activePanel])
 
-			case 'menu':
-				setActivePanel('menu')
-				setActiveStory('single')
-				break;
-			case 'multiplayerGame':
-				setPopout(
-					<Alert
-					  actions={[
-						{
-						  title: "Завершить",
-						  mode: "destructive",
-						  autoclose: true,
-						  action: () => setActivePanel('menu') && setActiveStory('multiplayer'),
-						},
-						{
-						  title: "Отмена",
-						  autoclose: true,
-						  mode: "cancel",
-						},
-					  ]}
-					  actionsLayout="vertical"
-					  onClose={()=>{
-						setPopout(null)
-					  }}
-					  header="Подтвердите действие"
-					  text="Вы уверены, что хотите завершить игру?"
-					/>
-				  );
-				break;
-			case 'temporaryGame':
-				setPopout(
-					<Alert
-					  actions={[
-						{
-						  title: "Завершить",
-						  mode: "destructive",
-						  autoclose: true,
-						  action: () => setActivePanel('menu') && setActiveStory('single'),
-						},
-						{
-						  title: "Отмена",
-						  autoclose: true,
-						  mode: "cancel",
-						},
-					  ]}
-					  actionsLayout="vertical"
-					  onClose={()=>{
-						setPopout(null)
-					  }}
-					  header="Подтвердите действие"
-					  text="Вы уверены, что хотите завершить игру?"
-					/>
-				  );
-				break;
-			case 'lvlGame':
-				setPopout(
-					<Alert
-					  actions={[
-						{
-						  title: "Завершить",
-						  mode: "destructive",
-						  autoclose: true,
-						  action: () => setActivePanel('menu') && setActiveStory('single') &&leaveRoom(joinCode),
-						},
-						{
-						  title: "Отмена",
-						  autoclose: true,
-						  mode: "cancel",
-						},
-					  ]}
-					  actionsLayout="vertical"
-					  onClose={()=>{
-						setPopout(null)
-					  }}
-					  header="Подтвердите действие"
-					  text="Вы уверены, что хотите завершить игру?"
-					/>
-				  );
-				break;
-			case 'multiplayerResult':
-				setActivePanel('menu')
-				setActiveStory('multiplayer')
-				break;
-			case 'resultLvl':
-				setActivePanel('menu')
-				setActiveStory('single')
-				break;
-			case 'result':
-				setActivePanel('menu')
-				setActiveStory('single')
-				break;
-			case 'lobbyForGuest':
-				setActivePanel('menu')
-				setActiveStory('multiplayer')
-				break;
 
-			case 'single':
-				setActivePanel('menu')
-				setActiveStory('single')
-				break;
-			case 'multiplayer':
-				setActivePanel('menu')
-				setActiveStory('multiplayer')
-				break;
-		  }
-		  setActiveModal(null)
-
-		e.preventDefault();
-		
-		
-		
-	});
-
+	useEffect(()=>{
+		console.log(timeFinish)
+	}, [timeFinish])
 
 	useEffect(() => {
 
-		window.history.pushState({activePanel: 'panesl'}, 'Titlees');
+		const img = new Image();
+		img.src = Eyes;
+
+		
+		window.addEventListener('popstate', (e) => {
+
+			if(e.state){
+				if(e.state.activePanel === 'home'){
+					setActivePanel('menu')
+					setActiveStory('single')
+				}
+				if(e.state.activePanel === 'mp'){
+					console.log("нынешняя panel" + activePanel)
+					setActivePanel('menu')
+					setActiveStory('multiplayer')
+				}
+				if(e.state.activePanel === 'mpGame'){
+					console.log('activeStory')
+					setPopout(
+						<Alert
+						  actions={[
+							{
+							  title: "Завершить",
+							  mode: "destructive",
+							  autoclose: true,
+							  action: () => setActivePanel('menu') && setActiveStory('multiplayer') &&window.history.go(-1),
+							},
+							{
+							  title: "Отмена",
+							  autoclose: true,
+							  mode: "cancel",
+							},
+						  ]}
+						  actionsLayout="vertical"
+						  onClose={()=>{
+							setPopout(null)
+						  }}
+						  header="Подтвердите действие"
+						  text="Вы уверены, что хотите завершить игру?"
+						/>
+					  );
+				}
+				if(e.state.activePanel === 'r'){
+					console.log('неи')
+					 
+				}
+			}
+			console.log(e.state)
+			console.log(activePanel)
+		
+	});
 		
 
 
@@ -291,6 +245,9 @@ const App = () => {
 				}
 			}
 		});  
+
+
+		
 
 		
 
@@ -372,7 +329,8 @@ const App = () => {
 		  setConnectType={setConnectType}
 		  setJoinCode={setJoinCode}
 		  platform={platform}
-		  onOpened={handleOpen}/>
+		  onOpened={handleOpen}
+		  joinCode={joinCode}/>
 		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal} joinCode={joinCode} onOpened={handleOpen}/>
 		</ModalRoot>
 	  );
@@ -488,7 +446,9 @@ const App = () => {
 									localTask={localTask}
 									answer={answer}
 									setAnswer={setAnswer}
-									themeColors={themeColors}/> 
+									themeColors={themeColors}
+									setActiveStory={setActiveStory}
+									activeStory={activeStory}/> 
 
 								
 								<ResultPage
@@ -571,6 +531,15 @@ const App = () => {
 								setActivePanel={setActivePanel}
 								themeColors={themeColors}
 								/>
+
+								<NotConnection 
+								id='notConnection'
+								go={go}
+								themeColors={themeColors}
+								setPopout={setPopout}
+								setActivePanel={setActivePanel}
+								setActiveStory={setActiveStory}
+								Eyes={Eyes}/>
 								
 
 								

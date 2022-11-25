@@ -28,7 +28,7 @@ import { ReactComponent as ClockIcon } from  '../../img/Сlock.svg';
 
 import '../../img/Fonts.css'
 
-const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, singleType, answer, setAnswer,themeColors }) => {
+const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, singleType, answer, setAnswer,themeColors,setActiveStory,activeStory }) => {
 
     const [first, setFirst] = useState(true) //первый запуск
 
@@ -65,6 +65,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 	}, [timeLeft])
     
 	useEffect(()=>{
+
 		
 
         setPopout(null)

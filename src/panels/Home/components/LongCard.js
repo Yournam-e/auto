@@ -78,6 +78,7 @@ const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo, themeColo
 								await setActivePanel('temporaryGame')
 								await checkToDelete()
 								await setPopout(<ScreenSpinner size='large' />)
+								await setActivePanel('temporaryGame')
 							}}
 							data-to='temporaryGame'
 							style={{

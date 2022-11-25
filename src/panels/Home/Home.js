@@ -141,44 +141,32 @@ const Home = ({
 	useEffect(()=>{
 
 		setPanelsHistory([...panelsHistory, activePanel])
+		window.history.pushState({activePanel: 'home'}, 'home');
 
-		window.history.pushState({activePanel: 'panel'}, 'Title');
 
 		document.body.classList.add("body-dark")
 		axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
 		.then(async function (response) {
 			await setLvlsInfo(response.data.data)
-			await console.log(response.data.data)
 			response.data.data.map((item, index)=>{
-				console.log(item)
-				console.log(completeLvls[index])
 				setCompleteLvls([
 					...completeLvls.map((todo) =>
 						item.lvlType === todo.id &&item.rightResults>todo.needComplete ? { ...todo, complete: true} : {...todo}
 					)
 				])
-
-
-  
-				
  
-
 			})
 			await setPopout(null)
 		})
 		.catch(function (error) {
 			console.warn(error);
 		});
-
-
-		
-
-
-
-		
-
 		 
 	}, [])
+
+
+
+
 
  
 	

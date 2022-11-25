@@ -57,7 +57,12 @@ const LvlGame = ({ id, go,
 	const seconds = getPadTime(timeLeft - minutes * 60); //секунды
 
 
- 
+	window.addEventListener('online', ()=>{
+		  console.log('не оффлайн')
+	});
+	window.addEventListener('offline',()=>{
+		console.log('оффлайн')
+	});
 	
 	function devideType(){
 		switch (lvlNumber) {
@@ -104,7 +109,13 @@ const LvlGame = ({ id, go,
     }
 
 	useEffect(()=>{
-		timeLeft === 0?setActivePanel('resultLvl'):console.log()
+
+		function pastTime(){
+			
+			setTimeFinish(Date.now())
+			setActivePanel('resultLvl')
+		}
+		timeLeft === 0? pastTime() :console.log()
 	}, [timeLeft])
 
 	useEffect(()=>{
@@ -251,41 +262,53 @@ const LvlGame = ({ id, go,
 								
 							}} 
 							onClick={()=>{
+								if (navigator.onLine) {
+									console.log('online');
+								  } else {
+									console.log('offline');
+								  }
 								//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
 								if(first === true){
 									setFirst(false)
 									createLvl()
 								}else{
 									if(lvlData){
-										if(lvlData.tasks.length-1 === taskNumber ){
+										if(lvlData.tasks.length-1 === taskNumber ){ //eсли последняя задача
 
-											const checkRight = decideTask(taskNumber, lvlData.tasks[taskNumber].task[0],
-												lvlData.tasks[taskNumber].task[1], lvlData.tasks[taskNumber].task[2],
-												lvlData.tasks[taskNumber].answers[index])
-	 
-		
-											setAllTasks([...allTasks, {
-												"id": lvlData.tasks[taskNumber].id,
-												"answer": lvlData.tasks[taskNumber].answers[index],
-												"number1": `${lvlData.tasks[taskNumber].task[0]}`,
-												"sign": `${lvlData.tasks[taskNumber].task[2]}`,
-												"number3": `${lvlData.tasks[taskNumber].task[1]}`,
-												"pcAnswer": checkRight[1],
-												"complete":checkRight[0],
-											}])
+											async function finished(){
+												
+												await setTimeFinish(Date.now())
+												await console.log(Date.now())
 
-											const newItem = {
-												"id": lvlData.tasks[taskNumber].id,
-												"answer": lvlData.tasks[taskNumber].answers[index]
+												const checkRight = await decideTask(taskNumber, lvlData.tasks[taskNumber].task[0],
+													lvlData.tasks[taskNumber].task[1], lvlData.tasks[taskNumber].task[2],
+													lvlData.tasks[taskNumber].answers[index])
+		 
+			
+												await setAllTasks([...allTasks, {
+													"id": lvlData.tasks[taskNumber].id,
+													"answer": lvlData.tasks[taskNumber].answers[index],
+													"number1": `${lvlData.tasks[taskNumber].task[0]}`,
+													"sign": `${lvlData.tasks[taskNumber].task[2]}`,
+													"number3": `${lvlData.tasks[taskNumber].task[1]}`,
+													"pcAnswer": checkRight[1],
+													"complete":checkRight[0],
+												}])
+	
+												const newItem = {
+													"id": lvlData.tasks[taskNumber].id,
+													"answer": lvlData.tasks[taskNumber].answers[index]
+												}
+			
+												const copy  = Object.assign({}, lvlResult);
+												copy.answers = [...lvlResult.answers, newItem];
+												await setLvlResult(copy);
+												
+												await setPopout(<ScreenSpinner size='large' />)
+												await setActivePanel('resultLvl')
 											}
-		
-											const copy  = Object.assign({}, lvlResult);
-											copy.answers = [...lvlResult.answers, newItem];
-											setLvlResult(copy);
-											
-											setPopout(<ScreenSpinner size='large' />)
-											setTimeFinish(Date.now() )
-											setActivePanel('resultLvl')
+
+											finished()
 										}
 										else{ 
 	

@@ -61,6 +61,8 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 	useEffect(() => {
 
+		window.history.pushState({activePanel: 'mpGame'}, 'mpGame');
+		window.history.pushState({activePanel: 'r'}, 'r');
 	}, [])
 
 	useEffect(() => {
@@ -79,13 +81,9 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 	client.nextTask = ({ answers, task, id }) => {
 		async function newTask(){
 			await console.debug("nextTask", answers, task, id);
-			await console.log('1')
 			await setGameInfo({ ...gameInfo, taskId: id })
-			await console.log('2')
 			await setAnswersInfo(answers);
-			await console.log('3')
 			await setTaskInfo(task);
-			await console.log('4')
 			setPopout(null)
 		}
 		newTask()
