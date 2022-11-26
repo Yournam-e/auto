@@ -195,6 +195,8 @@ const LvlResultPage = ({ id, go,
                 let searchTerm = lvlResult.lvlType;
                 let rightResults = items.find(one => one.lvlType === searchTerm).rightResults
                 let timeStarted = items.find(one => one.lvlType === searchTerm).started
+
+                console.log(lvlResult.answers.length)
                 console.log(rightResults);
                  
                 await timeFinish
@@ -206,7 +208,7 @@ const LvlResultPage = ({ id, go,
                 const timeMs = timeFinish - new Date(timeStarted).getTime()
                 console.log('c' + timeMs)  
                 setFinishedTime(timeMs/1000)
-                if(rightResults> lvlResult.answers.length-1){
+                if(rightResults> devideLvl(lvlNumber)[2]-1){
                     if(timeFinish - new Date(timeStarted).getTime()< 30000){
                         await setComplete([true, 'right'])
                         await setPopout(null); 

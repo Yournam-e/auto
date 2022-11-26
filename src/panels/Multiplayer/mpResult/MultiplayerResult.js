@@ -12,7 +12,7 @@ import {
 	ButtonGroup
 } from '@vkontakte/vkui';
 
-import { Icon56CheckCircleOutline, Icon24StoryOutline, Icon16Done } from '@vkontakte/icons';
+import { Icon56CheckCircleOutline, Icon24StoryOutline, Icon16Done, Icon16Spinner } from '@vkontakte/icons';
 import '../../Game/Game.css'
 import { client } from '../../../sockets/receiver';
 import { createRoom, joinRoom, leaveRoom } from '../../../sockets/game';
@@ -71,8 +71,14 @@ const MultiplayerResult = ({ id, go,
 
 		friendList.map((item, index) => {
 			if (item.userId === fetchedUser.id) {
+				if(index !== 0){
+					friendList[index - 1].rightResults > item.rightResults?setPlace(index):setPlace(index - 1)
+				}else{
+					setPlace(index)
+				}
+				console.log(friendList)
 				console.log(index)
-				setPlace(index)
+				
 			}
 
 		})
@@ -184,13 +190,15 @@ const MultiplayerResult = ({ id, go,
 								createRoom(joinCode)
 
 							}}
-							loading={connectType === 'join'?true:false}
+							before={connectType==='host'?false:<div  className='loaderIcon'>
+							<Icon16Spinner/>
+							</div>}
 							disabled={connectType === 'join'?true:false}
 							style={{
 								backgroundColor: '#1A84FF',
 								borderRadius: 100
 							}} className="result-buttonGroup-retry" appearance="accent" stretched>
-							Сыграть снова
+							{connectType==='host'?'Сыграть снова':'Ожидание'}
 						</Button>
 					</div>}
 						<div className="result-buttonNotNow-div" style={{paddingBottom:21}}>

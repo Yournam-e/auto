@@ -31,7 +31,7 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,
     const textInput = React.createRef();
 
 
-    const [disabledButton, setDisabledButton] = useState(false)
+    const [disabledButton, setDisabledButton] = useState(true)
 
     
 
@@ -69,7 +69,7 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,
                         ref={textInput}
                         maxLength={6}
                         onChange={value => {
-                            if(value === joinCode){
+                            if(value === joinCode || value.length <6){
                                 setDisabledButton(true)
                             }else{
                                 setDisabledButton(false)

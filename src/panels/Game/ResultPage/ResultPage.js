@@ -39,7 +39,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 	const [rightAns, setRightAns] = useState()
 
 
-	const [right, setRight] = useState()
+	const [right, setRight] = useState(null)
 	
 
 	const [friendsIds, setFriendsIds] = useState(null) //id друзей юзера
@@ -290,6 +290,16 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 		}
 
 	}, [friendsIds])
+
+
+	function decOfNum(number, titles, needNumber = true) {
+		if (number !== undefined) {
+			let decCache = [],
+				decCases = [2, 0, 1, 1, 1, 2];
+			if (!decCache[number]) decCache[number] = number % 100 > 4 && number % 100 < 20 ? 2 : decCases[Math.min(number % 10, 5)];
+			return (needNumber ? number + ' ' : '') + titles[decCache[number]];
+		}
+	}
 	
 	
 	useEffect(()=>{ 
@@ -343,19 +353,19 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					<Icon56CheckCircleOutline fill="#1A84FF" style={{marginLeft: 'auto', marginRight: 'auto'}}/>
 				</div>
 				<div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
-					{<Title className='result-task-title'>{right?`${right} задач`:'0 задач'}</Title>}
+					{<Title className='result-task-title'>{right?`${decOfNum(right, ['задачу', 'задачи', ' задач'])}`:'0 задач'}</Title>}
 					
 				</div>
 
 				<div style={{marginLeft: 18, marginRight: 18, marginTop: 16}}>
-					<Title className='result-task-text'>Неплохо! Поделись результатами с друзьями:</Title>
+					<Title className='result-task-text'>{right !==null && right !==0?'Неплохо!':''} Поделись результатами с друзьями:</Title>
 				</div>
 
 				<div className='result-task-button-div' style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
 					<Button 
 					onClick={async function (){ 
 
-						if(right){
+						if(right !== null){
 							showStoryBox(right)
 						}
 						
@@ -374,7 +384,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					>Поделиться в истории</Button>
 				</div>
 				<p className='hide'>content</p>
-				{tokenAvailability === true && 
+				{tokenAvailability === false && 
 				<div>
 					<div className='result-task-resTitle-div'>
 						<Title className='result-task-resTitle'>Результаты друзей:</Title>
@@ -407,7 +417,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					</List>
 				</div>}
 				
-				{tokenAvailability === false  && 
+				{tokenAvailability === true  && 
 				<div className='notFriend-div' style={{ marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}} >
 					<img className='eyes-photo' style={{marginTop: 16}} src={Eyes} width={44} height={44}></img>
 

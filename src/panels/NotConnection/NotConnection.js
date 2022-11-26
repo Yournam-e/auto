@@ -39,12 +39,9 @@ const NotConnection = ({
 
 	return(
 		<Panel id={id}>
-			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: Math.max(
-                document.body.scrollHeight, document.documentElement.scrollHeight
-            )}}>
+			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20"}}>
                 
-                    <div className='not-Connection--main-div' style={{ marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}} >
-                        <img className='eyes-photo' style={{marginTop: 16}} src={Eyes} width={44} height={44}></img>
+                    <div className='not-Connection--main-div' style={{ marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}}>
  
 
                         <Title level="3" style={{textAlign: 'center', marginTop: 24}}>√-1</Title>

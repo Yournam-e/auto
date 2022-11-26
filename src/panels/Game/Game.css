@@ -268,11 +268,11 @@
   position: fixed;
   left: 0;
   right: 0;
-  height: 30%;
+  height: 10%;
   bottom: 0;
-  padding-top: 5%;
-  padding-bottom: 5%;
-  backdrop-filter: blur(1.5px);
+  padding-top: 10px;
+  padding-bottom: 75px;
+  backdrop-filter: blur(3.5px);
   
 }
 
@@ -382,7 +382,7 @@
 .notFriend-div{
   border: 2px dashed rgba(0, 0, 0, 0.08);
   border-radius: 24px;
-  margin-bottom: 65%;
+  margin-bottom: 60%;
 }
 
 

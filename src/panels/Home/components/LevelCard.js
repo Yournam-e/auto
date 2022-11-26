@@ -134,7 +134,7 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 		promise.then(result =>setPopout(<ScreenSpinner size='large' />), setActivePanel('lvlGame') )
 
 
-		  };
+	};
 
 
 	return(
