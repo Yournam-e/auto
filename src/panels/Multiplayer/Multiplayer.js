@@ -51,8 +51,10 @@ const Multiplayer = ({
 	const [complexity, setComplexity] = useState("easy")
 
 
+	var clickTime = 0
+
+
 	client.gameStarted = ({ answers, task, id }) => {
-		console.debug("gameStarted", answers, task, id);
 		setTaskInfo(task)
 		setAnswersInfo(answers)
 		async function lol(){
@@ -63,7 +65,6 @@ const Multiplayer = ({
 	};
 
 	client.roomCreated = ({ roomId }) => {
-		console.debug('room create' + roomId)
 		joinRoom(roomId, userId)
 		setJoinCode(roomId)
 	};
@@ -75,7 +76,6 @@ const Multiplayer = ({
 			
 		axios.post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
 		.then(async function (response) {
-			console.log(response.data.data)
 			await setJoinCode(response.data.data)
 			
 			await setGameInfo({ ...gameInfo, roomId: response.data.data})
@@ -90,7 +90,6 @@ const Multiplayer = ({
 			
 		})
 		.catch(function (error) {
-			console.warn(error);
 		});
 
 		
@@ -109,9 +108,7 @@ const Multiplayer = ({
 		
 		if(haveHash){
 			setJoinCode(window.location.hash.slice(1))
-			console.log(gameInfo)
 			connectRoom(qsSign, window.location.hash.slice(1), userId);
-			console.log('agaaaaaaaain')
 
 		}else if(itAgain){
 			
@@ -125,12 +122,10 @@ const Multiplayer = ({
 	}, []); 
 
 	client.gameStarted = ({ answers, task, id }) => {
-		console.debug("gameStarted", answers, task, id);
 		setTaskInfo(task)
 		setAnswersInfo(answers)
 		async function lol(){
 			await setGameInfo({taskId: id, roomId: joinCode})
-			console.log(gameInfo)
 		}
 		lol()
 		setActivePanel('multiplayerGame')
@@ -230,6 +225,16 @@ const Multiplayer = ({
 							style={{
 								display: 'inline-block',
 								paddingLeft: 5
+							}}
+							onMouseDown={()=>{
+								clickTime = Date.now()
+							}}
+							onMouseUp={()=>{
+								if(Date.now() - clickTime >499){
+									navigator.clipboard.writeText(joinCode)
+									.then(() => { alert(`Copied!`) })
+									.catch((error) => {  })
+								}
 							}} >
 								{joinCode}
 						</Title>
@@ -363,9 +368,6 @@ const Multiplayer = ({
 						</div>}
 						stretched
 						onClick={()=>{
-							console.log(joinCode)
-							console.log(complexity)
-							console.log(playersId)
 							startGame(joinCode, complexity, playersId)
 
 						}}>{connectType==='host'?'Играть':'Ожидание'}</Button>

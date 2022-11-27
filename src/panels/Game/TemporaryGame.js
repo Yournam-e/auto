@@ -25,6 +25,7 @@ import axios from 'axios';
 import { client } from '../../sockets/receiver';
 
 import { ReactComponent as ClockIcon } from  '../../img/Сlock.svg';
+import { ReactComponent as RedClockIcon } from  '../../img/ClockRed.svg';
 
 import '../../img/Fonts.css'
 
@@ -85,7 +86,6 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
 
     useEffect(()=>{
-        console.log(answer)
     }, [answer])
 
 
@@ -101,7 +101,6 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
             "lvlType": "single30"
           })
         .then(async function (response) {
-            console.log(response.data.data)
 			setIsCounting(true)
             setAnswer({
                 "id": response.data.data.id,
@@ -113,7 +112,6 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 			setPopout(null)
         })
         .catch(function (error) {
-            console.warn(error);
         });
     }
  
@@ -191,19 +189,24 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
 	 
 			<div style={{height: 30, marginTop: 12}} className='single-clock-div'>
-					<ClockIcon width={16} height={16} className='multiplayer-title-return'
-							style={{
-								display:'inline-block', 
-								paddingLeft:5,
-								marginTop: 3
-							}}
-					/>
+				{seconds>5?
+				<ClockIcon width={16}   height={16} className='multiplayer-title-return'
+					style={{
+						display: 'inline-block',
+						paddingLeft: 5,
+						marginTop: 3, }}/>:
+				<RedClockIcon width={16}   height={16} className='multiplayer-title-return'
+					style={{
+						display: 'inline-block',
+						paddingLeft: 5,
+						marginTop: 3, }}/>}
 					<Title
 					className='multiplayer-title-code'
 					style={{
 						display:'inline-block', 
 						paddingLeft:5, 
 						color: '#99A2AD',
+						color: seconds>5?'#99A2AD':'#FF2525',
 						fontSize: 14}} ><span>{minutes}</span><span>:</span><span>{seconds}</span></Title>
 					
 			</div>
@@ -231,8 +234,6 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
                             if(!first){
 								if(gameData){
-									console.log(gameData)
-
 									const newItem = {
 										"id": gameData.tasks[taskNumber].id,
 										"answer": gameData.tasks[taskNumber].answers[index]

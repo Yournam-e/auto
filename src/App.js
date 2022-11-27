@@ -100,9 +100,6 @@ const App = () => {
 	const [lvlData, setLvlData] = useState()
 	  
 
-	useEventListener("online", () => { 
-		console.log('online')
-	})
 
 
 
@@ -115,13 +112,9 @@ const App = () => {
 	client.joinedRoom = ({ users }) => {
 		async function joinFunction(){
 			await setPopout(<ScreenSpinner size='large' />)
-			console.debug("joinedRoom", users);
 
-			if(connectType === 'join' &&  users.length === 1){
-				console.log('такого лобби не существует')
-			}
-		
-			await users!==0? updatePlayersList(users): console.log('ok')
+			
+			await users!==0? updatePlayersList(users): console.log('')
 
 			await setPlayersId(null)
 
@@ -132,7 +125,6 @@ const App = () => {
 				//setPlayersId([...playersId, item.userId]);
 				newArr.push(item.userId)
 			}
-			await console.log(newArr)
 			await setPlayersId(newArr)
 			setPopout(null)
 		}
@@ -143,14 +135,12 @@ const App = () => {
 
 
 	client.leftRoom = ({ userId }) => {
-		console.debug("leftRoom", userId);
 	};
 
 	  
 
 	  
 	client.gameStarted = ({task, answers, id }) => {
-		console.debug("gameStarted", answers, task, id);
 		setTaskInfo(task)
 		setAnswersInfo(answers)
 		async function lol(){
@@ -162,24 +152,17 @@ const App = () => {
 	  
 	useEffect(()=>{
 
-		if(themeColors === 'light'){
-			console.log('светлая')
-		}else{
-			console.log('темная')
-		}
+
 
 	}, [themeColors])
 
 
 	useEffect(()=>{
 		setPanelsHistory([...panelsHistory, activePanel])
-		console.log(activePanel)
-		console.log(panelsHistory)
 	}, [activePanel])
 
 
 	useEffect(()=>{
-		console.log(timeFinish)
 	}, [timeFinish])
 
 	useEffect(() => {
@@ -197,7 +180,6 @@ const App = () => {
 					setActiveStory('single')
 				}
 				if(e.state.activePanel === 'mp'){
-					console.log("нынешняя panel" + activePanel)
 					setActivePanel('menu')
 					setActiveStory('multiplayer')
 				}
@@ -210,12 +192,9 @@ const App = () => {
 					notSave()
 				}
 				if(e.state.activePanel === 'r'){
-					console.log('неи')
 					 
 				}
 			}
-			console.log(e.state)
-			console.log(activePanel)
 		
 	});
 		
@@ -256,10 +235,9 @@ const App = () => {
 			})
 			.catch((error) => {
 				// Ошибка
-				console.log(error);
 			});
 
-			await console.log(user) 
+
 		}
 		fetchData();
 

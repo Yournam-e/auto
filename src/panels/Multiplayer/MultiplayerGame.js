@@ -23,7 +23,7 @@ import { useUserId } from '../../hooks/useUserId';
 
 
 import { ReactComponent as ClockIcon } from  '../../img/Сlock.svg';
-
+import { ReactComponent as RedClockIcon } from  '../../img/ClockRed.svg';
 
 const MultiplayerGame = ({ id, go, count, fetchedUser,
 	setActivePanel, setPopout, gameInfo, setGameInfo,
@@ -47,7 +47,6 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 
 	client.gameFinished = ({ game }) => {
-		console.debug("gameFinished", game);
 		setPopout(null)
 		setGameInfo(null)
 		setMpGameResults([])
@@ -79,7 +78,6 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 	client.nextTask = ({ answers, task, id }) => {
 		async function newTask(){
-			await console.debug("nextTask", answers, task, id);
 			await setGameInfo({ ...gameInfo, taskId: id })
 			await setAnswersInfo(answers);
 			await setTaskInfo(task);
@@ -149,19 +147,21 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 					<div style={{ height: 30, marginTop: 12 }} className='single-clock-div'>
 						
-						<ClockIcon width={16} height={16} className='multiplayer-title-return'
+						{seconds>5?<ClockIcon width={16}   height={16} className='multiplayer-title-return'
 							style={{
 								display: 'inline-block',
 								paddingLeft: 5,
-								marginTop: 3
-							}}
-						/>
+								marginTop: 3, }}/>:<RedClockIcon width={16}   height={16} className='multiplayer-title-return'
+								style={{
+									display: 'inline-block',
+									paddingLeft: 5,
+									marginTop: 3, }}/>}
 						<Title
 							className='multiplayer-title-code'
 							style={{
 								display: 'inline-block',
 								paddingLeft: 5,
-								color: '#99A2AD',
+								color: seconds>5?'#99A2AD':'#FF2525',
 								fontSize: 14
 							}} ><span>{minutes}</span><span>:</span><span>{seconds}</span></Title>
 
@@ -189,9 +189,6 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 									onClick={() => {
 										//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
 										async function callNextTask(){
-											await console.log(gameInfo)
-											await console.log('aaaaa')
-											await console.log(answersInfo)
 											await answerTask(gameInfo.roomId, value, gameInfo.taskId)
 											//setPopout(<ScreenSpinner size='large' />)
 										}

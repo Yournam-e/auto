@@ -91,7 +91,6 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 		}else{
 			setCardsStyle('min')
 		}
-		console.log(pageWidth)
 	}, [])
 
 
@@ -107,15 +106,11 @@ const LevelCard = ({number, lvlsInfo, setPopout, setActivePanel, setLvlNumber, s
 				
 
 				lvlsInfo&&lvlsInfo.map((item, index)=>{
-					console.log('oook' + index)
 					if(item.lvlType === devideType(number)){
-						console.log("нашел")
 						try{
 							axios.delete(`https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`)
 							.then(async function (response) {
 								await setReady(true)
-								console.log(response.data.data)
-								console.log('удалил')
 							})
 							.catch(function () { 
 							});

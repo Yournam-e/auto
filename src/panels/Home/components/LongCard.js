@@ -17,15 +17,11 @@ const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo, themeColo
 	function checkToDelete(){
 		lvlsInfo&&lvlsInfo.map((item, index)=>{
 
-			console.log(item)
-			console.log('Длина массива ' + lvlsInfo.length)
-			
-			console.log('Длина indexc ' + index)
+
 			
 			if(item.lvlType === 'single30'){
 				axios.delete(`https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`)
 				.then(async function (response) {
-					console.log(response.data.data)
 				})
 				.catch(function (error) {
 					console.warn(error);

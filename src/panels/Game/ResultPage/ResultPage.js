@@ -138,19 +138,14 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 	function checkToDelete(){
 		lvlsInfo&&lvlsInfo.map((item, index)=>{
 
-			console.log(item)
-			console.log('Длина массива ' + lvlsInfo.length)
 			
-			console.log('Длина indexc ' + index)
 			
 			if(item.lvlType === 'single30'){
 				axios.delete(`https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`)
 				.then(async function (response) {
-					console.log(response.data.data) 
 					setPopout(null)
 				})
 				.catch(function (error) {
-					console.warn(error);
 				});
 			}
 
@@ -177,7 +172,6 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 						}})
 						.then((friendsData) => { 
 							  if (friendsData.response) {
-								console.log(friendsData.response)
 								setFriendsIds(friendsData.response)
 								setTokenAvailability(true)
 								setPopout(null)
@@ -215,8 +209,6 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				{}
 			)
 
-			console.log(params.vk_access_token_settings)
-			console.log(params )
 			getIds(true)
 			 
 		
@@ -269,7 +261,6 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 			"ids": friendsIds.items
 		  	})
 			.then(async function (response) {
-				console.log(response.data)
 				setFriendsResult(response.data)
 				for await (const item of response.data.data){
 					if(item.user.userId === fetchedUser.id){
@@ -280,10 +271,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				
 			})
 			.catch(function (error) {
-				console.warn(error);
 			});
-			console.log(friendsIds)
-
 
 		}
 
@@ -320,16 +308,13 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 						
 					}
 				}
-				await console.log(res.data.data)
 				await setPopout(null)
 			})
 			.catch(function (error) {
-				console.warn(error);
 			});
 			
 		})
 		.catch(function (error) {
-			console.warn(error);
 		});
 
 
@@ -467,7 +452,6 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 						<Button 
 							onClick={(e)=>{
 								go(e)
-								console.log('ask')
 							}}
 							data-to='menu'
 							size="l"

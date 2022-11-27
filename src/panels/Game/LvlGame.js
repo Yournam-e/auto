@@ -25,6 +25,7 @@ import axios from 'axios';
 
 import { ReactComponent as ClockIcon } from  '../../img/Сlock.svg';
 
+import { ReactComponent as RedClockIcon } from  '../../img/ClockRed.svg';
 const LvlGame = ({ id, go,
 	count, setCount,
 	setActivePanel, setPopout,
@@ -57,12 +58,7 @@ const LvlGame = ({ id, go,
 	const seconds = getPadTime(timeLeft - minutes * 60); //секунды
 
 
-	window.addEventListener('online', ()=>{
-		  console.log('не оффлайн')
-	});
-	window.addEventListener('offline',()=>{
-		console.log('оффлайн')
-	});
+	
 	
 	function devideType(){
 		switch (lvlNumber) {
@@ -104,7 +100,6 @@ const LvlGame = ({ id, go,
 			setPopout(null)
         })
         .catch(function (error) {
-            console.warn(error);
         });
     }
 
@@ -226,19 +221,22 @@ const LvlGame = ({ id, go,
 	
 		 
 				<div style={{height: 30, marginTop: 12}} className='single-clock-div'>
-						<ClockIcon width={16} height={16} className='multiplayer-title-return'
+					{seconds>5?<ClockIcon width={16}   height={16} className='multiplayer-title-return'
+							style={{
+								display: 'inline-block',
+								paddingLeft: 5,
+								marginTop: 3, }}/>:<RedClockIcon width={16}   height={16} className='multiplayer-title-return'
 								style={{
-									display:'inline-block', 
-									paddingLeft:5,
-									marginTop: 3
-								}}
-						/>
+									display: 'inline-block',
+									paddingLeft: 5,
+									marginTop: 3, }}/>}
 						<Title
 						className='multiplayer-title-code'
 						style={{
 							display:'inline-block', 
 							paddingLeft:5, 
 							color: '#99A2AD',
+							color: seconds>5?'#99A2AD':'#FF2525',
 							fontSize: 14}} ><span>{minutes}</span><span>:</span><span>{seconds}</span></Title>
 						
 				</div>
@@ -263,11 +261,6 @@ const LvlGame = ({ id, go,
 								
 							}} 
 							onClick={()=>{
-								if (navigator.onLine) {
-									console.log('online');
-								  } else {
-									console.log('offline');
-								  }
 								//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
 								if(first === true){
 									setFirst(false)
@@ -279,7 +272,6 @@ const LvlGame = ({ id, go,
 											async function finished(){
 												
 												await setTimeFinish(Date.now())
-												await console.log(Date.now())
 
 												const checkRight = await decideTask(taskNumber, lvlData.tasks[taskNumber].task[0],
 													lvlData.tasks[taskNumber].task[1], lvlData.tasks[taskNumber].task[2],
@@ -329,7 +321,7 @@ const LvlGame = ({ id, go,
 												"complete":checkRight[0],
 											}])
 	
-											console.log(allTasks)
+											
 	
 											setTaskNumber(taskNumber+1)
 		

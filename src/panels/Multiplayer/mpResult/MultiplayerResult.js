@@ -34,20 +34,14 @@ const MultiplayerResult = ({ id, go,
 
 
 
-	console.log(mpGameResults)
-
-	console.log(playersList)
 
 	const [place, setPlace] = useState(5)
 
 	useEffect(() => {
 		if (mpGameResults) {
 			const newArr = mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? -1 : 1);
-			console.log(newArr)
 			setFriendList(newArr)
 		}
-
-		console.log(friendList)
 
 
 		
@@ -55,8 +49,6 @@ const MultiplayerResult = ({ id, go,
 
 
 	useEffect(()=>{
-
-		console.log(friendList)
 		if (friendList) {
 			devideArray()
 		}
@@ -73,13 +65,9 @@ const MultiplayerResult = ({ id, go,
 
 
 				if(i===index){
-					console.log("для "+ index)
 					return index
 				}else{
 					if(friendList[i].rightResults === rights){
-						console.log('по индексу ' + index)
-						console.log("по i " + i)
-						console.log(friendList[i].rightResults)
 						return i 
 					} 
 				}
@@ -104,9 +92,6 @@ const MultiplayerResult = ({ id, go,
 				}else{
 					setPlace(index)
 				}
-				console.log(friendList)
-				console.log(index)
-				
 			}
 
 		})
@@ -122,7 +107,6 @@ const MultiplayerResult = ({ id, go,
 
 	client.roomCreated = ({roomId}) =>{
 
-		console.log('cоздана комната' + roomId)
 
 		async function onRoomCreate (){
 			await setHaveHash(false)
