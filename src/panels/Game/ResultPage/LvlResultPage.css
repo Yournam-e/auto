@@ -58,7 +58,7 @@
     right: 0;
     height: 20%;
     bottom: 0;
-    backdrop-filter: blur(1.5px);
+    backdrop-filter: blur(5.5px);
     
   }
 

@@ -6,7 +6,8 @@ import {
 	Button,
 	PanelHeaderClose, 
 	ModalPageHeader,
-    Div
+    Div,
+    Alert
  } from '@vkontakte/vkui';
 
 
@@ -17,16 +18,18 @@ import { Icon24DismissDark } from '@vkontakte/icons';
 
 import './style.css'
 
+import axios from 'axios';
 
 
 import InputMinimalist from './InputMinimalist'
 import { joinRoom } from '../../sockets/game';
+import { qsSign } from '../../hooks/qs-sign';
  
 
 const ModalInputCode = ({ id, setGameInfo, gameInfo,
     setJoinCode, setConnectType,
     setActiveModal, platform,
-    joinCode}) =>{
+    joinCode, setPopout}) =>{
 
     const textInput = React.createRef();
 
@@ -37,13 +40,47 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,
 
     
     async function getId(){
-        const user = await bridge.send('VKWebAppGetUserInfo'); 
-        //await connectRoom(qsSign, textInput.current.value, user.id);
-        joinRoom(textInput.current.state.value, user.id)
-        setGameInfo({ ...gameInfo, roomId: textInput.current.state.value})
-        setConnectType('join')
-        setJoinCode(textInput.current.state.value)
-        setActiveModal(null)
+        
+        axios.get(`https://showtime.app-dich.com/api/plus-plus/room/exists/${textInput.current.state.value}${qsSign}`) //получил инфу о лвлах
+			.then(async function (res) {
+				await console.log(res.data.data) 
+                if(res.data.data === true){
+                    const user = await bridge.send('VKWebAppGetUserInfo'); 
+                    //await connectRoom(qsSign, textInput.current.value, user.id);
+                    joinRoom(textInput.current.state.value, user.id)
+                    setGameInfo({ ...gameInfo, roomId: textInput.current.state.value})
+                    setConnectType('join')
+                    setJoinCode(textInput.current.state.value)
+                    setActiveModal(null)
+                }else{
+                    setPopout(
+                        <Alert
+                          actions={[
+                            {
+                              title: "Ок",
+                              mode: "destructive",
+                              autoclose: true,
+                              action: () => {
+                              },
+                            },
+                          ]}
+                          actionsLayout="vertical"
+                          onClose={()=>{
+                            setPopout(null)
+                          }}
+                          header="Внимание"
+                          text="Лобби не существует или было удалено"
+                        />
+                      );
+                }
+			})
+			.catch(function (error) {
+				console.warn(error);
+			});
+
+
+
+       
     }
  
 
@@ -54,7 +91,8 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,
         <ModalPageHeader
             after={platform === 'ios'||
             platform === 'android'||
-            platform === 'mobile-web'&&<Icon24DismissDark onClick={()=>{}} />}
+            platform === 'mobile-web'&&<Icon24DismissDark onClick={()=>{
+                setActiveModal(null)}} />}
             >
             Введите код
         </ModalPageHeader>

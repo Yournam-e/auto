@@ -67,6 +67,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 	useEffect(()=>{
 
 		
+		window.history.pushState({activePanel: 'lvlGame'}, 'lvlGame');  
 
         setPopout(null)
 

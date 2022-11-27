@@ -31,7 +31,7 @@ const LvlGame = ({ id, go,
 	lvlNumber, ready,
 	setLvlResult, lvlResult,
 	setTimeFinish,themeColors,
-	setAllTasks,allTasks }) => {
+	setAllTasks,allTasks, }) => {
 	
 	 
 	
@@ -132,10 +132,11 @@ const LvlGame = ({ id, go,
 		//createLvl()
 		async function lol(){
 			await setPopout(<ScreenSpinner size='large' />)
-			await setTimeout(() =>setPopout(null), 1000);
+			setPopout(null)
 		}
 
 		
+		window.history.pushState({activePanel: 'lvlGame'}, 'lvlGame');  
 
 
 		lol()

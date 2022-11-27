@@ -34,9 +34,8 @@ const Home = ({
 	lvlNumber,
 	themeColors,
 	setPanelsHistory,
-	panelsHistory}) => {
-
-	const [lvlsInfo, setLvlsInfo] = useState(null)
+	panelsHistory,
+	lvlsInfo, setLvlsInfo}) => {
 
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
 
@@ -140,7 +139,7 @@ const Home = ({
 	
 	useEffect(()=>{
 
-		setPanelsHistory([...panelsHistory, activePanel])
+		
 		window.history.pushState({activePanel: 'home'}, 'home');
 
 

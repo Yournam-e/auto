@@ -45,7 +45,7 @@ const App = () => {
 		roomId: null,
 		taskId: null
 	});
-	const [taskInfo, setTaskInfo] = useState(); //данные о примере
+	const [taskInfo, setTaskInfo] = useState(null); //данные о примере
 	const [answersInfo, setAnswersInfo] = useState(); // ответы
 
 
@@ -58,6 +58,7 @@ const App = () => {
 	const [playersList, updatePlayersList] = useState([]); //информация о юзерах в лобби
 	const [connectType, setConnectType] = useState('host') //тип подключения, host или join
 	const [itAgain, setAgain] = useState(false) //перезапуск игры или нет
+	const [notAdd, setNotAdd] = useState(false)
 
 
 	const [haveHash, setHaveHash] = useState(false)
@@ -70,6 +71,9 @@ const App = () => {
 	//single 
 	const [singleType, setSingleType] = useState()
 	const [localTask, setLocalTask] = useState([]) 
+	
+
+	const [lvlsInfo, setLvlsInfo] = useState(null)
 
 	const [timeFinish, setTimeFinish] = useState(0)
 
@@ -168,7 +172,9 @@ const App = () => {
 
 
 	useEffect(()=>{
+		setPanelsHistory([...panelsHistory, activePanel])
 		console.log(activePanel)
+		console.log(panelsHistory)
 	}, [activePanel])
 
 
@@ -184,6 +190,7 @@ const App = () => {
 		
 		window.addEventListener('popstate', (e) => {
 
+			setActiveModal(null)
 			if(e.state){
 				if(e.state.activePanel === 'home'){
 					setActivePanel('menu')
@@ -195,30 +202,12 @@ const App = () => {
 					setActiveStory('multiplayer')
 				}
 				if(e.state.activePanel === 'mpGame'){
-					console.log('activeStory')
-					setPopout(
-						<Alert
-						  actions={[
-							{
-							  title: "Завершить",
-							  mode: "destructive",
-							  autoclose: true,
-							  action: () => setActivePanel('menu') && setActiveStory('multiplayer') &&window.history.go(-1),
-							},
-							{
-							  title: "Отмена",
-							  autoclose: true,
-							  mode: "cancel",
-							},
-						  ]}
-						  actionsLayout="vertical"
-						  onClose={()=>{
-							setPopout(null)
-						  }}
-						  header="Подтвердите действие"
-						  text="Вы уверены, что хотите завершить игру?"
-						/>
-					  );
+					async function notSave(){
+						await setNotAdd(true)
+						await setActivePanel('menu')
+						setActiveStory('multiplayer')
+					}
+					notSave()
 				}
 				if(e.state.activePanel === 'r'){
 					console.log('неи')
@@ -330,7 +319,8 @@ const App = () => {
 		  setJoinCode={setJoinCode}
 		  platform={platform}
 		  onOpened={handleOpen}
-		  joinCode={joinCode}/>
+		  joinCode={joinCode}
+		  setPopout={setPopout}/>
 		  <ModalQRCode id='inputCodeQR' setActiveModal={setActiveModal} joinCode={joinCode} onOpened={handleOpen}/>
 		</ModalRoot>
 	  );
@@ -382,7 +372,9 @@ const App = () => {
 												themeColors={themeColors}
 												setPanelsHistory={setPanelsHistory}
 												activePanel={activePanel}
-												panelsHistory={panelsHistory} />
+												panelsHistory={panelsHistory}
+												lvlsInfo={lvlsInfo}
+												setLvlsInfo={setLvlsInfo} />
 											</View>
 											
 											<View id="multiplayer" activePanel="multiplayer">
@@ -407,7 +399,8 @@ const App = () => {
 												setPanelsHistory={setPanelsHistory}
 												activePanel={activePanel}
 												panelsHistory={panelsHistory}
-												itAgain={itAgain}/>
+												itAgain={itAgain}
+												notAdd={notAdd}/>
 											</View>
 										
 										</Epic>
@@ -431,7 +424,9 @@ const App = () => {
 									timeFinish={timeFinish}
 									themeColors={themeColors}
 									allTasks={allTasks}
-									setAllTasks={setAllTasks} />
+									setAllTasks={setAllTasks}
+									lvlsInfo={lvlsInfo}
+									setReady={setReady} />
 									
 								
 

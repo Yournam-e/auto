@@ -42,7 +42,8 @@ const Multiplayer = ({
 	themeColors,
 	setPanelsHistory,
 	panelsHistory,
-	itAgain
+	itAgain,
+	notAdd
 	
  }) => {
 
@@ -101,9 +102,9 @@ const Multiplayer = ({
 
 
 	useEffect(() => {
-
-		window.history.pushState({activePanel: 'mp'}, 'mp'); 
-		setPanelsHistory([...panelsHistory, activePanel]) 
+		if(notAdd === false){
+			window.history.pushState({activePanel: 'mp'}, 'mp');  
+		}
 
 		
 		if(haveHash){
@@ -348,8 +349,7 @@ const Multiplayer = ({
 								onClick={() => {
 									setComplexity("hard")
 								}}
-							>
-								Сложно
+							>Сложно
 							</Button>
 						</ButtonGroup>
 					</Div>}

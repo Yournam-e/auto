@@ -65,6 +65,34 @@ const MultiplayerResult = ({ id, go,
 
 
 
+	function countPosition(rights, index) {
+
+
+		if(index !== 0 ){
+			for(var i =0; ; i++){
+
+
+				if(i===index){
+					console.log("для "+ index)
+					return index
+				}else{
+					if(friendList[i].rightResults === rights){
+						console.log('по индексу ' + index)
+						console.log("по i " + i)
+						console.log(friendList[i].rightResults)
+						return i 
+					} 
+				}
+				
+			}
+		}else{
+			return 0
+		}
+
+		
+
+	}
+
 
 	function devideArray() {
 
@@ -84,6 +112,9 @@ const MultiplayerResult = ({ id, go,
 		})
 
 	}
+ 
+
+
  
 
 
@@ -117,7 +148,7 @@ const MultiplayerResult = ({ id, go,
 				<div style={{ marginLeft: 'auto', marginRight: 'auto', marginTop: 16 }}>
 
 					<Title className='result-task-title'>
-						Вы заняли<span style={{ color: '#1984FF', paddingRight: 5, paddingLeft: 5 }}>{mpGameResults && place + 1} -e место!</span>
+						Вы заняли<span style={{ color: '#1984FF', paddingRight: 5, paddingLeft: 5 }}>{mpGameResults && place + 1}-e место!</span>
 					</Title>
 
 				</div>
@@ -125,7 +156,7 @@ const MultiplayerResult = ({ id, go,
 				<div style={{ marginLeft: 18, marginRight: 18, marginTop: 16 }}>
 
 					{mpGameResults && fetchedUser &&
-						<Title className='result-task-text'>Правильных ответов: {mpGameResults.players.map((value) => {
+						<Title className='result-task-text'>Набрано баллов: {mpGameResults.players.map((value) => {
 							if (value.userId === fetchedUser.id) {
 								return value.rightResults
 							}
@@ -150,7 +181,7 @@ const MultiplayerResult = ({ id, go,
 												before={<div style={{ width: 100 }}>
 											<Avatar size={56} className='friendsAvatar' src={inItem.avatar} />
 											<Title style={{ verticalAlign: 'middle' }} className='result-friend-position'>
-												#{idx + 1}
+												#{countPosition(item.rightResults, idx) + 1}
 											</Title></div>}
 											>
 											<div key={inItem}>

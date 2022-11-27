@@ -238,7 +238,7 @@ const LvlResultPage = ({ id, go,
 
  
 
-        <div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: document.body.pageYOffset}}>
+        <div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: document.pageYOffset}}>
 
             <div className='main-div-resilt-page'>
             <div className='lvl-res-headDiv'>
@@ -322,7 +322,7 @@ const LvlResultPage = ({ id, go,
                                 
                                 >
                                 
-                                <Title level='2'className='inCell'>{item.number1}{item.sign}{item.number3}={item.pcAnswer}</Title>
+                                <Title level='2'className='inCell' style={{color: themeColors === 'light'?'#000':'#fff'}}>{item.number1}{item.sign}{item.number3}={item.pcAnswer}</Title>
                                 </Cell>
                             )
                         }
@@ -343,7 +343,7 @@ const LvlResultPage = ({ id, go,
 
 
 
-            <div className='lvl-res-absolute-div'>
+            <div className='lvl-res-absolute-div' style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20" }}>
                 <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
                     <div className="result-buttonRetry-div">
                         {

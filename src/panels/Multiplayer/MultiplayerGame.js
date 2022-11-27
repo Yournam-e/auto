@@ -29,7 +29,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 	setActivePanel, setPopout, gameInfo, setGameInfo,
 	taskInfo, setTaskInfo, setAnswersInfo, answersInfo,
 	setMpGameResults,themeColors,joinCode,
-	setActiveStory }) => {
+	setActiveStory, setNowInGame }) => {
 
 
 
@@ -61,8 +61,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 	useEffect(() => {
 
-		window.history.pushState({activePanel: 'mpGame'}, 'mpGame');
-		window.history.pushState({activePanel: 'r'}, 'r');
+		window.history.pushState({activePanel: 'mpGame'}, 'mpGame'); 
 	}, [])
 
 	useEffect(() => {
@@ -93,127 +92,125 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 
 		<Panel id={id}>
+		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+			<PanelHeader 
+			style={{backgroundColor: 'transparent' }} 
+			transparent={true}
+			shadow={false}
+			separator={false}
+			before={
+				<PanelHeaderButton
+				aria-label='Выйти из игры'
+				onClick={()=>{
+					setPopout(
+						<Alert
+						actions={[
+							{
+							title: "Завершить",
+							mode: "destructive",
+							autoclose: true,
+							action: () => setActivePanel('menu') && setActiveStory('multiplayer') &&leaveRoom(joinCode),
+							},
+							{
+							title: "Отмена",
+							autoclose: true,
+							mode: "cancel",
+							},
+						]}
+						actionsLayout="vertical"
+						onClose={()=>{
+							setPopout(null)
+						}}
+						header="Подтвердите действие"
+						text="Вы уверены, что хотите завершить игру?"
+						/>
+					);
+				
+				}}>
+				<Icon28Cancel />
+				</PanelHeaderButton>
+			}
+			>
+			</PanelHeader>
 
-		<PanelHeader 
-		style={{backgroundColor: 'transparent' }} 
-		transparent={true}
-		shadow={false}
-		separator={false}
-		before={
-			<PanelHeaderButton
-			aria-label='Выйти из игры'
-			onClick={()=>{
-				setPopout(
-					<Alert
-					actions={[
-						{
-						title: "Завершить",
-						mode: "destructive",
-						autoclose: true,
-						action: () => setActivePanel('menu') && setActiveStory('multiplayer') &&leaveRoom(joinCode),
-						},
-						{
-						title: "Отмена",
-						autoclose: true,
-						mode: "cancel",
-						},
-					]}
-					actionsLayout="vertical"
-					onClose={()=>{
-						setPopout(null)
-					}}
-					header="Подтвердите действие"
-					text="Вы уверены, что хотите завершить игру?"
-					/>
-				  );
-			
-			}}>
-			  <Icon28Cancel />
-			</PanelHeaderButton>
-		  }
-		>
-		</PanelHeader>
-
-
-			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
 
 			<div className='game-div-margin'>
-				<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
-				<div className='equationDiv'>
-					{taskInfo &&
-					<div className='temporaryGame--inDiv'>
-					<span 
-					level="1"
-					style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}
-					className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span>
-					</span>
-					</div>}
+					<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>Выбери правильный ответ:</Title>
+					<div className='equationDiv'>
+						{taskInfo &&
+						<div className='temporaryGame--inDiv'>
+						<span 
+						level="1"
+						style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33'}}
+						className='equation'>{taskInfo[0]}{taskInfo[2]}{taskInfo[1]}=<span className='equationMark'>?</span>
+						</span>
+						</div>}
+					</div>
+
+					<div style={{ height: 30, marginTop: 12 }} className='single-clock-div'>
+						
+						<ClockIcon width={16} height={16} className='multiplayer-title-return'
+							style={{
+								display: 'inline-block',
+								paddingLeft: 5,
+								marginTop: 3
+							}}
+						/>
+						<Title
+							className='multiplayer-title-code'
+							style={{
+								display: 'inline-block',
+								paddingLeft: 5,
+								color: '#99A2AD',
+								fontSize: 14
+							}} ><span>{minutes}</span><span>:</span><span>{seconds}</span></Title>
+
+					</div>
+
+
+					<Div className='container'>
+
+						{answersInfo && answersInfo.map((value, index) => {
+							return (
+
+								<Button
+									stretched
+									size="l"
+									sizeY='regular'
+									mode="neutral"
+									className='item'
+									id={'button' + index}
+									key={index}
+									style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33',  color:  themeColors === 'light'?'#000':'#F0F1F5'}}
+									onPointerDown={(e) => {
+
+
+									}}
+									onClick={() => {
+										//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
+										async function callNextTask(){
+											await console.log(gameInfo)
+											await console.log('aaaaa')
+											await console.log(answersInfo)
+											await answerTask(gameInfo.roomId, value, gameInfo.taskId)
+											//setPopout(<ScreenSpinner size='large' />)
+										}
+										callNextTask()
+										//setIsCounting(true)
+									}} >
+									{answersInfo[index]}
+								</Button>
+
+
+
+							)
+
+
+						})}
+
+					</Div>
 				</div>
-
-				<div style={{ height: 30, marginTop: 12 }} className='single-clock-div'>
-					
-					<ClockIcon width={16} height={16} className='multiplayer-title-return'
-						style={{
-							display: 'inline-block',
-							paddingLeft: 5,
-							marginTop: 3
-						}}
-					/>
-					<Title
-						className='multiplayer-title-code'
-						style={{
-							display: 'inline-block',
-							paddingLeft: 5,
-							color: '#99A2AD',
-							fontSize: 14
-						}} ><span>{minutes}</span><span>:</span><span>{seconds}</span></Title>
-
-				</div>
-
-
-				<Div className='container'>
-
-					{answersInfo && answersInfo.map((value, index) => {
-						return (
-
-							<Button
-								stretched
-								size="l"
-								sizeY='regular'
-								mode="neutral"
-								className='item'
-								id={'button' + index}
-								key={index}
-								style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33',  color:  themeColors === 'light'?'#000':'#F0F1F5'}}
-								onPointerDown={(e) => {
-
-
-								}}
-								onClick={() => {
-									//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
-									async function callNextTask(){
-										await console.log(gameInfo)
-										await console.log('aaaaa')
-										await console.log(answersInfo)
-										await answerTask(gameInfo.roomId, value, gameInfo.taskId)
-										//setPopout(<ScreenSpinner size='large' />)
-									}
-									callNextTask()
-									//setIsCounting(true)
-								}} >
-								{answersInfo[index]}
-							</Button>
-
-
-
-						)
-
-
-					})}
-
-				</Div>
-			</div>
-			</div>
+		</div>
 		</Panel>
 	);
 }

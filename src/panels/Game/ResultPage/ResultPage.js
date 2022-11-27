@@ -201,7 +201,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 
 	async function сheckFriends(){
 
-			var params = window
+			var params = await window
 			.location
 			.search
 			.replace('?','')
@@ -215,11 +215,9 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				{}
 			)
 
-			console.log( params.vk_access_token_settings.includes('friends'))
-
-			if(params.vk_access_token_settings.includes('friends') === true){
-				getIds(true)
-			}
+			console.log(params.vk_access_token_settings)
+			console.log(params )
+			getIds(true)
 			 
 		
 
@@ -250,7 +248,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				{}
 			)
 
-			params.vk_access_token_settings.includes('friends')?resolve(false): resolve(true);
+			params.vk_access_token_settings.includes('friends')?resolve(true): resolve(true);
 				
 		  });
 		  promise.then(result => result === true? getIds(result):setPopout(null))
@@ -341,19 +339,16 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 	}, [])
 
 	return(
-
-
 		
- 
 		<Panel id={id} className='resultPagePanel'>
-			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20"}} className='full-div'>
 			
 			<Div className='check-circle-outline'>
 				<div>
 					<Icon56CheckCircleOutline fill="#1A84FF" style={{marginLeft: 'auto', marginRight: 'auto'}}/>
 				</div>
 				<div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 16}}>
-					{<Title className='result-task-title'>{right?`${decOfNum(right, ['задачу', 'задачи', ' задач'])}`:'0 задач'}</Title>}
+					{<Title className='result-task-title'>{right?`${decOfNum(right, ['задача', 'задачи', 'задач'])}`:'0 задач'}</Title>}
 					
 				</div>
 
@@ -384,7 +379,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					>Поделиться в истории</Button>
 				</div>
 				<p className='hide'>content</p>
-				{tokenAvailability === false && 
+				{tokenAvailability === true && 
 				<div>
 					<div className='result-task-resTitle-div'>
 						<Title className='result-task-resTitle'>Результаты друзей:</Title>
@@ -417,31 +412,33 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					</List>
 				</div>}
 				
-				{tokenAvailability === true  && 
-				<div className='notFriend-div' style={{ marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}} >
-					<img className='eyes-photo' style={{marginTop: 16}} src={Eyes} width={44} height={44}></img>
+				{tokenAvailability === false  && 
+				<div style={{marginBottom:160}}>
+					<div className='notFriend-div' style={{ marginRight: 'auto',  marginLeft: 'auto', marginTop: 24}} >
+						<img className='eyes-photo' style={{marginTop: 16}} src={Eyes} width={44} height={44}></img>
 
-					<Title level="3" style={{textAlign: 'center'}}>Тут никого нет</Title>
+						<Title level="3" style={{textAlign: 'center'}}>Тут никого нет</Title>
 
-					<Text className='result-getFriend-text' style={{textAlign: 'center'}} >Разрешите доступ к списку друзей, чтобы видеть их результаты</Text>
-					
-					<div className='result-task-button-div'>
-					<Button 
-					className='result-getFriend-button'
-					onClick={()=>{
-						setPopout(<ScreenSpinner size='large' />)
-						getFriendsAndCheck()
-					}}
-					style={{
-						backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
-						color:'#1984FF',
-						borderRadius:25,
-						marginBottom: 24
+						<Text className='result-getFriend-text' style={{textAlign: 'center'}} >Разрешите доступ к списку друзей, чтобы видеть их результаты</Text>
+						
+						<div className='result-task-button-div'>
+						<Button 
+						className='result-getFriend-button'
+						onClick={()=>{
+							setPopout(<ScreenSpinner size='large' />)
+							getFriendsAndCheck()
 						}}
-					mode='accent'
-					size='l'>Разрешить доступ</Button>
-					</div>
+						style={{
+							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
+							color:'#1984FF',
+							borderRadius:25,
+							marginBottom: 24
+							}}
+						mode='accent'
+						size='l'>Разрешить доступ</Button>
+						</div>
 
+					</div>
 				</div>}
 
 				
@@ -492,11 +489,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 			</Div>
 
 
-			</div>
-
-			
-			
-						
+			</div>			
 		</Panel>
 	);
 }
