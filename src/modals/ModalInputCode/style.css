@@ -7,7 +7,6 @@
 }
 
 #inputCode .vkuiInput {
-    width: 119px;
 
     font-family: 'SF Pro Rounded Semibold';
     font-size: 33px;
@@ -19,6 +18,12 @@
 
 #inputCode .vkuiInput input {
     text-align: center;
+    font-family: 'SF Pro Rounded Semibold';
+    font-size: 33px;
+    line-height: 39px;
+    text-align: center;
+    letter-spacing: 2px;
+    color: #99A2AD;
 }
 
 #inputCode .vkuiInput .vkuiFormField__border {

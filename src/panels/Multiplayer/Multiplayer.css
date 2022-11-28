@@ -121,6 +121,10 @@
   margin-right: 2px;
 }
 
+.vkuiTabbar--ios.vkuiTabbar--shadow:before{
+  background: none;
+}
+
 .complexity-button-on-dark{
   padding-top: 6px;
   padding-bottom: 4px;
@@ -150,12 +154,12 @@
 }
 
 .multiplayer-play-button{
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   margin-left:12px;
   margin-right:12px;
 	color:#1984FF;
-	border-radius:25px;
+	border-radius:100px;
 }
 
 .multiplayer-play-group{
@@ -180,7 +184,7 @@
   Dark: white_alpha8 #14FFFFFF
   Light: black_alpha8 #14000000
   */
-  border: 2px dashed rgba(0, 0, 0, 0.08);
+  border: 2px dashed;
   border-radius: 231px; 
   margin-top: 4px;
   margin-bottom: 4px;

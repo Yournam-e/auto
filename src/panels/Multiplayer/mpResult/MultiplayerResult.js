@@ -33,9 +33,40 @@ const MultiplayerResult = ({ id, go,
 
 
 
-
+	const [readyToReplay, setReadyToReplay]= useState(false)
 
 	const [place, setPlace] = useState(5)
+
+	const [timeLeft, setTimeLeft] = useState(10); //время
+	const [isCounting, setIsCounting] = useState(true); //время
+
+
+	useEffect(()=>{
+		console.log(timeLeft)
+		if(timeLeft === 0){
+			if(connectType === 'host'){
+				if(readyToReplay){
+					setReadyToReplay(true)
+					setPlayersId([])
+					createRoom(joinCode)
+					console.log('kkkkk')
+				}
+			}
+	
+		}
+	}, [timeLeft])
+
+
+	useEffect(() => {
+
+
+
+		const interval = setInterval(() => {
+			isCounting && setTimeLeft((timeLeft) => timeLeft >= 1 ? timeLeft - 1 : 0)
+		}, 1000)
+
+	}, [isCounting])
+
 
 	useEffect(() => {
 		if (mpGameResults) {
@@ -54,6 +85,9 @@ const MultiplayerResult = ({ id, go,
 		}
 
 	}, [friendList])
+
+
+	
 
 
 
@@ -103,21 +137,26 @@ const MultiplayerResult = ({ id, go,
  
 
 
+	if(readyToReplay){
+		client.roomCreated = ({roomId}) =>{
 
 
-	client.roomCreated = ({roomId}) =>{
+			async function onRoomCreate (){
+				await setHaveHash(false)
+				await setAgain(true)
+				await joinRoom(roomId)
+				await setJoinCode(roomId)
+				await setActivePanel('menu')
+				console.log('ооок')
+			}
+	
+			
+			onRoomCreate()
+			
+		  };
+	}
 
-
-		async function onRoomCreate (){
-			await setHaveHash(false)
-			await setAgain(true)
-			await joinRoom(roomId)
-			await setJoinCode(roomId)
-			await setActivePanel('menu')
-		}
-		onRoomCreate()
-		
-	  };
+	
 
 	return (
 
@@ -197,25 +236,25 @@ const MultiplayerResult = ({ id, go,
 				<div className='result-absolute-div'>
 
 					<ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
-						{true &&
 						<div className="result-buttonRetry-div">
 						<Button size="l"
 							onClick={() => {
-								setPlayersId([])
-								createRoom(joinCode)
+								
+								setReadyToReplay(true)
+								
 
 							}}
-							before={connectType==='host'?false:<div  className='loaderIcon'>
+							before={readyToReplay?timeLeft?<div  className='loaderIcon'>
 							<Icon16Spinner/>
-							</div>}
-							disabled={connectType === 'join'?true:false}
+							</div>:false:false}
+							disabled={timeLeft?readyToReplay?true:false:true}
 							style={{
 								backgroundColor: '#1A84FF',
 								borderRadius: 100
 							}} className="result-buttonGroup-retry" appearance="accent" stretched>
-							{connectType==='host'?'Сыграть снова':'Ожидание'}
+							{timeLeft?readyToReplay?timeLeft +" сек до начала...":'Сыграть снова ' + timeLeft +" сек":readyToReplay?'Лобби закрыто':'Время вышло'}
 						</Button>
-					</div>}
+					</div>
 						<div className="result-buttonNotNow-div" style={{paddingBottom:21}}>
 							<Button
 								onClick={(e) => {

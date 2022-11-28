@@ -317,19 +317,23 @@ const App = () => {
 											activeStory={activeStory}
 											tabbar={
 												<Tabbar>
-													<TabbarItem
+													<TabbarItem 
 														onClick={onStoryChange}
 														selected={activeStory === "single"}
 														data-story="single"
-														text="Уровни">
-															<Icon28FavoriteOutline />
+														text={<span style={{color: themeColors === 'light'?
+														activeStory === "single"?'#2C2D2E':'#99A2AD':activeStory === "single"?'#C4C8CC':'#76787A'}}>Уровни</span>}>
+															<Icon28FavoriteOutline style={{color: themeColors === 'light'?
+														activeStory === "single"?'#2C2D2E':'#99A2AD':activeStory === "single"?'#C4C8CC':'#76787A'}} />
 													</TabbarItem>
 													<TabbarItem
 														onClick={onStoryChange}
 														selected={activeStory === "multiplayer"}
 														data-story="multiplayer"
-														text="Онлайн">
-															<Icon28Users3Outline />
+														text={<span style={{color: themeColors === 'light'?
+														activeStory === "multiplayer"?'#2C2D2E':'#99A2AD':activeStory === "multiplayer"?'#C4C8CC':'#76787A'}}>Онлайн</span>}>
+															<Icon28Users3Outline style={{color: themeColors === 'light'?
+														activeStory === "multiplayer"?'#2C2D2E':'#99A2AD':activeStory === "multiplayer"?'#C4C8CC':'#76787A'}}/>
 													</TabbarItem>
 												</Tabbar>
 											

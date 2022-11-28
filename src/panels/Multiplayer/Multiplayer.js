@@ -9,19 +9,15 @@ import { Panel, Div,
 	Alert } from '@vkontakte/vkui';
 
 import './Multiplayer.css';
-import { Icon20Sync, Icon20QrCodeOutline, Icon24Cancel,Icon20DoorArrowRightOutline, Icon16Spinner } from '@vkontakte/icons';
+import { Icon20Sync, Icon20QrCodeOutline, Icon24Cancel,Icon20DoorArrowRightOutline, Icon16Spinner, Icon24Play } from '@vkontakte/icons';
 
 import bridge from '@vkontakte/vk-bridge';
-
-
-
 
 import { connectRoom, createRoom, joinRoom, leaveRoom, startGame } from '../../sockets/game';
 import { client } from '../../sockets/receiver';
 import axios from 'axios';
 import { useUserId } from '../../hooks/useUserId';
-import { qsSign } from '../../hooks/qs-sign';
-
+import { qsSign } from '../../hooks/qs-sign'; 
 
 const Multiplayer = ({ 
 	id,
@@ -51,6 +47,9 @@ const Multiplayer = ({
 	const [complexity, setComplexity] = useState("easy")
 
 
+	const [notUserRoom, setNotUserRoom] = useState(false)
+
+
 	var clickTime = 0
 
 
@@ -61,12 +60,14 @@ const Multiplayer = ({
 			setGameInfo({ ...gameInfo, taskId: id})
 		}
 		lol()
+		setNotUserRoom(false)
 		setActivePanel('multiplayerGame')
 	};
 
 	client.roomCreated = ({ roomId }) => {
 		joinRoom(roomId, userId)
 		setJoinCode(roomId)
+		setNotUserRoom(false)
 	};
 
 	
@@ -83,6 +84,7 @@ const Multiplayer = ({
 				await connectRoom(qsSign, response.data.data, userId);
 			}else{
 				await joinRoom(response.data.data, userId);
+				setNotUserRoom(false)
 
 			}
 			
@@ -107,8 +109,46 @@ const Multiplayer = ({
 
 		
 		if(haveHash){
-			setJoinCode(window.location.hash.slice(1))
-			connectRoom(qsSign, window.location.hash.slice(1), userId);
+			axios.post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
+			.then(async function (response) {
+				await setJoinCode(response.data.data)
+				
+				await setGameInfo({ ...gameInfo, roomId: response.data.data})
+					if(window.location.hash.slice(1) === response.data.data){
+						setPopout(
+							<Alert
+							  actions={[
+								{
+								  title: "Выйти",
+								  mode: "destructive",
+								  autoclose: true,
+								  action: () => {
+									setConnectType('host')
+									joinToYourRoom()
+									leaveRoom(fetchedUser.id)
+								  },
+								},
+							  ]}
+							  actionsLayout="vertical"
+							  onClose={()=>{
+								setPopout(null)
+							  }}
+							  header="Внимание"
+							  text="Вы не можете подключиться к своему лобби как гость"
+							/>
+						  );
+					}else{
+						setJoinCode(window.location.hash.slice(1))
+						connectRoom(qsSign, window.location.hash.slice(1), userId);
+						setNotUserRoom(true)
+					}
+				
+				setFirstStart(false)
+				
+			})
+			.catch(function (error) {
+		});
+			
 
 		}else if(itAgain){
 			
@@ -136,7 +176,7 @@ const Multiplayer = ({
 
 
 	useEffect(()=>{
-		if(connectType === 'join' &&playersList.length===1){
+		if(connectType === 'join' &&playersList.length===1 && notUserRoom){
 			setPopout(
 				<Alert
 				  actions={[
@@ -149,11 +189,6 @@ const Multiplayer = ({
 						joinToYourRoom()
 						leaveRoom(fetchedUser.id)
 					  },
-					},
-					{
-					  title: "Остаться",
-					  autoclose: true,
-					  mode: "cancel",
 					},
 				  ]}
 				  actionsLayout="vertical"
@@ -304,7 +339,7 @@ const Multiplayer = ({
 					{fetchedUser && [0,1,2,3].map((item, index) => (
 						<Cell
 							key={index} 
-							before={playersList[index]?<Avatar src={playersList[index].avatar} />:<div className='noneUser' />  }
+							before={playersList[index]?<Avatar src={playersList[index].avatar} />:<div style={{borderColor:themeColors === 'light'?'#E3E3E6':'#38383B'}} className='noneUser' />  }
 							disabled={index === 0 ? true : false || playersList[index]?false:true}
 						>
 							{playersList[index]? <Title level="3" weight="2" className='player-name-on'>{playersList[index].name}</Title> : <Title level="3" weight="3" className='player-name-off'>Пусто</Title>}
@@ -362,8 +397,8 @@ const Multiplayer = ({
 						<Button size="l" 
 						className='multiplayer-play-button' appearance="accent"
 						disabled={connectType==='host'?false:true} 
-						style={{background:'#1A84FF'}}
-						before={connectType==='host'?false:<div  className='loaderIcon'>
+						style={{background:'#1A84FF', color: '#fff'}}
+						before={connectType==='host'?<Icon24Play />:<div  className='loaderIcon'>
 							<Icon16Spinner/>
 						</div>}
 						stretched

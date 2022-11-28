@@ -132,7 +132,7 @@ const ModalInputCode = ({ id, setGameInfo, gameInfo,
                             getId()
                             console.log()
                         }}
-                        style={{padding: 12, borderRadius: 25, background: '1A84FF'}}>
+                        style={{padding: 12, borderRadius: 100, background: '1A84FF'}}>
                             Присоединиться
                         </Button>
                     </Div>
