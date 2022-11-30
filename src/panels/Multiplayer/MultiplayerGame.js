@@ -195,7 +195,9 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 										callNextTask()
 										//setIsCounting(true)
 									}} >
+									<Title>
 									{answersInfo[index]}
+									</Title>
 								</Button>
 
 

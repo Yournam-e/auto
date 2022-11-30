@@ -16,6 +16,18 @@
     border-radius:25px;
 }
 
+.qr-code-share-button:active{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    margin-left:10px;
+    margin-right:10px; 
+    border-radius:25px;
+
+    -webkit-transform: scale(0.94);
+    transform: scale(0.94);
+}
+
 .qr-code-share-button-div{
     display: flex;
     justify-content: center;

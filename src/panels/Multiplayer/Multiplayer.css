@@ -60,6 +60,19 @@
 	border-radius:25px;
 }
 
+.multiplayer-qr-button:active{
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-right: 24px;
+  padding-left: 24px;
+	color:#1984ff69;
+	border-radius:25px;
+  -webkit-transform: scale(0.94);
+  transform: scale(0.94);
+  transition: 100ms;
+  transition-timing-function: ease-in-out;
+}
+
 
 .multiplayer-separator-div{
   margin-top: 25px;
@@ -103,6 +116,21 @@
 	color:#1984FF;
 	border-radius:25px;
 }
+
+.multiplayer-code-button:active{
+  padding-top: 10px;
+  padding-bottom: 8px;
+  padding-right: 24px;
+  padding-left: 24px;
+	color:#1984FF;
+	border-radius:25px;
+
+  -webkit-transform: scale(0.94);
+  transform: scale(0.94);
+  transition: 100ms;
+  transition-timing-function: ease-in-out;
+}
+
 
 .multiplayer-complexity-div{
   display: flex;
@@ -158,8 +186,22 @@
   padding-bottom: 10px;
   margin-left:12px;
   margin-right:12px;
+	color:#1984FF; 
+	border-radius:100px;
+}
+
+.multiplayer-play-button:active{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left:12px;
+  margin-right:12px;
 	color:#1984FF;
 	border-radius:100px;
+  -webkit-transform: scale(0.94);
+  transform: scale(0.94);
+  transition: 100ms;
+  transition-timing-function: ease-in-out;
+
 }
 
 .multiplayer-play-group{

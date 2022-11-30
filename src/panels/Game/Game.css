@@ -291,6 +291,18 @@
   display: flex;
   align-items: center;
 }
+.result-buttonRetry-div:active{
+  width:100%;
+  margin-top: -16px;
+  display: flex;
+  align-items: center;
+  -webkit-transform: scale(0.94);
+  transform: scale(0.94);
+  transition: 100ms;
+  transition-timing-function: ease-in-out;
+}
+
+
 .result-buttonNotNow-div{
   width:100%;
   margin-top: 4px;

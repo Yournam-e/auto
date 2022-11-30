@@ -340,8 +340,10 @@ const LvlGame = ({ id, go,
 								
 								setIsCounting(true)
 							}} >
+								<Title>
 								{lvlData && lvlData.tasks[taskNumber].answers[index]}
 								{!lvlData && value}
+								</Title>
 							</Button>
 							
 	

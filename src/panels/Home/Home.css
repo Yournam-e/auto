@@ -103,6 +103,29 @@ body {
     margin-bottom: 16px;
 }
 
+.button-long:active{
+    font-family: 'SF Pro Text';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+
+    padding-left: 16px;
+    padding-right: 16px;
+  
+    padding-top: 6px;
+    padding-bottom: 6px;
+  
+    letter-spacing: -0.25px;
+    margin-left: 65px;
+    margin-bottom: 16px;
+    -webkit-transform: scale(0.94);
+    transform: scale(0.94);
+    transition: 100ms;
+    transition-timing-function: ease-in-out;
+    
+}
+
 .lvl-card-div{
     margin-top: 16px;
     
@@ -196,6 +219,30 @@ body {
     margin-bottom: 10px;
 }
 
+.button-lvl:active{
+    font-family: 'SF Pro Text';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+
+    padding-left: 1%;
+    padding-right: 1%;
+  
+  
+    padding-top: 6px;
+    padding-bottom: 6px;
+  
+    letter-spacing: -0.25px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+
+    -webkit-transform: scale(0.94);
+    transform: scale(0.94);
+    transition: 100ms;
+    transition-timing-function: ease-in-out;
+}
+
 .button-lvl-complete{
     font-family: 'SF Pro Text';
     font-style: normal;
@@ -213,6 +260,32 @@ body {
     margin-left: 10px;
     margin-bottom: 10px;
 }
+.button-lvl-complete:active{
+    font-family: 'SF Pro Text';
+    font-style: normal;
+    font-weight:400;
+    font-size: 11px;
+    line-height: 18px;
+
+    padding-left: 3px;
+    padding-right: 3px;
+  
+    padding-top: 6px;
+    padding-bottom: 6px;
+  
+    letter-spacing: -0.25px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+
+
+    -webkit-transform: scale(0.94);
+    transform: scale(0.94);
+
+    transition: 100ms;
+    transition-timing-function: ease-in-out;
+}
+
+
 
 .home--level_card{
     box-shadow: 0px 32px 52px 0px rgba(0, 0, 0, 0.03);
