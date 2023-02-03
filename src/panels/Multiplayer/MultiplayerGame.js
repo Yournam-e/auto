@@ -16,7 +16,7 @@ import '../Game/Game.css';
 
 import ExmpleGeneration from '../../scripts/decideTask';
 import { getPadTime } from '../../scripts/getPadTime';
-import { Icon16ClockCircleFill, Icon28Cancel } from '@vkontakte/icons';
+import { Icon24ChevronLeft, Icon28Cancel, Icon24Back  } from '@vkontakte/icons'; 
 import { answerTask, leaveRoom } from '../../sockets/game';
 import { client } from '../../sockets/receiver';
 import { useUserId } from '../../hooks/useUserId';
@@ -29,7 +29,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 	setActivePanel, setPopout, gameInfo, setGameInfo,
 	taskInfo, setTaskInfo, setAnswersInfo, answersInfo,
 	setMpGameResults,themeColors,joinCode,
-	setActiveStory, setNowInGame }) => {
+	setActiveStory, setNowInGame, platform }) => {
 
 
 
@@ -90,7 +90,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 
 
 		<Panel id={id}>
-		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: document.documentElement.scrollHeight}}>
 			<PanelHeader 
 			style={{backgroundColor: 'transparent' }} 
 			transparent={true}
@@ -125,7 +125,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 					);
 				
 				}}>
-				<Icon28Cancel />
+				{platform === 'ios'?<Icon24ChevronLeft width={28} height={28} fill='#1A84FF'/>:<Icon24Back width={28} height={28} fill='#1A84FF'/>}
 				</PanelHeaderButton>
 			}
 			>
@@ -181,7 +181,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 									className='item'
 									id={'button' + index}
 									key={index}
-									style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33',  color:  themeColors === 'light'?'#000':'#F0F1F5'}}
+									style={{background: themeColors === 'light'?'#FFFFFF':'#2E2E33',  color:  themeColors === 'light'?'#000':'#F0F1F5'}}
 									onPointerDown={(e) => {
 
 
@@ -190,7 +190,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 										//ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
 										async function callNextTask(){
 											await answerTask(gameInfo.roomId, value, gameInfo.taskId)
-											//setPopout(<ScreenSpinner size='large' />)
+											setPopout(<ScreenSpinner size='large' />)
 										}
 										callNextTask()
 										//setIsCounting(true)

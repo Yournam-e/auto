@@ -39,22 +39,33 @@ const MultiplayerResult = ({ id, go,
 
 	const [timeLeft, setTimeLeft] = useState(10); //время
 	const [isCounting, setIsCounting] = useState(true); //время
+	
+	
+	const [newA, setNewA] = useState([])
+
+	let lasd = playersList
 
 
 	useEffect(()=>{
-		console.log(timeLeft)
 		if(timeLeft === 0){
 			if(connectType === 'host'){
 				if(readyToReplay){
 					setReadyToReplay(true)
 					setPlayersId([])
 					createRoom(joinCode)
-					console.log('kkkkk')
 				}
 			}
 	
 		}
 	}, [timeLeft])
+
+ 
+
+	useEffect(()=>{
+		if(newA.length ===0 && playersList && playersList!==null  ){
+			setNewA(playersList) 
+		}
+	}, [playersList])
 
 
 	useEffect(() => {
@@ -66,15 +77,16 @@ const MultiplayerResult = ({ id, go,
 		}, 1000)
 
 	}, [isCounting])
-
+ 
 
 	useEffect(() => {
 		if (mpGameResults) {
 			const newArr = mpGameResults.players.sort((a, b) => a.rightResults > b.rightResults ? -1 : 1);
 			setFriendList(newArr)
+			
 		}
 
-
+		console.log(mpGameResults)
 		
 	}, [mpGameResults])
 
@@ -83,6 +95,8 @@ const MultiplayerResult = ({ id, go,
 		if (friendList) {
 			devideArray()
 		}
+
+		console.log(friendList)
 
 	}, [friendList])
 
@@ -133,9 +147,27 @@ const MultiplayerResult = ({ id, go,
 	}
  
 
+	useEffect(()=>{
+		console.log(friendList)
+		console.log(mpGameResults)
+		console.log(friendList)
+
+		console.log(newA)
+
+	}, [])
+
+	useEffect(()=>{
+		console.log(newA)
+
+	}, [newA])
+	useEffect(()=>{
+		console.log(friendList) 
+	}, [friendList])
+	useEffect(()=>{
+		console.log(mpGameResults) 
+	}, [mpGameResults])
 
  
-
 
 	if(readyToReplay){
 		client.roomCreated = ({roomId}) =>{
@@ -145,9 +177,9 @@ const MultiplayerResult = ({ id, go,
 				await setHaveHash(false)
 				await setAgain(true)
 				await joinRoom(roomId)
+				await setActiveStory('multiplayer')
 				await setJoinCode(roomId)
 				await setActivePanel('menu')
-				console.log('ооок')
 			}
 	
 			
@@ -171,7 +203,7 @@ const MultiplayerResult = ({ id, go,
 				<div style={{ marginLeft: 'auto', marginRight: 'auto', marginTop: 16 }}>
 
 					<Title className='result-task-title'>
-						Вы заняли<span style={{ color: '#1984FF', paddingRight: 5, paddingLeft: 5 }}>{mpGameResults && place + 1}-e место!</span>
+						Вы заняли<span style={{ color: '#2BD328', paddingRight: 5, paddingLeft: 5 }}>{mpGameResults && place + 1}-e место!</span>
 					</Title>
 
 				</div>
@@ -195,7 +227,7 @@ const MultiplayerResult = ({ id, go,
 
 
 							<div style={{ height: 65, marginLeft: 16, marginTop:25 }}>
-								{mpGameResults && playersList.map((inItem, index) => {
+								{mpGameResults &&newA && newA.map((inItem, index) => {
 									if (item.userId === inItem.userId) {
 										return (
 											<Cell
@@ -257,11 +289,15 @@ const MultiplayerResult = ({ id, go,
 					</div>
 						<div className="result-buttonNotNow-div" style={{paddingBottom:21}}>
 							<Button
+								className="result-buttonGroup-notNow"
 								onClick={(e) => {
+									
+									//joinToYourRoom()
 									leaveRoom(joinCode, fetchedUser.id)
 									setAgain(false)
-									setActiveStory('single')
+									setActiveStory('multiplayer')
 									setConnectType('host')
+									setHaveHash(false)
 									go(e)
 								}}
 								data-to='menu'

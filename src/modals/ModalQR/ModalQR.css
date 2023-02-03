@@ -26,6 +26,7 @@
 
     -webkit-transform: scale(0.94);
     transform: scale(0.94);
+    transition: all 100ms ease-in-out;
 }
 
 .qr-code-share-button-div{

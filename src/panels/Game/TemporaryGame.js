@@ -19,7 +19,7 @@ import './Game.css';
 
 import ExmpleGeneration from '../../scripts/decideTask';
 import { getPadTime } from '../../scripts/getPadTime';
-import { Icon16ClockCircleFill, Icon28Cancel } from '@vkontakte/icons';
+import { Icon24Back, Icon24ChevronLeft } from '@vkontakte/icons';
 import { qsSign } from '../../hooks/qs-sign';
 import axios from 'axios';
 import { client } from '../../sockets/receiver';
@@ -29,7 +29,19 @@ import { ReactComponent as RedClockIcon } from  '../../img/ClockRed.svg';
 
 import '../../img/Fonts.css'
 
-const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, singleType, answer, setAnswer,themeColors,setActiveStory,activeStory }) => {
+const TemporaryGame = ({ id,
+	go,
+	count, 
+	setCount, 
+	setActivePanel, 
+	setPopout, 
+	singleType, 
+	answer, 
+	setAnswer,
+	themeColors,
+	setActiveStory,
+	activeStory,
+	platform }) => {
 
     const [first, setFirst] = useState(true) //первый запуск
 
@@ -119,7 +131,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 
  
 		<Panel id={id}>
-
+		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: document.documentElement.scrollHeight}}>
 		<PanelHeader 
 		style={{backgroundColor: 'transparent' }} 
 		transparent={true}
@@ -153,12 +165,12 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 				  );
 			
 			}}>
-			  <Icon28Cancel />
+			  {platform === 'ios'?<Icon24ChevronLeft width={28} height={28} fill='#1A84FF'/>:<Icon24Back width={28} height={28} fill='#1A84FF'/>}
 			</PanelHeaderButton>
 		  }>
 		</PanelHeader>
 
-		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+
 
 		  	
 			<div className='game-div-margin'> 
@@ -224,7 +236,7 @@ const TemporaryGame = ({ id, go, count, setCount, setActivePanel, setPopout, sin
 						mode="neutral" 
 						className='item'
 						id={'button' + index} 
-						style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33', color:  themeColors === 'light'?'#000':'#F0F1F5'}}
+						style={{background: themeColors === 'light'?'#FFFFFF':'#2E2E33', color:  themeColors === 'light'?'#000':'#F0F1F5'}}
 						key={index}
 						onClick={()=>{
                             if(first){

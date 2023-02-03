@@ -11,7 +11,8 @@ import {
 	List,
 	ButtonGroup,
 	Text,
-	ScreenSpinner
+	ScreenSpinner,
+	Separator
  } from '@vkontakte/vkui';
 
 
@@ -19,14 +20,13 @@ import bridge from '@vkontakte/vk-bridge';
 
 import Eyes from '../../../img/Eyes.png'
 
-import { Icon56CheckCircleOutline, Icon24StoryOutline, Icon16Done } from '@vkontakte/icons';
+import { Icon56CheckCircleOutline, Icon24StoryOutline, Icon16Done, Icon24RefreshOutline } from '@vkontakte/icons';
 import '../Game.css'
 import axios from 'axios';
 import { qsSign } from '../../../hooks/qs-sign'; 
 
- 
 
-import { createCanvas, loadImage } from 'canvas';
+import { createCanvas } from 'canvas';
 import { useUserId } from '../../../hooks/useUserId';
 
 const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, fetchedUser,themeColors }) => {
@@ -73,17 +73,25 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 		}
 	}
 
+	function loadImage(url) {
+		return new Promise(r => { let i = new Image(); i.onload = (() => r(i)); i.src = url; i.crossOrigin="anonymous"});
+		}
+
 
 	async function showStoryBox(count){
 
 		//await loadFonts()
 		
+		
 		// параметры url
 		function getUrlParams() {
 			return window.location.search.length > 0 && JSON.parse('{"' + decodeURI(window.location.search.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
 		}
+
 		
-		const background = await loadImage(require(`../../../img/story/story.png`));
+		
+		const background = await loadImage("https://showtime.app-dich.com/imgs/plusstory.webp")
+		background.setAttribute("crossOrigin", "anonymous");
 		const phrases = [
 			decOfNum(count, ['Математическую задачу', 'Математические задачи', 'Математических задач']),
 			' за ',
@@ -94,7 +102,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 		
 		ctx.drawImage(background, 0, 0);
 		
-		ctx.font = '700 189px Space Grotesk';
+		ctx.font = '700 189px Manrope';
 		ctx.fillStyle = '#1A84FF';
 		ctx.textAlign = 'center';
 		ctx.fillText(count, 540, 709 + 133);
@@ -126,6 +134,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				}
 			});
 		}catch(e){
+			console.log(e)
 			setPopout(null)
 		}
 
@@ -195,21 +204,26 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 
 	async function сheckFriends(){
 
-			var params = await window
-			.location
-			.search
-			.replace('?','')
-			.split('&')
-			.reduce(
-				function(p,e){
-					var a = e.split('=');
-					p[ decodeURIComponent(a[0])] = decodeURIComponent(a[1]); 
-					return p;
-				},
-				{}
-			)
+		var params = await window
+		.location
+		.search
+		.replace('?','')
+		.split('&')
+		.reduce(
+			function(p,e){
+				var a = e.split('=');
+				p[ decodeURIComponent(a[0])] = decodeURIComponent(a[1]); 
+				return p;
+			},
+			{}
+		)
 
+		await console.log( params.vk_access_token_settings.includes('friends'))
+
+		if(params.vk_access_token_settings.includes('friends') === true){
 			getIds(true)
+		}
+		 
 			 
 		
 
@@ -326,7 +340,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 	return(
 		
 		<Panel id={id} className='resultPagePanel'>
-			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20"}} className='full-div'>
+			<div style={{background: themeColors === 'light'?"#FFFFFF":"#1D1D20"}} className='full-div'>
 			
 			<Div className='check-circle-outline'>
 				<div>
@@ -347,6 +361,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 
 						if(right !== null){
 							showStoryBox(right)
+						}else{
 						}
 						
 						await setPopout(<ScreenSpinner size='large' />)
@@ -429,13 +444,15 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 				
 				
 			<div className='result-absolute-div'>
-
+				
 				<ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
+					
 					<div className="result-buttonRetry-div">
 						<Button size="l" style={{
 								backgroundColor:'#1A84FF',
 								borderRadius:100
 								}} 
+								before={<Icon24RefreshOutline />}
 								className="result-buttonGroup-retry"
 								appearance="accent"
 								onClick={async function(e){
@@ -450,6 +467,7 @@ const ResultPage = ({ id, go, answer, setPopout, setSingleType, setActivePanel, 
 					</div>
 					<div className="result-buttonNotNow-div" >
 						<Button 
+							className="result-buttonGroup-notNow"
 							onClick={(e)=>{
 								go(e)
 							}}

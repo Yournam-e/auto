@@ -12,6 +12,7 @@ import Home from './panels/Home/Home';
 import Multiplayer from './panels/Multiplayer/Multiplayer';
 import LvlGame from './panels/Game/LvlGame';
 import ResultPage from './panels/Game/ResultPage/ResultPage';
+import MessengerLobby from './panels/Messenger/MessengerLobby'
 
 import ModalInputCode from './modals/ModalInputCode/ModalInputCode'
 import ModalQRCode from './modals/ModalQR/ModalQR';
@@ -22,9 +23,15 @@ import MultiplayerResult from './panels/Multiplayer/mpResult/MultiplayerResult';
 import LobbyForGuest from './panels/Multiplayer/LobbyForGuest/LobbyForGuest';
 import TemporaryGame from './panels/Game/TemporaryGame';
 import NotConnection from './panels/NotConnection/NotConnection';
-
+import searchToObject from './scripts/searchToObject'
 
 import { useEventListener } from './scripts/useEventListener';
+import eruda from '../node_modules/eruda/eruda.js';
+import { useUserId } from './hooks/useUserId';
+
+import axios from 'axios';
+import { qsSign } from './hooks/qs-sign';
+import { leaveRoom } from './sockets/game';
 
 const App = () => {
 	const [scheme, setScheme] = useState('bright_light')
@@ -38,8 +45,7 @@ const App = () => {
 
 
 	const [count, setCount] = useState(0); //баллы
-
-
+	
 	//muliplayer
 	const [gameInfo, setGameInfo] = useState({
 		roomId: null,
@@ -101,6 +107,10 @@ const App = () => {
 	  
 
 
+	//переменные для мессенджера
+
+	const [gameExists, setGameExists] = useState(false)
+
 
 
 	useEventListener("offline", () => {
@@ -111,7 +121,7 @@ const App = () => {
 
 	client.joinedRoom = ({ users }) => {
 		async function joinFunction(){
-			await setPopout(<ScreenSpinner size='large' />)
+			//await setPopout(<ScreenSpinner size='large' />)
 
 			
 			await users!==0? updatePlayersList(users): console.log('')
@@ -126,16 +136,14 @@ const App = () => {
 				newArr.push(item.userId)
 			}
 			await setPlayersId(newArr)
-			setPopout(null)
+			//setPopout(null)
 		}
 
 		joinFunction()
 
 	};
 
-
-	client.leftRoom = ({ userId }) => {
-	};
+ 
 
 	  
 
@@ -165,16 +173,23 @@ const App = () => {
 	useEffect(()=>{
 	}, [timeFinish])
 
+	
+
 	useEffect(() => {
+
+		
 
 		const img = new Image();
 		img.src = Eyes;
 
 		
 		window.addEventListener('popstate', (e) => {
-
-			setActiveModal(null)
+			if(activeModal){
+				setActiveModal(null)
+			}
+			
 			if(e.state){
+				
 				if(e.state.activePanel === 'home'){
 					setActivePanel('menu')
 					setActiveStory('single')
@@ -198,9 +213,10 @@ const App = () => {
 		
 	});
 		
-
+		
 
 		bridge.subscribe(({ detail: { type, data }}) => {
+			 
 			if (type === 'VKWebAppUpdateConfig') {
 				setScheme(data.scheme)
 				
@@ -240,12 +256,29 @@ const App = () => {
 
 		}
 		fetchData();
-
-
 		
+		console.log()
 
+		 
 
-		if(!window.location.hash ||window.location.hash === '#'){
+		if(searchToObject().vk_ref === 'im_attach_picker'){
+			setActivePanel('menu')
+			setActiveStory('multiplayer')
+			console.log('1')
+		}
+		else if(searchToObject().vk_ref === 'im_app_action' && window.location.hash){
+			async function startToHash(){ 
+				await setGameInfo({ ...gameInfo, roomId: window.location.hash.slice(1)})
+				await setHaveHash(true)
+				await setConnectType('join')
+				await setActivePanel('menu')
+				await setActiveStory('multiplayer')
+				console.log('12')
+				
+			}
+			startToHash()
+		}
+		else if(!window.location.hash ||window.location.hash === '#'){
 			setHaveHash(false)
 		}else{
 			async function startToHash(){ 
@@ -356,7 +389,10 @@ const App = () => {
 												activePanel={activePanel}
 												panelsHistory={panelsHistory}
 												lvlsInfo={lvlsInfo}
-												setLvlsInfo={setLvlsInfo} />
+												setLvlsInfo={setLvlsInfo}
+												gameExists={gameExists}
+												setConnectType={setConnectType}
+												setGameExists={setGameExists} />
 											</View>
 											
 											<View id="multiplayer" activePanel="multiplayer">
@@ -382,15 +418,19 @@ const App = () => {
 												activePanel={activePanel}
 												panelsHistory={panelsHistory}
 												itAgain={itAgain}
-												notAdd={notAdd}/>
+												notAdd={notAdd}
+												setGameExists={setGameExists}
+												setActiveStory={setActiveStory}
+												gameExists={gameExists}
+												updatePlayersList={updatePlayersList}/>
 											</View>
 										
 										</Epic>
 									</div>
 								</Panel>
 								 
-									<LvlGame 
-									id='lvlGame'
+								<LvlGame 
+								id='lvlGame'
 									setCount={setCount} 
 									count={count} 
 									setActivePanel={setActivePanel} 
@@ -408,24 +448,56 @@ const App = () => {
 									allTasks={allTasks}
 									setAllTasks={setAllTasks}
 									lvlsInfo={lvlsInfo}
-									setReady={setReady} />
+									setReady={setReady}
+									platform={platform} />
+
+
+								<MessengerLobby
+								setActivePanel={setActivePanel}
+								id='messengerLobby'
+								go={go} 
+								connectType={connectType}
+								setPopout={setPopout} 
+								fetchedUser={fetchedUser}
+								gameInfo={gameInfo} setGameInfo={setGameInfo}
+								setActiveModal={setActiveModal}
+								playersId={playersId} setPlayersId={setPlayersId}
+								joinCode={joinCode} setJoinCode={setJoinCode}
+								firstStart={firstStart} setFirstStart={setFirstStart}
+								playersList={playersList}
+								setTaskInfo={setTaskInfo}
+								setAnswersInfo={setAnswersInfo}
+								setConnectType={setConnectType}
+								themeColors={themeColors}
+								haveHash={haveHash}
+								setPanelsHistory={setPanelsHistory}
+								activePanel={activePanel}
+								panelsHistory={panelsHistory}
+								itAgain={itAgain}
+								notAdd={notAdd}
+								setActiveStory={setActiveStory}
+								setGameExists={setGameExists}
+								updatePlayersList={updatePlayersList}
+								 />
 									
 								
 
 
-								<TemporaryGame id='temporaryGame'
-									setCount={setCount} 
-									count={count} 
-									setActivePanel={setActivePanel} 
-									setPopout={setPopout}
-									singleType={singleType} 
-									setLocalTask={setLocalTask}
-									localTask={localTask}
-									answer={answer}
-									setAnswer={setAnswer}
-									themeColors={themeColors}
-									setActiveStory={setActiveStory}
-									activeStory={activeStory}/> 
+								<TemporaryGame 
+								id='temporaryGame'
+								setCount={setCount} 
+								count={count} 
+								setActivePanel={setActivePanel} 
+								setPopout={setPopout}
+								singleType={singleType} 
+								setLocalTask={setLocalTask}
+								localTask={localTask}
+								answer={answer}
+								setAnswer={setAnswer}
+								themeColors={themeColors}
+								setActiveStory={setActiveStory}
+								activeStory={activeStory}
+								platform={platform}/> 
 
 								
 								<ResultPage
@@ -456,7 +528,8 @@ const App = () => {
 								themeColors={themeColors}
 								setPopout={setPopout}
 								joinCode={joinCode}
-								setActiveStory={setActiveStory}/>
+								setActiveStory={setActiveStory}
+								platform={platform}/>
 
 								
 								<LvlResultPage id='resultLvl'
@@ -489,8 +562,7 @@ const App = () => {
 								connectType={connectType}
 								setJoinCode={setJoinCode}
 								setConnectType={setConnectType}
-								setHaveHash={setHaveHash}
-								 />
+								setHaveHash={setHaveHash}/>
 
 								<LobbyForGuest 
 								id='lobbyForGuest'
@@ -507,7 +579,7 @@ const App = () => {
 								setAnswersInfo={setAnswersInfo}
 								setActivePanel={setActivePanel}
 								themeColors={themeColors}
-								/>
+								platform={platform}/>
 
 								<NotConnection 
 								id='notConnection'

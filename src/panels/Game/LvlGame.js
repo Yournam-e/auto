@@ -19,7 +19,7 @@ import decideTask from '../../scripts/decideTask';
 
 
 import { getPadTime } from '../../scripts/getPadTime';
-import { Icon16ClockCircleFill,Icon28Cancel } from '@vkontakte/icons';
+import { Icon24ChevronLeft,Icon24Back } from '@vkontakte/icons';
 import { qsSign } from '../../hooks/qs-sign';
 import axios from 'axios';
 
@@ -32,7 +32,7 @@ const LvlGame = ({ id, go,
 	lvlNumber, ready,
 	setLvlResult, lvlResult,
 	setTimeFinish,themeColors,
-	setAllTasks,allTasks, }) => {
+	setAllTasks,allTasks,platform }) => {
 	
 	 
 	
@@ -165,6 +165,7 @@ const LvlGame = ({ id, go,
 
  
 		<Panel id={id}>
+		<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: document.documentElement.scrollHeight}}>
 		<PanelHeader 
 		style={{backgroundColor: 'transparent' }} 
 		transparent={true}
@@ -198,11 +199,10 @@ const LvlGame = ({ id, go,
 					  );
 				
 				}}>
-			  <Icon28Cancel />
+			  {platform === 'ios'?<Icon24ChevronLeft width={28} height={28} fill='#1A84FF'/>:<Icon24Back width={28} height={28} fill='#1A84FF'/>}
 			</PanelHeaderButton>
 		  }>
-		</PanelHeader>
-			<div style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20", height: window.pageYOffset}}>
+		</PanelHeader> 
 
 				<div className='game-div-margin'>
 				<Title level="2" className='selectAnswer' style={{ textAlign: 'center' }}>{!lvlData &&'Выбери любой ответ, чтобы начать' ||lvlData &&'Выбери правильный ответ:'}</Title>
@@ -255,7 +255,7 @@ const LvlGame = ({ id, go,
 							className='item'
 							id={'button' + index} 
 							key={index}
-							style={{background: themeColors === 'light'?'#F0F1F5':'#2E2E33',  color:  themeColors === 'light'?'#000':'#F0F1F5'}}
+							style={{background: themeColors === 'light'?'#FFFFFF':'#2E2E33',  color:  themeColors === 'light'?'#000':'#F0F1F5'}}
 							onPointerDown={(e)=>{
 								
 								

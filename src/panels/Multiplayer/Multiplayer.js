@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from "react-router-dom"
 
 import { Panel, Div,
 	Avatar, Title,
@@ -8,8 +9,8 @@ import { Panel, Div,
 	PanelHeaderButton,ScreenSpinner,
 	Alert } from '@vkontakte/vkui';
 
-import './Multiplayer.css';
-import { Icon20Sync, Icon20QrCodeOutline, Icon24Cancel,Icon20DoorArrowRightOutline, Icon16Spinner, Icon24Play } from '@vkontakte/icons';
+import './../Multiplayer/Multiplayer.css'; 
+import { Icon20Sync, Icon20QrCodeOutline, Icon20MessageOutline,Icon20DoorArrowRightOutline, Icon28ArrowUturnLeftOutline, Icon24Play } from '@vkontakte/icons';
 
 import bridge from '@vkontakte/vk-bridge';
 
@@ -18,6 +19,7 @@ import { client } from '../../sockets/receiver';
 import axios from 'axios';
 import { useUserId } from '../../hooks/useUserId';
 import { qsSign } from '../../hooks/qs-sign'; 
+
 
 const Multiplayer = ({ 
 	id,
@@ -37,13 +39,17 @@ const Multiplayer = ({
 	haveHash,
 	themeColors,
 	setPanelsHistory,
-	panelsHistory,
+	setActiveStory,
 	itAgain,
-	notAdd
+	notAdd,
+	setGameExists,
+	updatePlayersList,
+	setPlayersId,
+	platform
 	
  }) => {
 
-	const userId = useUserId()
+	const thisUserId = useUserId()
 	const [complexity, setComplexity] = useState("easy")
 
 
@@ -51,6 +57,22 @@ const Multiplayer = ({
 
 
 	var clickTime = 0
+
+
+	client.leftRoom = ({userId}) =>{
+		if(userId && activePanel==='menu'){
+			console.log('выходит ' + activePanel)
+			console.log(playersList)
+			updatePlayersList(playersList.splice(playersList.indexOf(userId), 1))
+			updatePlayersList(playersList.filter(function(number) {
+				return number !==userId;
+			}))
+			setPlayersId(playersId.filter(function(number) {
+				return number !==userId;
+			}))
+			console.log(userId)
+		}
+	}
 
 
 	client.gameStarted = ({ answers, task, id }) => {
@@ -65,10 +87,17 @@ const Multiplayer = ({
 	};
 
 	client.roomCreated = ({ roomId }) => {
-		joinRoom(roomId, userId)
+		joinRoom(roomId, thisUserId)
 		setJoinCode(roomId)
 		setNotUserRoom(false)
 	};
+
+	bridge.subscribe((e) => {
+		if (e.detail.type === 'VKWebAppViewHide') {
+		console.log('fgsajm')
+		leaveRoom(fetchedUser.id)
+		}
+	});
 
 	
 
@@ -81,9 +110,9 @@ const Multiplayer = ({
 			
 			await setGameInfo({ ...gameInfo, roomId: response.data.data})
 			if(firstStart){
-				await connectRoom(qsSign, response.data.data, userId);
+				await connectRoom(qsSign, response.data.data, thisUserId);
 			}else{
-				await joinRoom(response.data.data, userId);
+				await joinRoom(response.data.data, thisUserId);
 				setNotUserRoom(false)
 
 			}
@@ -103,6 +132,36 @@ const Multiplayer = ({
 
 
 	useEffect(() => {
+		console.log(window.location.href)
+		
+		axios.get(`https://showtime.app-dich.com/api/plus-plus/user-games${qsSign}`)
+		.then(async function (response) {
+			await response
+			console.log(response.data.data[0])
+			console.log(response.data.data[0].roomId ) 
+			console.log( window.location.hash.slice(1))
+			if(response.data.data[0].ownerId === useUserId ){
+				if(response.data.data[0].started){
+					setActivePanel('menu')
+					setActiveStory('single')
+					setGameExists(true)
+					
+				}
+			}
+			if(response.data.data[0].roomId  === window.location.hash.slice(1)){
+				console.log('asf')
+				if(response.data.data[0].started){
+					setActivePanel('menu')
+					setActiveStory('single')
+					setGameExists(true)
+					
+				}
+			} 
+			
+		})
+		.catch(function (error) {
+			console.log(error)
+		});
 		if(notAdd === false){
 			window.history.pushState({activePanel: 'mp'}, 'mp');  
 		}
@@ -115,31 +174,12 @@ const Multiplayer = ({
 				
 				await setGameInfo({ ...gameInfo, roomId: response.data.data})
 					if(window.location.hash.slice(1) === response.data.data){
-						setPopout(
-							<Alert
-							  actions={[
-								{
-								  title: "Выйти",
-								  mode: "destructive",
-								  autoclose: true,
-								  action: () => {
-									setConnectType('host')
-									joinToYourRoom()
-									leaveRoom(fetchedUser.id)
-								  },
-								},
-							  ]}
-							  actionsLayout="vertical"
-							  onClose={()=>{
-								setPopout(null)
-							  }}
-							  header="Внимание"
-							  text="Вы не можете подключиться к своему лобби как гость"
-							/>
-						  );
+						await setConnectType('host')
+						await setJoinCode(window.location.hash.slice(1))
+						await connectRoom(qsSign, window.location.hash.slice(1), thisUserId);
 					}else{
 						setJoinCode(window.location.hash.slice(1))
-						connectRoom(qsSign, window.location.hash.slice(1), userId);
+						connectRoom(qsSign, window.location.hash.slice(1), thisUserId);
 						setNotUserRoom(true)
 					}
 				
@@ -181,22 +221,28 @@ const Multiplayer = ({
 				<Alert
 				  actions={[
 					{
-					  title: "Выйти",
+					  title: "Создать",
 					  mode: "destructive",
 					  autoclose: true,
 					  action: () => {
 						setConnectType('host')
 						joinToYourRoom()
 						leaveRoom(fetchedUser.id)
+						setPopout(null) 
+						useHistory().pushState("", document.title, window.location.pathname);
+
 					  },
 					},
 				  ]}
 				  actionsLayout="vertical"
 				  onClose={()=>{
+					setConnectType('host')
+					joinToYourRoom()
+					leaveRoom(fetchedUser.id)
 					setPopout(null)
 				  }}
-				  header="Внимание"
-				  text="Лобби не существует или было удалено"
+				  header="Лобби не существует"
+				  text="Создать свою комнату?"
 				/>
 			  );
 		}
@@ -212,15 +258,6 @@ const Multiplayer = ({
 			{connectType === 'join' &&
 			<PanelHeader
 			style={{backgroundColor: 'transparent' }}
-				before={
-					<PanelHeaderButton onClick={()=>{
-						setConnectType('host')
-						joinToYourRoom()
-						leaveRoom(fetchedUser.id)
-					}} >
-					<Icon20DoorArrowRightOutline fill='#1A84FF' style={{marginLeft:25}}/>
-					</PanelHeaderButton>
-				}
 				transparent={true}
 				shadow={false}
 				separator={false}
@@ -248,7 +285,7 @@ const Multiplayer = ({
 					<Title
 						className='multiplayer-title'
 						style={{ textAlign: 'center' }}>
-							{connectType === 'host'?'Пригласите друзей в лобби':'Лобби друга'}
+							{connectType === 'host'?'Пригласите друга в лобби':'Лобби друга'}
 					</Title>
 
 					
@@ -277,7 +314,7 @@ const Multiplayer = ({
 						{connectType === 'host' &&<Icon20Sync className='multiplayer-title-return'
 							fill='#1A84FF'
 							onClick={async function(){
-								await setPopout(<ScreenSpinner size='large' />)
+								//await setPopout(<ScreenSpinner size='large' />)
 								await createRoom(joinCode)
 								
 								
@@ -291,6 +328,7 @@ const Multiplayer = ({
 						
 
 					</div>
+					{platform === 'mobile-web'?
 					<div className='multiplayer-qr-button-div'>
 						<Button
 							className='multiplayer-qr-button'
@@ -302,6 +340,86 @@ const Multiplayer = ({
 							before={<Icon20QrCodeOutline />}
 							mode='secondary'>Поделиться QR</Button>
 					</div>
+					:
+					<div className='multiplayer-qr-button-div'>
+						<Button
+							className='multiplayer-qr-button'
+							style={{backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
+							color:'#1984FF'}}
+							onClick={()=>{ 
+								bridge.send("VKWebAppAddToChat", {
+                                    action_title: 'Присоединиться к лобби',
+									hash: joinCode
+                                }).then((data) => { 
+                                    console.log(data)
+                                })
+                                .catch((error) => { 
+										if(error.type === 'access_denied '){
+											setPopout(
+												<Alert
+												  actions={[
+													{
+													  title: "Поделиться",
+													  mode: "destructive",
+													  autoclose: true,
+													  action: () => {
+														setPopout(null)
+														bridge.send('VKWebAppShare', {
+														  link: `https://vk.com/app51451320#${joinCode}`
+														  })
+														  .then((data) => { 
+															if (data.result) {
+															  setActiveModal(null)
+															}
+														  })
+														  .catch((error) => {
+															// Ошибка
+															console.log(error);
+														  }); 
+													  },
+													},
+													{
+														title: "Потом",
+														mode: "cancel",
+														autoclose: true,
+														action: () => {
+														  setPopout(null)
+														  bridge.send('VKWebAppShare', {
+															link: `https://vk.com/app51451320#${joinCode}`
+															})
+															.then((data) => { 
+															  if (data.result) {
+																setActiveModal(null)
+															  }
+															})
+															.catch((error) => {
+															  // Ошибка
+															  console.log(error);
+															}); 
+														},
+													  },
+												  ]}
+												  actionsLayout="vertical"
+												  header="Временно недоступно"
+												  text="Попробуйте поделиться ссылкой"
+												/>
+											  );
+										}
+                                });
+							}}
+							before={<Icon20MessageOutline width={22} height={22}/>}
+							mode='secondary'>Пригласить чат</Button>
+                            <Button
+							className='multiplayer-qr-button-messenger'
+							style={{backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
+							color:'#1984FF',
+                            marginLeft:8 }}
+							onClick={()=>{
+								setActiveModal('inputCodeQR')
+							}}
+							before={<Icon20QrCodeOutline />}
+							mode='secondary'>QR</Button>
+					</div>}
 
 					{connectType === 'host' && <div>
 					<div className='multiplayer-separator-div'>
@@ -395,17 +513,24 @@ const Multiplayer = ({
 					</Div>}
 					<ButtonGroup gap="space" style={{ marginTop: 10 }} className='multiplayer-play-div'>
 						<Button size="l" 
-						className='multiplayer-play-button' appearance="accent"
-						disabled={connectType==='host'?false:true} 
-						style={{background:'#1A84FF', color: '#fff'}}
-						before={connectType==='host'?<Icon24Play />:<div  className='loaderIcon'>
-							<Icon16Spinner/>
+						className='multiplayer-play-button' appearance="accent" 
+						style={{
+							background:connectType==='host'?'#1A84FF':'#EBF1FA',
+							color: connectType==='host'?'#fff':'#1A84FF'}}
+						before={connectType==='host'?<Icon24Play />:<div>
+							<Icon28ArrowUturnLeftOutline/>
 						</div>}
 						stretched
 						onClick={()=>{
-							startGame(joinCode, complexity, playersId)
+							if(connectType === 'join'){
+								setConnectType('host')
+								joinToYourRoom()
+								leaveRoom(fetchedUser.id)
+							}else{
+								startGame(joinCode, complexity, playersId)
+							}
 
-						}}>{connectType==='host'?'Играть':'Ожидание'}</Button>
+						}}>{connectType==='host'?'Играть':'Выйти'}</Button>
 					</ButtonGroup>
 				</div>
 

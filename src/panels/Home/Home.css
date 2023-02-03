@@ -121,7 +121,7 @@ body {
     margin-bottom: 16px;
     -webkit-transform: scale(0.94);
     transform: scale(0.94);
-    transition: 100ms;
+    transition: all 100ms ease-in-out;
     transition-timing-function: ease-in-out;
     
 }
@@ -239,8 +239,7 @@ body {
 
     -webkit-transform: scale(0.94);
     transform: scale(0.94);
-    transition: 100ms;
-    transition-timing-function: ease-in-out;
+    transition: all 100ms ease-in-out;
 }
 
 .button-lvl-complete{
@@ -281,7 +280,7 @@ body {
     -webkit-transform: scale(0.94);
     transform: scale(0.94);
 
-    transition: 100ms;
+    transition: all 100ms ease-in-out;
     transition-timing-function: ease-in-out;
 }
 

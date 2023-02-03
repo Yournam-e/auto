@@ -31,7 +31,7 @@
   font-style: normal;
   font-weight: 600;
   color: #1A84FF;
-  font-size: 36px;
+  font-size: 35px;
   line-height: 22px;
 }
 
@@ -271,9 +271,35 @@
   right: 0;
   height: 10%;
   bottom: 0;
-  padding-top: 10px;
+  padding-top: 20px;
   padding-bottom: 75px;
-  backdrop-filter: blur(5.5px);
+  backdrop-filter: blur(2.5px);
+  
+}
+
+
+.result-absolute-div-LVL{
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 10%;
+  bottom: 0;
+  padding-top: 20px;
+  padding-bottom: 75px; 
+  backdrop-filter: blur(12.5px);
+  
+}
+
+.result-absolute-div-MP{
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 10%;
+  bottom: 0;
+  padding-top: 20px;
+  padding-bottom: 75px;
+  background-color: #ffffff;
+  backdrop-filter: blur(4.5px);
   
 }
 
@@ -287,6 +313,7 @@
 .result-buttonRetry-div{
   
   width:100%;
+  max-width: 400px;
   margin-top: -16px;
   display: flex;
   align-items: center;
@@ -298,18 +325,23 @@
   align-items: center;
   -webkit-transform: scale(0.94);
   transform: scale(0.94);
-  transition: 100ms;
+  transition: all 100ms ease-in-out;
   transition-timing-function: ease-in-out;
 }
 
 
 .result-buttonNotNow-div{
   width:100%;
-  margin-top: 4px;
+  max-width: 400px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
 }
 
+.result-buttonGroup-notNow{
+  padding-top:10px;
+  padding-bottom: 10px;
+}
 
 .result-buttonGroup-retry{
   margin-top: 10px;

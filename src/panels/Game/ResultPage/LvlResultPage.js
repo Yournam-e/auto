@@ -10,7 +10,8 @@ import {
 	Cell,
 	List,
 	ButtonGroup,
-    ScreenSpinner
+    ScreenSpinner,
+    Separator
  } from '@vkontakte/vkui';
 import { Icon56CheckCircleOutline, 
     Icon56CancelCircleOutline, 
@@ -173,12 +174,10 @@ const LvlResultPage = ({ id, go,
 
         var lastTime = Date.now()
 
-        console.log(timeFinish)
-
-        console.log('текущий уровень' + lvlNumber)
+        
         setReady(false)
 
-        console.log(allTasks)
+        
 
         
         axios.put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`,{
@@ -187,7 +186,6 @@ const LvlResultPage = ({ id, go,
             "answers": lvlResult.answers,
           })
         .then(async function (response) {
-            console.log(response)
             axios.get(`${url}info${qsSign}`) //получил инфу о лвлах
             .then(async function (response) { 
                 await console.log(response.data.data)
@@ -196,17 +194,12 @@ const LvlResultPage = ({ id, go,
                 let rightResults = items.find(one => one.lvlType === searchTerm).rightResults
                 let timeStarted = items.find(one => one.lvlType === searchTerm).started
 
-                console.log(lvlResult.answers.length)
-                console.log(rightResults);
                  
                 await timeFinish
-                console.log('a' + timeStarted)
-                console.log('b ' +timeFinish)
                 if(timeFinish === 0){
                     
                 }
                 const timeMs = timeFinish - new Date(timeStarted).getTime()
-                console.log('c' + timeMs)  
                 setFinishedTime(timeMs/1000)
                 if(rightResults> devideLvl(lvlNumber)[2]-1){
                     if(timeFinish - new Date(timeStarted).getTime()< 30000){
@@ -249,29 +242,20 @@ const LvlResultPage = ({ id, go,
                     marginRight: 'auto'
                 }}/>
                 :<Icon56CancelCircleOutline 
-                        fill="#1A84FF" 
+                        fill="#FF2525" 
                         style={{
                             marginLeft: 'auto', 
                             marginRight: 'auto'
                             }}
                         />}
 
-                <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>Уровень {complete && allTasks.length>devideLvl(lvlNumber)[2]&& complete[0]?'пройден!':'провален'}</Title>
+                <Title className='lvl-res-title-div' style={{color:themeColors === 'light'?'':'#fff'}}>{complete && allTasks.length>devideLvl(lvlNumber)[2]&& complete[0]?'Уровень пройден!':'Попробуйте снова'}</Title>
                 
                 {complete && complete[0] && allTasks.length>devideLvl(lvlNumber)[2] && <Title  className='lvl-res-sub-title-div' weight="1">Неплохо!</Title>}
                 {complete && complete[1] === "beOnTime" && <Title  className='lvl-res-sub-title-div' weight="1" >Вы не успели</Title>}
                 <div className="not-right-button" >
 
-                {complete&& !complete[0] && allTasks.length>10 &&  <Button 
-                    before={<Icon20Cancel fill='#FF2525'/>} 
-                    style={{
-                    backgroundColor:themeColors === "light"? "#F7ECEF":"#3F1E21", 
-                    color:"#FF2525",
-                    padding:10,
-                    borderRadius:50}}
-                    hasActive={false}
-                    hasHover={false}
-                    >Вы ошиблись</Button>}
+                {complete&& !complete[0] && allTasks.length>10 &&  <Title style={{}} className='lvl-res-sub-title-div' weight="1" >Вы не успели</Title>}
                 
                 </div>
 
@@ -342,8 +326,9 @@ const LvlResultPage = ({ id, go,
 
 
 
-
+            
             <div className='lvl-res-absolute-div' style={{background: themeColors === 'light'?"#F7F7FA":"#1D1D20" }}>
+                
                 <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
                     <div className="result-buttonRetry-div">
                         {
@@ -370,6 +355,7 @@ const LvlResultPage = ({ id, go,
                     </div>
                     <div className="result-buttonNotNow-div">
                         <Button 
+                            className="result-buttonGroup-notNow"
                             onClick={(e)=>{
                                 setFinishedTime(0)
                                 

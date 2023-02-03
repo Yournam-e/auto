@@ -50,8 +50,8 @@ const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo, themeColo
 			className='long-card'>
 				<div style={{minHeight: 141}}>
 									
-					<Icon24ClockOutline width={24} height={24} className='long-card-icon' style={{
-							backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF'
+					<Icon24ClockOutline width={24} height={24} fill={themeColors==='dark'?"#FFFFFF":"#6D7885"} className='long-card-icon' style={{
+							backgroundColor:themeColors==='dark'?'#293950':'#F7F7F7'
 						}}/>
 						<Div>
 							<div>
@@ -82,7 +82,7 @@ const LongCard = ({setActivePanel, setSingleType, setPopout, lvlsInfo, themeColo
 							color:'#1984FF',
 							borderRadius:25
 							}}
-							before={<Icon24Play height={16} width={16} />}
+							before={<Icon24Play height={16} width={16}/>}
 							mode='accent'
 							size='s'
 							>Попробовать</Button>

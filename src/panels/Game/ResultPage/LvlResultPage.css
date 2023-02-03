@@ -54,6 +54,8 @@
 .lvl-res-absolute-div{
     padding-bottom: 5%;
     position: fixed;
+    
+    padding-top: 20px;
     left: 0;
     right: 0;
     height: 20%;
@@ -63,7 +65,7 @@
   }
 
 .all-task-list{
-    margin-bottom: 110%;
+    margin-bottom: 115%;
     margin-left: -30%;
 }
 
@@ -82,8 +84,8 @@
 }
 
 .not-right-button{
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 8x;
+    margin-bottom: 8px;
     display: flex;
     justify-content: center;
 }

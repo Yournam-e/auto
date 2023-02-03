@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'; 
 
 
-import { Panel, Title, CardGrid, Button, Card, Cell, Div, PanelHeader } from '@vkontakte/vkui';
+import { Panel, Title, CardGrid, Button, Card, Cell, Div, PanelHeader, Alert } from '@vkontakte/vkui';
 import { Icon24Play, Icon24ClockOutline } from '@vkontakte/icons';
 import bridge from '@vkontakte/vk-bridge';
 
@@ -35,7 +35,10 @@ const Home = ({
 	themeColors,
 	setPanelsHistory,
 	panelsHistory,
-	lvlsInfo, setLvlsInfo}) => {
+	lvlsInfo, setLvlsInfo,
+	gameExists,
+	setConnectType,
+	setGameExists}) => {
 
 	const url ='https://showtime.app-dich.com/api/plus-plus/'
 
@@ -139,6 +142,8 @@ const Home = ({
 	
 	useEffect(()=>{
 
+
+
 		
 		window.history.pushState({activePanel: 'home'}, 'home');
 
@@ -156,6 +161,30 @@ const Home = ({
  
 			})
 			await setPopout(null)
+			if(gameExists === true){
+				setPopout(
+					<Alert
+					  actions={[
+						{
+						  title: "Ок",
+						  mode: "destructive",
+						  autoclose: true,
+						  action: () => {
+							setGameExists(false)
+							setConnectType('host') 
+						  },
+						},
+					  ]}
+					  actionsLayout="vertical"
+					  onClose={()=>{
+						setGameExists(false)
+						setPopout(null)
+					  }}
+					  header="Внимание"
+					  text="Игра уже запущена, попробуйте позже"
+					/>
+				  );
+			}
 		})
 		.catch(function (error) {
 			console.warn(error);
@@ -205,6 +234,7 @@ const Home = ({
 									
 							)
 						})} 
+
 						
 						
 						
