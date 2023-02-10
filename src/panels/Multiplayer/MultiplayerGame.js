@@ -29,7 +29,7 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 	setActivePanel, setPopout, gameInfo, setGameInfo,
 	taskInfo, setTaskInfo, setAnswersInfo, answersInfo,
 	setMpGameResults,themeColors,joinCode,
-	setActiveStory, setNowInGame, platform }) => {
+	setActiveStory, setNowInGame, platform,setLeavingRoom,setConnectType }) => {
 
 
 
@@ -107,7 +107,18 @@ const MultiplayerGame = ({ id, go, count, fetchedUser,
 							title: "Завершить",
 							mode: "destructive",
 							autoclose: true,
-							action: () => setActivePanel('menu') && setActiveStory('multiplayer') &&leaveRoom(joinCode),
+							action: () =>{
+								async function x(){
+									await setLeavingRoom(true)
+									setConnectType('host')
+									await leaveRoom(fetchedUser.id)
+									await setActivePanel('menu')
+									await setActiveStory('multiplayer') 
+									
+									
+								}
+								x()
+							} ,
 							},
 							{
 							title: "Отмена",

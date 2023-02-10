@@ -40,6 +40,7 @@ const MultiplayerResult = ({ id, go,
 	const [timeLeft, setTimeLeft] = useState(10); //время
 	const [isCounting, setIsCounting] = useState(true); //время
 	
+	const [buttonTitle, setButtonTitle] = useState('')
 	
 	const [newA, setNewA] = useState([])
 
@@ -77,6 +78,20 @@ const MultiplayerResult = ({ id, go,
 		}, 1000)
 
 	}, [isCounting])
+
+
+	useEffect(()=>{
+		if(timeLeft === 0){
+			if(readyToReplay){
+				setTimeout(()=>{
+					setButtonTitle('Лобби закрыто')
+				}, 2000);
+			}else{
+				setButtonTitle('Время вышло')
+			}
+			
+		}
+	}, [timeLeft])
  
 
 	useEffect(() => {
@@ -86,7 +101,7 @@ const MultiplayerResult = ({ id, go,
 			
 		}
 
-		console.log(mpGameResults)
+		
 		
 	}, [mpGameResults])
 
@@ -146,26 +161,8 @@ const MultiplayerResult = ({ id, go,
 
 	}
  
-
-	useEffect(()=>{
-		console.log(friendList)
-		console.log(mpGameResults)
-		console.log(friendList)
-
-		console.log(newA)
-
-	}, [])
-
-	useEffect(()=>{
-		console.log(newA)
-
-	}, [newA])
-	useEffect(()=>{
-		console.log(friendList) 
-	}, [friendList])
-	useEffect(()=>{
-		console.log(mpGameResults) 
-	}, [mpGameResults])
+ 
+ 
 
  
 
@@ -187,6 +184,8 @@ const MultiplayerResult = ({ id, go,
 			
 		  };
 	}
+
+
 
 	
 
@@ -284,7 +283,7 @@ const MultiplayerResult = ({ id, go,
 								backgroundColor: '#1A84FF',
 								borderRadius: 100
 							}} className="result-buttonGroup-retry" appearance="accent" stretched>
-							{timeLeft?readyToReplay?timeLeft +" сек до начала...":'Сыграть снова ' + timeLeft +" сек":readyToReplay?'Лобби закрыто':'Время вышло'}
+							{timeLeft?readyToReplay?timeLeft +" сек до начала...":'Сыграть снова ' + timeLeft +" сек":buttonTitle}
 						</Button>
 					</div>
 						<div className="result-buttonNotNow-div" style={{paddingBottom:21}}>

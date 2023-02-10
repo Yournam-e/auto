@@ -45,32 +45,35 @@ const Multiplayer = ({
 	setGameExists,
 	updatePlayersList,
 	setPlayersId,
-	platform
-	
+	platform,
+	leavingRoom,
+	setLeavingRoom,
+	setAgain
  }) => {
 
 	const thisUserId = useUserId()
 	const [complexity, setComplexity] = useState("easy")
 
 
+ 
+
 	const [notUserRoom, setNotUserRoom] = useState(false)
 
 
-	var clickTime = 0
+ 
+
+
+	var clickTime = 0;
 
 
 	client.leftRoom = ({userId}) =>{
 		if(userId && activePanel==='menu'){
-			console.log('выходит ' + activePanel)
-			console.log(playersList)
-			updatePlayersList(playersList.splice(playersList.indexOf(userId), 1))
-			updatePlayersList(playersList.filter(function(number) {
-				return number !==userId;
-			}))
+
+			updatePlayersList([...playersList.filter((item) => item.userId !== userId )])
 			setPlayersId(playersId.filter(function(number) {
 				return number !==userId;
 			}))
-			console.log(userId)
+			 
 		}
 	}
 
@@ -87,18 +90,34 @@ const Multiplayer = ({
 	};
 
 	client.roomCreated = ({ roomId }) => {
+		console.log(playersId)
+		console.log(playersList)
 		joinRoom(roomId, thisUserId)
 		setJoinCode(roomId)
 		setNotUserRoom(false)
+		setPopout(null)
 	};
 
 	bridge.subscribe((e) => {
 		if (e.detail.type === 'VKWebAppViewHide') {
-		console.log('fgsajm')
-		leaveRoom(fetchedUser.id)
+		
+			if(connectType === 'join'){
+				setConnectType('host')
+				joinToYourRoom()
+				leaveRoom(fetchedUser.id)
+			}
 		}
 	});
 
+
+	bridge.subscribe((e) => {
+		if (e.detail.type === 'VKWebAppViewRestore') {
+			setConnectType('host')
+			joinToYourRoom()
+			leaveRoom(joinCode)
+			setPopout(null)
+		}
+	  });
 	
 
 	function joinToYourRoom(i){
@@ -130,6 +149,8 @@ const Multiplayer = ({
 
 	}
 
+ 
+
 
 	useEffect(() => {
 		console.log(window.location.href)
@@ -149,7 +170,7 @@ const Multiplayer = ({
 				}
 			}
 			if(response.data.data[0].roomId  === window.location.hash.slice(1)){
-				console.log('asf')
+				
 				if(response.data.data[0].started){
 					setActivePanel('menu')
 					setActiveStory('single')
@@ -167,7 +188,7 @@ const Multiplayer = ({
 		}
 
 		
-		if(haveHash){
+		if(haveHash &&firstStart){
 			axios.post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
 			.then(async function (response) {
 				await setJoinCode(response.data.data)
@@ -190,11 +211,19 @@ const Multiplayer = ({
 		});
 			
 
-		}else if(itAgain){
-			
+		}
+		else if(leavingRoom === true){
+			 
+			joinToYourRoom()
+			setLeavingRoom(false)
+		}
+		else if(itAgain){
+			 
 			setGameInfo({ ...gameInfo, roomId: joinCode})
+			setAgain(false)
 		}
 		else{
+			
 			joinToYourRoom()
 		}
 		
@@ -219,26 +248,40 @@ const Multiplayer = ({
 		if(connectType === 'join' &&playersList.length===1 && notUserRoom){
 			setPopout(
 				<Alert
-				  actions={[
+				actions={[
 					{
-					  title: "Создать",
-					  mode: "destructive",
-					  autoclose: true,
-					  action: () => {
-						setConnectType('host')
-						joinToYourRoom()
-						leaveRoom(fetchedUser.id)
-						setPopout(null) 
-						useHistory().pushState("", document.title, window.location.pathname);
-
+						title: "Создать",
+						mode: "destructive",
+						autoclose: true,
+						action: () => {
+						  setPopout(null) 
+						  setConnectType('host')
+						   
+						  leaveRoom(joinCode)
+						  
+						   
+  
+						},
 					  },
-					},
+					{
+						title: "В меню",
+						mode: "cancel",
+						autoclose: true,
+						action: () => {
+						  setConnectType('host')
+						  
+						  setActiveStory('single')
+						  setPopout(null) 
+						   
+  
+						},
+					  },
 				  ]}
-				  actionsLayout="vertical"
+				  actionsLayout="horizontal"
 				  onClose={()=>{
 					setConnectType('host')
 					joinToYourRoom()
-					leaveRoom(fetchedUser.id)
+					leaveRoom(joinCode)
 					setPopout(null)
 				  }}
 				  header="Лобби не существует"
@@ -314,10 +357,14 @@ const Multiplayer = ({
 						{connectType === 'host' &&<Icon20Sync className='multiplayer-title-return'
 							fill='#1A84FF'
 							onClick={async function(){
-								//await setPopout(<ScreenSpinner size='large' />)
+								await setPopout(<ScreenSpinner size='large' />)
 								await createRoom(joinCode)
 								
-								
+								updatePlayersList([...playersList.filter((item) => item.userId === fetchedUser.id )])
+								setPlayersId(playersId.filter(function(number) {
+									return number ===fetchedUser.id;
+								}))
+											
 							}}
 							style={{
 								display: 'inline-block',
@@ -328,13 +375,14 @@ const Multiplayer = ({
 						
 
 					</div>
-					{platform === 'mobile-web'?
+					{platform && platform === "mobile-web" ?
 					<div className='multiplayer-qr-button-div'>
 						<Button
 							className='multiplayer-qr-button'
 							style={{backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 							color:'#1984FF'}}
 							onClick={()=>{
+								
 								setActiveModal('inputCodeQR')
 							}}
 							before={<Icon20QrCodeOutline />}
@@ -354,57 +402,58 @@ const Multiplayer = ({
                                     console.log(data)
                                 })
                                 .catch((error) => { 
-										if(error.type === 'access_denied '){
-											setPopout(
-												<Alert
-												  actions={[
-													{
-													  title: "Поделиться",
-													  mode: "destructive",
-													  autoclose: true,
-													  action: () => {
-														setPopout(null)
-														bridge.send('VKWebAppShare', {
-														  link: `https://vk.com/app51451320#${joinCode}`
-														  })
-														  .then((data) => { 
-															if (data.result) {
-															  setActiveModal(null)
-															}
-														  })
-														  .catch((error) => {
-															// Ошибка
-															console.log(error);
-														  }); 
-													  },
+										
+									if(error){
+										setPopout(
+											<Alert
+											  actions={[
+												{
+												  title: "Поделиться",
+												  mode: "destructive",
+												  autoclose: true,
+												  action: () => {
+													setPopout(null)
+													bridge.send('VKWebAppShare', {
+													  link: `https://vk.com/app51451320#${joinCode}`
+													  })
+													  .then((data) => { 
+														if (data.result) {
+														  setActiveModal(null)
+														}
+													  })
+													  .catch((error) => {
+														// Ошибка
+														console.log(error);
+													  }); 
+												  },
+												},
+												{
+													title: "Потом",
+													mode: "cancel",
+													autoclose: true,
+													action: () => {
+													  setPopout(null)
+													  bridge.send('VKWebAppShare', {
+														link: `https://vk.com/app51451320#${joinCode}`
+														})
+														.then((data) => { 
+														  if (data.result) {
+															setActiveModal(null)
+														  }
+														})
+														.catch((error) => {
+														  // Ошибка
+														  console.log(error);
+														}); 
 													},
-													{
-														title: "Потом",
-														mode: "cancel",
-														autoclose: true,
-														action: () => {
-														  setPopout(null)
-														  bridge.send('VKWebAppShare', {
-															link: `https://vk.com/app51451320#${joinCode}`
-															})
-															.then((data) => { 
-															  if (data.result) {
-																setActiveModal(null)
-															  }
-															})
-															.catch((error) => {
-															  // Ошибка
-															  console.log(error);
-															}); 
-														},
-													  },
-												  ]}
-												  actionsLayout="vertical"
-												  header="Временно недоступно"
-												  text="Попробуйте поделиться ссылкой"
-												/>
-											  );
-										}
+												  },
+											  ]}
+											  actionsLayout="vertical"
+											  header="Временно недоступно"
+											  text="Попробуйте поделиться ссылкой"
+											/>
+										);
+									}
                                 });
 							}}
 							before={<Icon20MessageOutline width={22} height={22}/>}
@@ -415,11 +464,13 @@ const Multiplayer = ({
 							color:'#1984FF',
                             marginLeft:8 }}
 							onClick={()=>{
+								window.history.pushState({activePanel: 'modal'}, 'modal');
 								setActiveModal('inputCodeQR')
 							}}
 							before={<Icon20QrCodeOutline />}
 							mode='secondary'>QR</Button>
 					</div>}
+
 
 					{connectType === 'host' && <div>
 					<div className='multiplayer-separator-div'>
@@ -442,6 +493,7 @@ const Multiplayer = ({
 							style={{backgroundColor:themeColors==='dark'?'#293950':'#F4F9FF',
 							color:'#1984FF'}}
 							onClick={()=>{
+								window.history.pushState({activePanel: 'modal'}, 'modal');
 								setActiveModal('inputCode')
 							}} 
 							mode='secondary'>Присоединиться по коду</Button>
@@ -515,7 +567,7 @@ const Multiplayer = ({
 						<Button size="l" 
 						className='multiplayer-play-button' appearance="accent" 
 						style={{
-							background:connectType==='host'?'#1A84FF':'#EBF1FA',
+							background:connectType==='host'?'#1A84FF':themeColors==='dark'?'#293950':'#EBF1FA',
 							color: connectType==='host'?'#fff':'#1A84FF'}}
 						before={connectType==='host'?<Icon24Play />:<div>
 							<Icon28ArrowUturnLeftOutline/>

@@ -66,6 +66,9 @@ const App = () => {
 	const [itAgain, setAgain] = useState(false) //перезапуск игры или нет
 	const [notAdd, setNotAdd] = useState(false)
 
+	const [leavingRoom, setLeavingRoom] = useState()
+
+
 
 	const [haveHash, setHaveHash] = useState(false)
 
@@ -118,11 +121,14 @@ const App = () => {
 	})
 
 
+ 
+
 
 	client.joinedRoom = ({ users }) => {
 		async function joinFunction(){
 			//await setPopout(<ScreenSpinner size='large' />)
 
+			 
 			
 			await users!==0? updatePlayersList(users): console.log('')
 
@@ -184,7 +190,8 @@ const App = () => {
 
 		
 		window.addEventListener('popstate', (e) => {
-			if(activeModal){
+			if(e){
+				
 				setActiveModal(null)
 			}
 			
@@ -234,9 +241,7 @@ const App = () => {
 		
 
 		
-
-		 
-
+ 
 		
 		async function fetchData() {
 			const user = await bridge.send('VKWebAppGetUserInfo');
@@ -247,6 +252,7 @@ const App = () => {
 			.then((data) => { 
 				if (data.platform) {
 					setPlatform(data.platform)
+					
 				}
 			})
 			.catch((error) => {
@@ -257,14 +263,13 @@ const App = () => {
 		}
 		fetchData();
 		
-		console.log()
+		
 
 		 
 
 		if(searchToObject().vk_ref === 'im_attach_picker'){
 			setActivePanel('menu')
 			setActiveStory('multiplayer')
-			console.log('1')
 		}
 		else if(searchToObject().vk_ref === 'im_app_action' && window.location.hash){
 			async function startToHash(){ 
@@ -273,7 +278,7 @@ const App = () => {
 				await setConnectType('join')
 				await setActivePanel('menu')
 				await setActiveStory('multiplayer')
-				console.log('12')
+				
 				
 			}
 			startToHash()
@@ -311,6 +316,17 @@ const App = () => {
 		inputRef.current.focus();
 	  }
 	}, []);
+
+
+	bridge.subscribe((e) => {
+		if (e.detail.type === 'VKWebAppViewHide') {
+		
+			if(connectType === 'join'){
+				setConnectType('host')
+				leaveRoom(fetchedUser.id)
+			}
+		}
+	});
 
 
 
@@ -351,7 +367,10 @@ const App = () => {
 											tabbar={
 												<Tabbar>
 													<TabbarItem 
-														onClick={onStoryChange}
+														onClick={(e)=>{
+															onStoryChange(e)
+															setConnectType('host')
+														}}
 														selected={activeStory === "single"}
 														data-story="single"
 														text={<span style={{color: themeColors === 'light'?
@@ -422,7 +441,11 @@ const App = () => {
 												setGameExists={setGameExists}
 												setActiveStory={setActiveStory}
 												gameExists={gameExists}
-												updatePlayersList={updatePlayersList}/>
+												updatePlayersList={updatePlayersList}
+												platform={platform}
+												leavingRoom={leavingRoom}
+												setLeavingRoom={setLeavingRoom}
+												setAgain={setAgain}/>
 											</View>
 										
 										</Epic>
@@ -529,7 +552,9 @@ const App = () => {
 								setPopout={setPopout}
 								joinCode={joinCode}
 								setActiveStory={setActiveStory}
-								platform={platform}/>
+								platform={platform}
+								setLeavingRoom={setLeavingRoom}
+								setConnectType={setConnectType}/>
 
 								
 								<LvlResultPage id='resultLvl'
