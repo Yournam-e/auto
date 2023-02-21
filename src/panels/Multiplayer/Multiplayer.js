@@ -153,7 +153,7 @@ const Multiplayer = ({
 
 
 	useEffect(() => {
-		console.log(window.location.href)
+		 
 		
 		axios.get(`https://showtime.app-dich.com/api/plus-plus/user-games${qsSign}`)
 		.then(async function (response) {
@@ -375,7 +375,7 @@ const Multiplayer = ({
 						
 
 					</div>
-					{platform && platform === "mobile-web" ?
+					{true ?
 					<div className='multiplayer-qr-button-div'>
 						<Button
 							className='multiplayer-qr-button'
