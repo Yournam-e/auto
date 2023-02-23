@@ -24,7 +24,8 @@ export const client = clientPerformCallback((m) => ({
       } | null;
     }) => void
   >(),
-  lvlFinished: m<(data: { lvlId: string; userId: number; id: string; }) => void>(),
+  lvlFinished:
+    m<(data: { lvlId: string; userId: number; id: string }) => void>(),
   joinedRoom: m<
     (data: {
       users: {

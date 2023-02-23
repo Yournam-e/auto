@@ -1,12 +1,3 @@
-import bridge from '@vkontakte/vk-bridge';
-
-function getFriendsId(){
-    
-
-    
- 
-}
-
-
+function getFriendsId() {}
 
 export default getFriendsId;

@@ -1,91 +1,86 @@
-.lvl-res-headDiv{
-    margin-top: 10%;
+.lvl-res-headDiv {
+  margin-top: 10%;
 }
 
-.main-div-resilt-page{
-    display: flex;
-    justify-content: center;
+.main-div-resilt-page {
+  display: flex;
+  justify-content: center;
 }
 
-.lvl-res-title-div{
-    margin-top: 16px;
-    font-family: 'SF Pro Rounded';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 22px;
-    letter-spacing: 0.25px;
+.lvl-res-title-div {
+  margin-top: 16px;
+  font-family: "SF Pro Rounded";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
 
-    color: #000000;
+  color: #000000;
 
-
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
-.lvl-res-sub-title-div{
-    margin-top: 8px;
-    font-family: 'SF Pro Text';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 22px; 
+.lvl-res-sub-title-div {
+  margin-top: 8px;
+  font-family: "SF Pro Text";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
 
-    color: #6D7885;
+  color: #6d7885;
 
- 
-
-
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
-.lvl-res-div{
-    display: flex;
-    justify-content: center;
+.lvl-res-div {
+  display: flex;
+  justify-content: center;
 }
 
-.lvl-res-clock-div{
-    display: flex;
-    justify-content: center;
-    margin-left: -15px;
+.lvl-res-clock-div {
+  display: flex;
+  justify-content: center;
+  margin-left: -15px;
 }
 
-.lvl-res-absolute-div{
-    padding-bottom: 5%;
-    position: fixed;
-    
-    padding-top: 20px;
-    left: 0;
-    right: 0;
-    height: 20%;
-    bottom: 0;
-    backdrop-filter: blur(5.5px);
-    
-  }
+.lvl-res-absolute-div {
+  padding-bottom: 5%;
+  position: fixed;
 
-.all-task-list{
-    margin-bottom: 115%;
-    margin-left: -30%;
+  padding-top: 20px;
+  left: 0;
+  right: 0;
+  height: 20%;
+  bottom: 0;
+  backdrop-filter: blur(5.5px);
 }
 
-.all-task-cell{
-    width:100%;
+.all-task-list {
+  margin-bottom: 115%;
+  margin-left: -30%;
 }
 
-.inCell{
+.all-task-cell {
+  width: 100%;
 }
 
-.lvl-res-list-icon{
-    padding: 10px;
-    border-radius: 100px;
-    margin-right: 120px;
-    margin-left: 10px;
+.inCell {
 }
 
-.not-right-button{
-    margin-top: 8x;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: center;
+.lvl-res-list-icon {
+  padding: 10px;
+  border-radius: 100px;
+  margin-right: 120px;
+  margin-left: 10px;
+}
+
+.not-right-button {
+  margin-top: 8x;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
 }

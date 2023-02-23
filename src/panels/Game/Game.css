@@ -1,47 +1,50 @@
- 
-
-
 @keyframes pulsing-heart {
-  0% { transform: none; }
-  25% { background-color: #2BD328;
-    color: #FFFFFF; }
-  50% { background-color: #2BD328;
-  color: #FFFFFF; }
-  75% { background-color: #2BD328;
-    color: #FFFFFF; }
-  100% { transform: none; }
+  0% {
+    transform: none;
+  }
+  25% {
+    background-color: #2bd328;
+    color: #ffffff;
+  }
+  50% {
+    background-color: #2bd328;
+    color: #ffffff;
+  }
+  75% {
+    background-color: #2bd328;
+    color: #ffffff;
+  }
+  100% {
+    transform: none;
+  }
 }
 
-
-.temporaryGame--inDiv{
-
-
+.temporaryGame--inDiv {
 }
-.equationDiv{ /*div для примера*/
+.equationDiv {
+  /*div для примера*/
   margin: 10px;
-  text-align: center; 
-  
-  justify-content: center;
+  text-align: center;
 
+  justify-content: center;
 }
 
-
-.equationMark{ /*вопросительный знак*/
-  font-family: 'SF Pro Rounded';
+.equationMark {
+  /*вопросительный знак*/
+  font-family: "SF Pro Rounded";
   font-style: normal;
   font-weight: 600;
-  color: #1A84FF;
+  color: #1a84ff;
   font-size: 35px;
   line-height: 22px;
 }
 
-
-.equation{ /*пример*/
+.equation {
+  /*пример*/
 
   display: inline-block;
 
-
-  font-family: 'SF Pro Rounded';
+  font-family: "SF Pro Rounded";
   font-style: normal;
   font-weight: 600;
   padding-top: 18px;
@@ -51,17 +54,16 @@
   text-align: center;
   font-size: 35px;
   line-height: 22px;
-  letter-spacing: 2px; 
+  letter-spacing: 2px;
 
-  background: #F0F1F5;
+  background: #f0f1f5;
   border-radius: 20px;
 }
 
-.equation-dark{ /*пример*/
+.equation-dark {
+  /*пример*/
 
-
-
-  font-family: 'SF Pro Rounded';
+  font-family: "SF Pro Rounded";
   font-style: normal;
   font-weight: 600;
   margin-left: auto;
@@ -71,104 +73,86 @@
   text-align: center;
   font-size: 35px;
   line-height: 22px;
-  
-  letter-spacing: 2px; 
 
-  background: #2E2E33;
+  letter-spacing: 2px;
+
+  background: #2e2e33;
   border-radius: 20px;
 }
 
-.selectAnswer{
-  font-family: 'SF Pro Text';
+.selectAnswer {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 400;
   font-size: 17px;
-  color: #6D7885;
-
+  color: #6d7885;
 }
-
 
 .container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 10px;
-    max-inline-size: 400px;
-    margin-inline: auto; 
-    margin-left: auto;
-    margin-right: auto;
-    margin-top:13%;
-  }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 10px;
+  max-inline-size: 400px;
+  margin-inline: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 13%;
+}
 
+.item {
+  font-family: "SF Pro Rounded";
+  font-style: normal;
+  font-weight: 600;
+  --font-size: 222px;
+  /* identical to box height, or 73% */
 
+  text-align: center;
+  letter-spacing: 1px;
 
-  
-.item { 
+  min-block-size: 100px;
+  background: #ffffff;
+  border-radius: 28px;
+  color: #000000;
 
-    font-family: 'SF Pro Rounded';
-    font-style: normal;
-    font-weight: 600;
-    --font-size: 222px; 
-    /* identical to box height, or 73% */
-    
-    text-align: center;
-    letter-spacing: 1px;
-  
+  height: 150px;
+  width: 150px;
+  transition-duration: 200ms;
 
+  box-sizing: border-box;
+}
 
-    min-block-size: 100px; 
-    background: #FFFFFF;
-    border-radius: 28px;
-    color: #000000;
+.item:active {
+  background-color: #2bd328;
+  color: #ffffff;
+}
 
-     
-
-    height: 150px;
-    width: 150px;
-    transition-duration: 200ms;
-
-    
-
-
-    box-sizing: border-box;
-  }
-
-
-  .item:active {
-    background-color: #2BD328;
-    color: #FFFFFF;
-    
-
-  }
-  
-  
 @media (min-width: 150px) {
-    .item {
-      flex-basis: calc((100% - 10px) / 2);
-    }
+  .item {
+    flex-basis: calc((100% - 10px) / 2);
   }
+}
 
-.single-clock-div{
+.single-clock-div {
   display: flex;
   justify-content: center;
 }
 
-.clock-icon-div{
+.clock-icon-div {
   display: flex;
   justify-content: center;
 }
-.time-title{
+.time-title {
   display: flex;
   justify-content: center;
 }
 
-.check-circle-outline{
+.check-circle-outline {
   margin-top: 25%;
-  
 }
 
-.result-task-title{
-  font-family: 'SF Pro Rounded';
+.result-task-title {
+  font-family: "SF Pro Rounded";
   font-style: normal;
   font-weight: 600;
   font-size: 22px;
@@ -180,22 +164,22 @@
   letter-spacing: 0.25px;
 }
 
-.result-task-text{
-  font-family: 'SF Pro Text';
+.result-task-text {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 400;
   font-size: 17px;
   line-height: 22px;
   /* or 129% */
   text-align: center;
-  
+
   display: flex;
   justify-content: center;
-  color: #6D7885;
+  color: #6d7885;
 }
 
-.result-task-button{
-  font-family: 'SF Pro Text';
+.result-task-button {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 600;
   font-size: 19px;
@@ -209,40 +193,32 @@
 
   letter-spacing: -0.25px;
   margin-bottom: 16px;
-  
 }
 
-.result-task-button-div{
+.result-task-button-div {
   display: flex;
   justify-content: center;
-  
 }
 
-.result-task-resTitle{
-
-  font-family: 'SF Pro Text';
+.result-task-resTitle {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 400;
   font-size: 18px;
-  line-height: 22px; 
+  line-height: 22px;
 
-  color: #6D7885;
-
-
- 
+  color: #6d7885;
 }
 
-.result-task-resTitle-div{
-
+.result-task-resTitle-div {
   margin-left: 10px;
- 
+
   display: flex;
   align-items: center;
 }
 
-
-.result-friend-position{
-  font-family: 'SF Pro Text';
+.result-friend-position {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 500;
   font-size: 17px;
@@ -255,17 +231,15 @@
 
   /* Light Text / Tertiary */
 
-  color: #99A2AD;
+  color: #99a2ad;
 }
 
-
-.result-friendList{
+.result-friendList {
   padding-bottom: 10%;
   margin-bottom: 120px;
 }
- 
 
-.result-absolute-div{
+.result-absolute-div {
   position: fixed;
   left: 0;
   right: 0;
@@ -274,23 +248,20 @@
   padding-top: 20px;
   padding-bottom: 75px;
   backdrop-filter: blur(2.5px);
-  
 }
 
-
-.result-absolute-div-LVL{
+.result-absolute-div-LVL {
   position: fixed;
   left: 0;
   right: 0;
   height: 10%;
   bottom: 0;
   padding-top: 20px;
-  padding-bottom: 75px; 
+  padding-bottom: 75px;
   backdrop-filter: blur(12.5px);
-  
 }
 
-.result-absolute-div-MP{
+.result-absolute-div-MP {
   position: fixed;
   left: 0;
   right: 0;
@@ -300,26 +271,24 @@
   padding-bottom: 75px;
   background-color: #ffffff;
   backdrop-filter: blur(4.5px);
-  
 }
 
-.result-buttonGroup{
+.result-buttonGroup {
   display: flex;
   align-items: center;
   margin-left: 5%;
-  margin-right: 5%; 
+  margin-right: 5%;
 }
 
-.result-buttonRetry-div{
-  
-  width:100%;
+.result-buttonRetry-div {
+  width: 100%;
   max-width: 400px;
   margin-top: -16px;
   display: flex;
   align-items: center;
 }
-.result-buttonRetry-div:active{
-  width:100%;
+.result-buttonRetry-div:active {
+  width: 100%;
   margin-top: -16px;
   display: flex;
   align-items: center;
@@ -329,23 +298,22 @@
   transition-timing-function: ease-in-out;
 }
 
-
-.result-buttonNotNow-div{
-  width:100%;
+.result-buttonNotNow-div {
+  width: 100%;
   max-width: 400px;
   margin-top: 10px;
   display: flex;
   align-items: center;
 }
 
-.result-buttonGroup-notNow{
-  padding-top:10px;
+.result-buttonGroup-notNow {
+  padding-top: 10px;
   padding-bottom: 10px;
 }
 
-.result-buttonGroup-retry{
+.result-buttonGroup-retry {
   margin-top: 10px;
-  font-family: 'SF Pro Text';
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 600;
   font-size: 17px;
@@ -353,38 +321,34 @@
 
   padding-left: 25px;
   padding-right: 25px;
-  
 
-  padding-top:10px;
+  padding-top: 10px;
   padding-bottom: 10px;
 
   letter-spacing: -0.25px;
 }
 
-.result-buttonGroup-notNow{
-  
+.result-buttonGroup-notNow {
 }
 
-.friendsPoint{
-  display: flex; 
-  align-items: center; 
+.friendsPoint {
+  display: flex;
+  align-items: center;
   padding-left: -10px;
   padding-right: -10px;
   margin-left: 16;
 
   width: auto;
-  height: 28px; 
+  height: 28px;
 }
 
-.friendsAvatar{
+.friendsAvatar {
   float: right;
   margin-left: 16px;
 }
 
- 
-
-.result-getFriend-button{
-  font-family: 'SF Pro Text';
+.result-getFriend-button {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 600;
   font-size: 19px;
@@ -401,14 +365,14 @@
   margin-top: 24px;
 }
 
-.eyes-photo{
+.eyes-photo {
   display: block;
   margin-left: auto;
-  margin-right: auto
+  margin-right: auto;
 }
 
-.result-getFriend-text{
-  font-family: 'SF Pro Text';
+.result-getFriend-text {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -420,28 +384,22 @@
 
   /* Light Text / Subhead */
 
-  color: #6D7885;
-
+  color: #6d7885;
 }
 
-.notFriend-div{
+.notFriend-div {
   border: 2px dashed rgba(0, 0, 0, 0.08);
   border-radius: 24px;
   margin-bottom: 10%;
 }
 
-
-@import url('https://fonts.googleapis.com/css2?family=Manrope&family=Space+Grotesk:wght@300;400&display=swap');
-.hide{
+@import url("https://fonts.googleapis.com/css2?family=Manrope&family=Space+Grotesk:wght@300;400&display=swap");
+.hide {
   opacity: 0;
-  position: fixed; 
-  font-family: 'Manrope', sans-serif;
-  
+  position: fixed;
+  font-family: "Manrope", sans-serif;
 }
 
-
-.game-div-margin{
-  
+.game-div-margin {
   align-items: center;
 }
-

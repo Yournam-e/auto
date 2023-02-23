@@ -1,120 +1,108 @@
-.multiplayer-title{
-  font-family: 'SF Pro Text';
+.multiplayer-title {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 16px;
   /* identical to box height, or 100% */
-  
+
   letter-spacing: -0.078px;
-  
+
   /* Light Text / Subhead */
-  
-  color: #6D7885;
-  
-  
+
+  color: #6d7885;
 }
 
-.multiplayer-div{
+.multiplayer-div {
   margin-top: 5%;
 }
 
-.multiplayer-title-div{
+.multiplayer-title-div {
   margin-top: 16px;
   display: flex;
   justify-content: center;
 }
 
-.multiplayer-title-code{
-  font-family: 'SF Pro Text';
+.multiplayer-title-code {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 600;
   font-size: 22px;
   line-height: 22px;
-  
+
   letter-spacing: -0.408px;
 
-  
-
   position: flex;
 }
 
-.multiplayer-title-return{
-  
+.multiplayer-title-return {
   position: flex;
-  
 }
 
-.multiplayer-qr-button-div{
+.multiplayer-qr-button-div {
   margin-top: 8px;
   display: flex;
   justify-content: center;
 }
 
-.multiplayer-qr-button{
+.multiplayer-qr-button {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-right: 24px;
   padding-left: 24px;
-	color:#1984FF;
-	border-radius:25px;
+  color: #1984ff;
+  border-radius: 25px;
 }
 
-.multiplayer-qr-button-messenger{
+.multiplayer-qr-button-messenger {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-right: 8px;
   padding-left: 8px;
-	color:#1984FF;
-	border-radius:25px;
+  color: #1984ff;
+  border-radius: 25px;
 }
 
-.multiplayer-qr-button-messenger:active{
+.multiplayer-qr-button-messenger:active {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-right: 8px;
   padding-left: 8px;
-	color:#1984ff69;
-	border-radius:25px;
+  color: #1984ff69;
+  border-radius: 25px;
   -webkit-transform: scale(0.94);
   transform: scale(0.94);
   transition: all 100ms ease-in-out;
   transition-timing-function: ease-in-out;
 }
 
-.multiplayer-qr-button:active{
+.multiplayer-qr-button:active {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-right: 24px;
   padding-left: 24px;
-	color:#1984ff69;
-	border-radius:25px;
+  color: #1984ff69;
+  border-radius: 25px;
   -webkit-transform: scale(0.94);
   transform: scale(0.94);
   transition: all 100ms ease-in-out;
   transition-timing-function: ease-in-out;
 }
 
-
-
-
-.multiplayer-separator-div{
+.multiplayer-separator-div {
   margin-top: 25px;
   display: flex;
   justify-content: center;
-  
 }
 
- 
-
-.separator-right{
+.separator-right {
   float: right;
-  width: 80px; 
+  width: 80px;
   margin-left: 22px;
 }
 
-.title-or{
-  font-family: 'SF Pro Text';
+.title-or {
+  font-family: "SF Pro Text";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -125,30 +113,30 @@
 
   /* Light Text / Tertiary */
 
-  color: #99A2AD;
+  color: #99a2ad;
 }
 
-.separator-left{
+.separator-left {
   width: 80px;
   margin-right: 22px;
 }
 
-.multiplayer-code-button{
+.multiplayer-code-button {
   padding-top: 10px;
   padding-bottom: 8px;
   padding-right: 24px;
   padding-left: 24px;
-	color:#1984FF;
-	border-radius:25px;
+  color: #1984ff;
+  border-radius: 25px;
 }
 
-.multiplayer-code-button:active{
+.multiplayer-code-button:active {
   padding-top: 10px;
   padding-bottom: 8px;
   padding-right: 24px;
   padding-left: 24px;
-	color:#1984FF;
-	border-radius:25px;
+  color: #1984ff;
+  border-radius: 25px;
 
   -webkit-transform: scale(0.94);
   transform: scale(0.94);
@@ -156,84 +144,82 @@
   transition-timing-function: ease-in-out;
 }
 
-
-.multiplayer-complexity-div{
+.multiplayer-complexity-div {
   display: flex;
   justify-content: center;
 }
 
-.complexity-button-on-light{
+.complexity-button-on-light {
   padding-top: 6px;
   padding-bottom: 4px;
   padding-right: 5px;
   padding-left: 5px;
-	color:#1984FF;
-  background-color: #ECF1FA;
-	border-radius:25px;
+  color: #1984ff;
+  background-color: #ecf1fa;
+  border-radius: 25px;
   margin-left: 2px;
   margin-right: 2px;
 }
 
-.vkuiTabbar--ios.vkuiTabbar--shadow:before{
+.vkuiTabbar--ios.vkuiTabbar--shadow:before {
   background: none;
 }
 
-.complexity-button-on-dark{
+.complexity-button-on-dark {
   padding-top: 6px;
   padding-bottom: 4px;
   padding-right: 5px;
   padding-left: 5px;
-	color:#1984FF;
-  background-color: #1D2D41;
-	border-radius:25px;
+  color: #1984ff;
+  background-color: #1d2d41;
+  border-radius: 25px;
   margin-left: 2px;
   margin-right: 2px;
 }
 
-.complexity-button-off{
+.complexity-button-off {
   padding-top: 6px;
   padding-bottom: 4px;
   padding-right: 5px;
   padding-left: 5px;
-	color:#ffffff;
-	border-radius:25px;
+  color: #ffffff;
+  border-radius: 25px;
   margin-left: 2px;
   margin-right: 2px;
 }
 
-.multiplayer-play-div{
+.multiplayer-play-div {
   display: flex;
   justify-content: center;
 }
 
-.multiplayer-play-button{
+.multiplayer-play-button {
   padding-top: 10px;
   padding-bottom: 10px;
-  margin-left:12px;
-  margin-right:12px;
-	color:#1984FF; 
-	border-radius:100px;
+  margin-left: 12px;
+  margin-right: 12px;
+  color: #1984ff;
+  border-radius: 100px;
 }
 
-.multiplayer-play-button:active{
+.multiplayer-play-button:active {
   padding-top: 10px;
   padding-bottom: 10px;
-  margin-left:12px;
-  margin-right:12px;
-	color:#1984FF;
-	border-radius:100px;
+  margin-left: 12px;
+  margin-right: 12px;
+  color: #1984ff;
+  border-radius: 100px;
   -webkit-transform: scale(0.94);
   transform: scale(0.94);
   transition: all 100ms ease-in-out;
   transition-timing-function: ease-in-out;
-
 }
 
-.multiplayer-play-group{
+.multiplayer-play-group {
   bottom: 10px;
 }
 
-.result-buttonGroup{
+.result-buttonGroup {
   display: flex;
   align-items: center;
   margin-left: 5%;
@@ -241,7 +227,7 @@
   margin-bottom: 5%;
 }
 
-.noneUser{
+.noneUser {
   width: 44px;
   height: 44px;
 
@@ -252,36 +238,31 @@
   Light: black_alpha8 #14000000
   */
   border: 2px dashed;
-  border-radius: 231px; 
+  border-radius: 231px;
   margin-top: 4px;
   margin-bottom: 4px;
-  margin-left: auto; 
-  margin-right: auto; 
-
-   
+  margin-left: auto;
+  margin-right: auto;
 }
 
-
-.player-name-off{
+.player-name-off {
   margin-left: 12px;
-  color:#99A2AD;
+  color: #99a2ad;
 }
 
-
-
-.game-div-margin{
+.game-div-margin {
   margin-top: 15%;
 }
 
-.loaderIcon{
+.loaderIcon {
   animation: spin 1s infinite linear;
 }
 
 @keyframes spin {
   from {
-      transform: scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg);
   }
   to {
-      transform: scale(1) rotate(360deg);
+    transform: scale(1) rotate(360deg);
   }
 }
