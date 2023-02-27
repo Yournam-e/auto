@@ -1,5 +1,11 @@
-import { useEffect, useState } from "react";
-
+import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import {
+  Icon16Done,
+  Icon24RefreshOutline,
+  Icon24StoryOutline,
+  Icon56CheckCircleOutline,
+} from "@vkontakte/icons";
+import bridge from "@vkontakte/vk-bridge";
 import {
   Avatar,
   Button,
@@ -8,38 +14,21 @@ import {
   Div,
   List,
   Panel,
-  ScreenSpinner,
   Text,
   Title,
 } from "@vkontakte/vkui";
-
-import bridge from "@vkontakte/vk-bridge";
-
-import Eyes from "../../../img/Eyes.png";
-
-import {
-  Icon16Done,
-  Icon24RefreshOutline,
-  Icon24StoryOutline,
-  Icon56CheckCircleOutline,
-} from "@vkontakte/icons";
 import axios from "axios";
+import { createCanvas } from "canvas";
+import { useStore } from "effector-react";
+import { useCallback, useEffect, useState } from "react";
+import { PanelRoute, PopoutRoute } from "../../../constants/router";
+import { $main, checkToDelete } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
+import Eyes from "../../../img/Eyes.png";
 import "../Game.css";
 
-import { createCanvas } from "canvas";
-import { useUserId } from "../../../hooks/useUserId";
-
-const ResultPage = ({
-  id,
-  go,
-  answer,
-  setPopout,
-  setSingleType,
-  setActivePanel,
-  fetchedUser,
-  themeColors,
-}) => {
+const ResultPage = ({ id }) => {
+  const { user, appearance, answer } = useStore($main);
   const url = "https://showtime.app-dich.com/api/plus-plus/";
 
   const [lvlsInfo, setLvlsInfo] = useState(null);
@@ -52,8 +41,6 @@ const ResultPage = ({
   const [friendsResult, setFriendsResult] = useState(); //результаты друзей
 
   const [tokenAvailability, setTokenAvailability] = useState(false);
-
-  const userID = useUserId();
 
   function decOfNum(number, titles, needNumber = true) {
     if (number !== undefined) {
@@ -68,16 +55,29 @@ const ResultPage = ({
     }
   }
 
-  function loadFonts(fonts = []) {
-    for (const font of fonts) {
-      const span = document.createElement("span");
-      span.style.position = "absolute";
-      span.style.fontFamily = font;
-      span.style.opacity = "0";
-      span.innerText = ".";
-      document.body.appendChild(span);
-      span.onload = () => span.remove();
-    }
+  async function loadFonts(fonts = []) {
+    new Promise((resolve, reject) => {
+      try {
+        if (fonts.length === 0) {
+          resolve();
+        }
+        for (const font of fonts) {
+          const span = document.createElement("span");
+          span.style.position = "absolute";
+          span.style.fontFamily = font;
+          span.style.opacity = "0";
+          span.innerText = ".";
+          document.body.appendChild(span);
+          span.onload = () => {
+            span.remove();
+            resolve();
+          };
+        }
+      } catch (e) {
+        console.log(e);
+        reject();
+      }
+    });
   }
 
   function loadImage(url) {
@@ -90,9 +90,8 @@ const ResultPage = ({
   }
 
   async function showStoryBox(count) {
-    //await loadFonts()
-
-    // параметры url
+    setActivePopout(PopoutRoute.Loading);
+    await loadFonts(["Manrope"]);
     function getUrlParams() {
       return (
         window.location.search.length > 0 &&
@@ -106,7 +105,6 @@ const ResultPage = ({
         )
       );
     }
-
     const background = await loadImage(
       "https://showtime.app-dich.com/imgs/plusstory.webp"
     );
@@ -158,28 +156,15 @@ const ResultPage = ({
         },
       });
     } catch (e) {
-      console.log(e);
-      setPopout(null);
+      console.log("show story box err", e);
+    } finally {
+      back();
     }
-
-    setPopout(null);
   }
 
-  function checkToDelete() {
-    lvlsInfo &&
-      lvlsInfo.map((item, index) => {
-        if (item.lvlType === "single30") {
-          axios
-            .delete(
-              `https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`
-            )
-            .then(async function (response) {
-              setPopout(null);
-            })
-            .catch(function (error) {});
-        }
-      });
-  }
+  const playAgain = useCallback(() => {
+    checkToDelete(lvlsInfo);
+  }, [lvlsInfo]);
 
   function getIds(result) {
     if (result === true) {
@@ -203,19 +188,12 @@ const ResultPage = ({
                 if (friendsData.response) {
                   setFriendsIds(friendsData.response);
                   setTokenAvailability(true);
-                  setPopout(null);
                 }
               })
-              .catch((error) => {
-                // Ошибка
-                setPopout(false);
-              });
+              .catch((error) => {});
           }
         })
-        .catch((error) => {
-          // Ошибка
-          setPopout(false);
-        });
+        .catch((error) => {});
     }
   } ///получи id друзей
 
@@ -251,9 +229,7 @@ const ResultPage = ({
         ? resolve(true)
         : resolve(true);
     });
-    promise.then((result) =>
-      result === true ? getIds(result) : setPopout(null)
-    );
+    promise.then((result) => result === true && getIds(result));
   } //// получи друзей и чекай token'ы (при нажатии)
 
   useEffect(() => {
@@ -268,7 +244,7 @@ const ResultPage = ({
         .then(async function (response) {
           setFriendsResult(response.data);
           for await (const item of response.data.data) {
-            if (item.user.userId === fetchedUser.id) {
+            if (item.user.userId === user.id) {
               setRightAns(item.rightResults);
             }
           }
@@ -309,7 +285,6 @@ const ResultPage = ({
                 setRight(item.rightResults);
               }
             }
-            await setPopout(null);
           })
           .catch(function (error) {});
       })
@@ -319,7 +294,7 @@ const ResultPage = ({
   return (
     <Panel id={id} className="resultPagePanel">
       <div
-        style={{ background: themeColors === "light" ? "#FFFFFF" : "#1D1D20" }}
+        style={{ background: appearance === "light" ? "#FFFFFF" : "#1D1D20" }}
         className="full-div"
       >
         <Div className="check-circle-outline">
@@ -356,14 +331,11 @@ const ResultPage = ({
               onClick={async function () {
                 if (right !== null) {
                   showStoryBox(right);
-                } else {
                 }
-
-                await setPopout(<ScreenSpinner size="large" />);
               }}
               className="result-task-button"
               style={{
-                backgroundColor: themeColors === "dark" ? "#293950" : "#F4F9FF",
+                backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
                 color: "#1984FF",
                 borderRadius: 25,
               }}
@@ -417,7 +389,7 @@ const ResultPage = ({
                           hasHover={false}
                           style={{
                             backgroundColor:
-                              themeColors === "dark" ? "#293950" : "#F4F9FF",
+                              appearance === "dark" ? "#293950" : "#F4F9FF",
                             color: "#1984FF",
                             borderRadius: 25,
                           }}
@@ -466,12 +438,12 @@ const ResultPage = ({
                   <Button
                     className="result-getFriend-button"
                     onClick={() => {
-                      setPopout(<ScreenSpinner size="large" />);
+                      setActivePopout(PopoutRoute.Loading);
                       getFriendsAndCheck();
                     }}
                     style={{
                       backgroundColor:
-                        themeColors === "dark" ? "#293950" : "#F4F9FF",
+                        appearance === "dark" ? "#293950" : "#F4F9FF",
                       color: "#1984FF",
                       borderRadius: 25,
                       marginBottom: 24,
@@ -498,12 +470,7 @@ const ResultPage = ({
                   before={<Icon24RefreshOutline />}
                   className="result-buttonGroup-retry"
                   appearance="accent"
-                  onClick={async function (e) {
-                    await setSingleType("single30");
-                    await setPopout(<ScreenSpinner size="large" />);
-                    await setActivePanel("temporaryGame");
-                    await checkToDelete();
-                  }}
+                  onClick={playAgain}
                   stretched
                 >
                   Попробовать снова
@@ -512,10 +479,9 @@ const ResultPage = ({
               <div className="result-buttonNotNow-div">
                 <Button
                   className="result-buttonGroup-notNow"
-                  onClick={(e) => {
-                    go(e);
+                  onClick={() => {
+                    setActivePanel(PanelRoute.Menu);
                   }}
-                  data-to="menu"
                   size="l"
                   style={{
                     borderRadius: 25,

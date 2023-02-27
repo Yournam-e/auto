@@ -1,48 +1,38 @@
 import { useEffect, useState } from "react";
 
 import {
-  Alert,
   Button,
   Div,
   Panel,
   PanelHeader,
   PanelHeaderButton,
-  ScreenSpinner,
   Title,
+  usePlatform,
 } from "@vkontakte/vkui";
 
 import "../Game/Game.css";
 
 import { Icon24Back, Icon24ChevronLeft } from "@vkontakte/icons";
 import { getPadTime } from "../../scripts/getPadTime";
-import { answerTask, leaveRoom } from "../../sockets/game";
+import { answerTask } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
 
+import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import { useStore } from "effector-react";
+import { PopoutRoute } from "../../constants/router";
+import {
+  $main,
+  setAnswersInfo,
+  setGameInfo,
+  setMpGameResults,
+  setTaskInfo,
+} from "../../core/main";
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
-const MultiplayerGame = ({
-  id,
-  go,
-  count,
-  fetchedUser,
-  setActivePanel,
-  setPopout,
-  gameInfo,
-  setGameInfo,
-  taskInfo,
-  setTaskInfo,
-  setAnswersInfo,
-  answersInfo,
-  setMpGameResults,
-  themeColors,
-  joinCode,
-  setActiveStory,
-  setNowInGame,
-  platform,
-  setLeavingRoom,
-  setConnectType,
-}) => {
+export const MultiplayerGame = ({ id }) => {
+  const { gameInfo, taskInfo, answersInfo, appearance } = useStore($main);
+  const platform = usePlatform();
   //const [equation, setEquation] = useState([2, 2, '+', 4]); //задача
 
   const [timeLeft, setTimeLeft] = useState(30); //время
@@ -53,7 +43,6 @@ const MultiplayerGame = ({
   const seconds = getPadTime(timeLeft - minutes * 60); //секунды
 
   client.gameFinished = ({ game }) => {
-    setPopout(null);
     setGameInfo(null);
     setMpGameResults([]);
     setMpGameResults(game);
@@ -81,7 +70,7 @@ const MultiplayerGame = ({
       await setGameInfo({ ...gameInfo, taskId: id });
       await setAnswersInfo(answers);
       await setTaskInfo(task);
-      setPopout(null);
+      back();
     }
     newTask();
   };
@@ -90,7 +79,7 @@ const MultiplayerGame = ({
     <Panel id={id}>
       <div
         style={{
-          background: themeColors === "light" ? "#F7F7FA" : "#1D1D20",
+          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
           height: document.documentElement.scrollHeight,
         }}
       >
@@ -103,38 +92,7 @@ const MultiplayerGame = ({
             <PanelHeaderButton
               aria-label="Выйти из игры"
               onClick={() => {
-                setPopout(
-                  <Alert
-                    actions={[
-                      {
-                        title: "Завершить",
-                        mode: "destructive",
-                        autoclose: true,
-                        action: () => {
-                          async function x() {
-                            await setLeavingRoom(true);
-                            setConnectType("host");
-                            await leaveRoom(fetchedUser.id);
-                            await setActivePanel("menu");
-                            await setActiveStory("multiplayer");
-                          }
-                          x();
-                        },
-                      },
-                      {
-                        title: "Отмена",
-                        autoclose: true,
-                        mode: "cancel",
-                      },
-                    ]}
-                    actionsLayout="vertical"
-                    onClose={() => {
-                      setPopout(null);
-                    }}
-                    header="Подтвердите действие"
-                    text="Вы уверены, что хотите завершить игру?"
-                  />
-                );
+                setActivePopout(PopoutRoute.AlertGameExit);
               }}
             >
               {platform === "ios" ? (
@@ -160,7 +118,7 @@ const MultiplayerGame = ({
                 <span
                   level="1"
                   style={{
-                    background: themeColors === "light" ? "#F0F1F5" : "#2E2E33",
+                    background: appearance === "light" ? "#F0F1F5" : "#2E2E33",
                   }}
                   className="equation"
                 >
@@ -228,8 +186,8 @@ const MultiplayerGame = ({
                     key={index}
                     style={{
                       background:
-                        themeColors === "light" ? "#FFFFFF" : "#2E2E33",
-                      color: themeColors === "light" ? "#000" : "#F0F1F5",
+                        appearance === "light" ? "#FFFFFF" : "#2E2E33",
+                      color: appearance === "light" ? "#000" : "#F0F1F5",
                     }}
                     onPointerDown={(e) => {}}
                     onClick={() => {
@@ -240,7 +198,7 @@ const MultiplayerGame = ({
                           value,
                           gameInfo.taskId
                         );
-                        setPopout(<ScreenSpinner size="large" />);
+                        setActivePopout(PopoutRoute.Loading);
                       }
                       callNextTask();
                       //setIsCounting(true)
@@ -256,5 +214,3 @@ const MultiplayerGame = ({
     </Panel>
   );
 };
-
-export default MultiplayerGame;

@@ -1,6 +1,6 @@
-import { memo } from 'react';
-
+import { ScreenSpinner } from "@vkontakte/vkui";
+import { memo } from "react";
 
 export const LoadingPopout = memo(() => {
-  return <div></div>;
+  return <ScreenSpinner size="large" />;
 });

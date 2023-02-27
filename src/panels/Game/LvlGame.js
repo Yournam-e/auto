@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 
 import {
-  Alert,
   Button,
   Div,
   Panel,
   PanelHeader,
   PanelHeaderButton,
-  ScreenSpinner,
   Title,
+  usePlatform,
 } from "@vkontakte/vkui";
 
 import "./Game.css";
 
 import decideTask from "../../scripts/decideTask";
 
+import { back, setActivePanel, setActivePopout } from "@blumjs/router";
 import { Icon24Back, Icon24ChevronLeft } from "@vkontakte/icons";
 import axios from "axios";
 import { qsSign } from "../../hooks/qs-sign";
@@ -22,29 +22,21 @@ import { getPadTime } from "../../scripts/getPadTime";
 
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
-import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
-const LvlGame = ({
-  id,
-  go,
-  count,
-  setCount,
-  setActivePanel,
-  setPopout,
-  lvlNumber,
-  ready,
-  setLvlResult,
-  lvlResult,
-  setTimeFinish,
-  themeColors,
+import { useStore } from "effector-react";
+import { PanelRoute, PopoutRoute } from "../../constants/router";
+import {
+  $main,
   setAllTasks,
-  allTasks,
-  platform,
-}) => {
+  setLvlResult,
+  setTimeFinish,
+} from "../../core/main";
+import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
+
+const LvlGame = ({ id }) => {
+  const { lvlNumber, isReady, lvlResult, allTasks, appearance } =
+    useStore($main);
+  const platform = usePlatform();
   const [lvlData, setLvlData] = useState(false);
-
-  const [equation, setEquation] = useState([2, 2, "+", 4]); //задача
-
-  const [answer, setAnswer] = useState([3, 1, 2, 4]); //варианты ответов
 
   const [taskNumber, setTaskNumber] = useState(0);
 
@@ -94,7 +86,7 @@ const LvlGame = ({
           lvlType: devideType(),
           answers: [],
         });
-        setPopout(null);
+        back();
       })
       .catch(function (error) {});
   }
@@ -102,25 +94,23 @@ const LvlGame = ({
   useEffect(() => {
     function pastTime() {
       setTimeFinish(Date.now());
-      setActivePanel("resultLvl");
+      setActivePanel(PanelRoute.ResultLvl);
     }
     timeLeft === 0 ? pastTime() : console.log();
   }, [timeLeft]);
 
   useEffect(() => {
-    if (ready === true) {
+    if (isReady) {
       createLvl();
     }
-  }, [ready]);
+  }, [isReady]);
 
   useEffect(() => {
     //createLvl()
     async function lol() {
-      await setPopout(<ScreenSpinner size="large" />);
-      setPopout(null);
+      setActivePopout(PopoutRoute.Loading);
+      back();
     }
-
-    window.history.pushState({ activePanel: "lvlGame" }, "lvlGame");
 
     lol();
   }, []);
@@ -141,7 +131,7 @@ const LvlGame = ({
     <Panel id={id}>
       <div
         style={{
-          background: themeColors === "light" ? "#F7F7FA" : "#1D1D20",
+          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
           height: document.documentElement.scrollHeight,
         }}
       >
@@ -153,30 +143,7 @@ const LvlGame = ({
           before={
             <PanelHeaderButton
               onClick={() => {
-                setPopout(
-                  <Alert
-                    actions={[
-                      {
-                        title: "Завершить",
-                        mode: "destructive",
-                        autoclose: true,
-                        action: () =>
-                          setActivePanel("menu") && setAllTasks([{}]),
-                      },
-                      {
-                        title: "Отмена",
-                        autoclose: true,
-                        mode: "cancel",
-                      },
-                    ]}
-                    actionsLayout="vertical"
-                    onClose={() => {
-                      setPopout(null);
-                    }}
-                    header="Подтвердите действие"
-                    text="Вы уверены, что хотите завершить игру?"
-                  />
-                );
+                setActivePopout(PopoutRoute.AlertFinishGame);
               }}
             >
               {platform === "ios" ? (
@@ -203,7 +170,7 @@ const LvlGame = ({
                 level="1"
                 className="equation"
                 style={{
-                  background: themeColors === "light" ? "#F0F1F5" : "#2E2E33",
+                  background: appearance === "light" ? "#F0F1F5" : "#2E2E33",
                 }}
               >
                 {lvlData && lvlData.tasks[taskNumber].task[0]}
@@ -269,8 +236,8 @@ const LvlGame = ({
                   id={"button" + index}
                   key={index}
                   style={{
-                    background: themeColors === "light" ? "#FFFFFF" : "#2E2E33",
-                    color: themeColors === "light" ? "#000" : "#F0F1F5",
+                    background: appearance === "light" ? "#FFFFFF" : "#2E2E33",
+                    color: appearance === "light" ? "#000" : "#F0F1F5",
                   }}
                   onPointerDown={(e) => {}}
                   onClick={() => {
@@ -317,8 +284,8 @@ const LvlGame = ({
                             copy.answers = [...lvlResult.answers, newItem];
                             await setLvlResult(copy);
 
-                            await setPopout(<ScreenSpinner size="large" />);
-                            await setActivePanel("resultLvl");
+                            setActivePopout(PopoutRoute.Loading);
+                            setActivePanel(PanelRoute.ResultLvl);
                           }
 
                           finished();

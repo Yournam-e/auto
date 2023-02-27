@@ -1,49 +1,24 @@
 import { useEffect, useState } from "react";
 
-import { Alert, CardGrid, Panel, PanelHeader } from "@vkontakte/vkui";
+import { CardGrid, Panel, PanelHeader } from "@vkontakte/vkui";
 
 import "./Home.css";
 
 import axios from "axios";
+import { useStore } from "effector-react";
 import { qsSign } from "../../hooks/qs-sign";
-import LevelCard from "./components/LevelCard";
-import LongCard from "./components/LongCard";
+import { LevelCard } from "./components/LevelCard";
+import { LongCard } from "./components/LongCard";
 
+import { setActivePopout } from "@blumjs/router";
+import { PopoutRoute } from "../../constants/router";
+import { $main, setLvlsInfo } from "../../core/main";
 import "../../img/Fonts.css";
 
-const Home = ({
-  id,
-  setSingleType,
-  setLocalTask,
-  activePanel,
-  setLvlData,
-  lvlData,
-  setLvlNumber,
-  setReady,
-  lvlNumber,
-  themeColors,
-  setPanelsHistory,
-  panelsHistory,
-  lvlsInfo,
-  setLvlsInfo,
-  gameExists,
-  setConnectType,
-  setGameExists,
-}) => {
-  const url = "https://showtime.app-dich.com/api/plus-plus/";
+export const Home = ({ id }) => {
+  const { gameExists } = useStore($main);
 
-  const [completeArray, setCompleteArray] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const url = "https://showtime.app-dich.com/api/plus-plus/";
 
   const [completeLvls, setCompleteLvls] = useState([
     { id: "one", complete: false, needComplete: 8 },
@@ -57,8 +32,6 @@ const Home = ({
     { id: "nine", complete: false, needComplete: 8 },
     { id: "ten", complete: false, needComplete: 8 },
   ]);
-
-  useEffect(() => {}, [completeLvls]);
 
   function devideType(i) {
     switch (i) {
@@ -115,7 +88,7 @@ const Home = ({
     axios
       .get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
-        await setLvlsInfo(response.data.data);
+        setLvlsInfo(response.data.data);
         response.data.data.map((item, index) => {
           setCompleteLvls([
             ...completeLvls.map((todo) =>
@@ -126,28 +99,7 @@ const Home = ({
           ]);
         });
         if (gameExists === true) {
-          setPopout(
-            <Alert
-              actions={[
-                {
-                  title: "Ок",
-                  mode: "destructive",
-                  autoclose: true,
-                  action: () => {
-                    setGameExists(false);
-                    setConnectType("host");
-                  },
-                },
-              ]}
-              actionsLayout="vertical"
-              onClose={() => {
-                setGameExists(false);
-                setPopout(null);
-              }}
-              header="Внимание"
-              text="Игра уже запущена, попробуйте позже"
-            />
-          );
+          setActivePopout(PopoutRoute.AlertGameExist);
         }
       })
       .catch(function (error) {
@@ -162,28 +114,11 @@ const Home = ({
       </PanelHeader>
       <div className="long-card-div">
         <CardGrid size="l" style={{ marginBottom: 56 }}>
-          <LongCard
-            setSingleType={setSingleType}
-            lvlsInfo={lvlsInfo}
-            setLocalTask={setLocalTask}
-            themeColors={themeColors}
-          />
+          <LongCard />
 
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => {
             return (
-              <LevelCard
-                key={number}
-                number={number}
-                lvlsInfo={lvlsInfo}
-                setLvlData={setLvlData}
-                lvlData={lvlData}
-                setLvlNumber={setLvlNumber}
-                setReady={setReady}
-                themeColors={themeColors}
-                devideLvl={devideLvl}
-                completeArray={completeArray}
-                completeLvls={completeLvls}
-              />
+              <LevelCard key={number} number={number} devideLvl={devideLvl} />
             );
           })}
         </CardGrid>
@@ -191,5 +126,3 @@ const Home = ({
     </Panel>
   );
 };
-
-export default Home;

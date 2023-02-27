@@ -28,6 +28,10 @@ export enum PopoutRoute {
   Loading = "Loading",
   AlertLobby = "AlertLobby",
   AlertGameExist = "AlertGameExist",
+  AlertGameExit = "AlertGameExit",
+  AlertLobbyNotExist = "AlertLobbyNotExist",
+  AlertShareGame = "AlertShareGame",
+  AlertFinishGame = "AlertFinishGame",
 }
 
 export enum StoryRoute {

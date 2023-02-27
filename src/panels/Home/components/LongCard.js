@@ -1,34 +1,22 @@
 import { Icon24ClockOutline, Icon24Play } from "@vkontakte/icons";
 import { Button, Card, Div, Title } from "@vkontakte/vkui";
 
-import axios from "axios";
-import { PanelRoute, PopoutRoute } from "../../../constants/router";
-
-import { qsSign } from "../../../hooks/qs-sign";
+import { useStore } from "effector-react";
+import { memo, useCallback } from "react";
+import { $main, checkToDelete } from "../../../core/main";
 import "../Home.css";
 
-const LongCard = ({ setActivePanel, setSingleType, lvlsInfo, themeColors }) => {
-  function checkToDelete() {
-    lvlsInfo &&
-      lvlsInfo.map((item, index) => {
-        if (item.lvlType === "single30") {
-          axios
-            .delete(
-              `https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`
-            )
-            .then(async function (response) {})
-            .catch(function (error) {
-              console.warn(error);
-            });
-        }
-      });
-  }
+export const LongCard = memo(() => {
+  const { appearance, lvlsInfo } = useStore($main);
+  const startGame = useCallback(() => {
+    checkToDelete(lvlsInfo);
+  }, [lvlsInfo]);
 
   return (
     <div className="long-card-div-div">
       <Card
         style={{
-          backgroundColor: themeColors === "dark" ? "#2C2C31" : "#FFFFFF",
+          backgroundColor: appearance === "dark" ? "#2C2C31" : "#FFFFFF",
           borderRadius: 24,
         }}
         className="long-card"
@@ -37,10 +25,10 @@ const LongCard = ({ setActivePanel, setSingleType, lvlsInfo, themeColors }) => {
           <Icon24ClockOutline
             width={24}
             height={24}
-            fill={themeColors === "dark" ? "#FFFFFF" : "#6D7885"}
+            fill={appearance === "dark" ? "#FFFFFF" : "#6D7885"}
             className="long-card-icon"
             style={{
-              backgroundColor: themeColors === "dark" ? "#293950" : "#F7F7F7",
+              backgroundColor: appearance === "dark" ? "#293950" : "#F7F7F7",
             }}
           />
           <Div>
@@ -48,7 +36,7 @@ const LongCard = ({ setActivePanel, setSingleType, lvlsInfo, themeColors }) => {
               <Title
                 className="long-card-title"
                 style={{
-                  color: themeColors === "dark" ? "#C4C8CC" : "#2C2D2E",
+                  color: appearance === "dark" ? "#C4C8CC" : "#2C2D2E",
                 }}
               >
                 Попробуй 30-секундный режим
@@ -63,16 +51,10 @@ const LongCard = ({ setActivePanel, setSingleType, lvlsInfo, themeColors }) => {
 
           <Button
             className="button-long"
-            onClick={async function (e) {
-              setSingleType("single30");
-              setActivePanel(PanelRoute.TemporaryGame);
-              await checkToDelete();
-              setActivePopout(PopoutRoute.Loading);
-              setActivePanel(PanelRoute.TemporaryGame);
-            }}
+            onClick={startGame}
             data-to="temporaryGame"
             style={{
-              backgroundColor: themeColors === "dark" ? "#293950" : "#F4F9FF",
+              backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
               color: "#1984FF",
               borderRadius: 25,
             }}
@@ -86,6 +68,4 @@ const LongCard = ({ setActivePanel, setSingleType, lvlsInfo, themeColors }) => {
       </Card>
     </div>
   );
-};
-
-export default LongCard;
+});

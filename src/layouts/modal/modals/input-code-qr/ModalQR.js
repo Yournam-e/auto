@@ -18,8 +18,11 @@ import bridge from "@vkontakte/vk-bridge";
 import "./ModalQR.css";
 
 import qr from "@vkontakte/vk-qr";
+import { useStore } from "effector-react";
+import { $main } from "../../../../core/main";
 
-export const ModalQRCode = ({ id, joinCode }) => {
+export const ModalQRCode = ({ id }) => {
+  const { joinCode } = useStore($main);
   let options = {};
 
   const platform = usePlatform();

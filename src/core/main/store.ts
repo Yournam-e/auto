@@ -4,10 +4,11 @@ import { StoryRoute } from "../../constants/router";
 import { Appearance, ConnectType, GameInfo } from "../../types";
 import {
   setActiveStory,
+  setAgain,
   setAllTasks,
   setAnswer,
-  setAnswerInfo,
-  setAppeareance,
+  setAnswersInfo,
+  setAppearance,
   setCompleteLvl,
   setConnectType,
   setCountPoints,
@@ -25,6 +26,7 @@ import {
   setLvlsInfo,
   setMpGameResults,
   setNotAdd,
+  setNotUserRoom,
   setPanelsHistory,
   setPlatform,
   setPlayerLobbyList,
@@ -40,11 +42,12 @@ type Store = {
   appearance: Appearance;
   activeStory: StoryRoute;
   user: any;
+  notUserRoom: boolean;
   platform: Platform;
   countPoints: number;
   gameInfo: GameInfo;
   taskInfo: any;
-  answerInfo: any;
+  answersInfo: any;
   joinCode: null | string;
   mpGameResults: any[];
   playersId: number[];
@@ -76,12 +79,14 @@ type Store = {
   };
   lvlData: any;
   gameExists: boolean;
+  itAgain: boolean;
 };
 
 export const $main = createStore<Store>({
   appearance: "light",
   activeStory: StoryRoute.Single,
   user: null,
+  notUserRoom: false,
   platform: Platform.ANDROID,
   countPoints: 0,
   gameInfo: {
@@ -89,7 +94,7 @@ export const $main = createStore<Store>({
     taskId: "",
   },
   taskInfo: null,
-  answerInfo: null,
+  answersInfo: null,
   joinCode: null,
   mpGameResults: [],
   playersId: [],
@@ -121,8 +126,9 @@ export const $main = createStore<Store>({
   },
   lvlData: null,
   gameExists: false,
+  itAgain: false,
 })
-  .on(setAppeareance, (state, appearance) => ({
+  .on(setAppearance, (state, appearance) => ({
     ...state,
     appearance,
   }))
@@ -150,9 +156,9 @@ export const $main = createStore<Store>({
     ...state,
     taskInfo,
   }))
-  .on(setAnswerInfo, (state, answerInfo) => ({
+  .on(setAnswersInfo, (state, answersInfo) => ({
     ...state,
-    answerInfo,
+    answersInfo,
   }))
   .on(setJoinCode, (state, joinCode) => ({
     ...state,
@@ -245,4 +251,12 @@ export const $main = createStore<Store>({
   .on(setGameExists, (state, gameExists) => ({
     ...state,
     gameExists,
+  }))
+  .on(setAgain, (state, itAgain) => ({
+    ...state,
+    itAgain,
+  }))
+  .on(setNotUserRoom, (state, notUserRoom) => ({
+    ...state,
+    notUserRoom,
   }));

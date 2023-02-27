@@ -11,29 +11,32 @@ import {
   Title,
 } from "@vkontakte/vkui";
 
+import { setActivePanel } from "@blumjs/router";
 import { Icon16Done, Icon16Spinner } from "@vkontakte/icons";
+import { useStore } from "effector-react";
+import { PanelRoute, StoryRoute } from "../../../constants/router";
+import {
+  $main,
+  setActiveStory,
+  setAgain,
+  setConnectType,
+  setHaveHash,
+  setJoinCode,
+  setPlayersId,
+} from "../../../core/main";
 import { createRoom, joinRoom, leaveRoom } from "../../../sockets/game";
 import { client } from "../../../sockets/receiver";
 import "../../Game/Game.css";
 
-const MultiplayerResult = ({
-  id,
-  go,
-  mpGameResults,
-  fetchedUser,
-  setActivePanel,
-  joinCode,
-  playersList,
-  themeColors,
-  setAgain,
-  connectType,
-  setJoinCode,
-  setActiveStory,
-  setConnectType,
-  setPlayersId,
-  setHaveHash,
-}) => {
-  //let friendList = null
+const MultiplayerResult = ({ id }) => {
+  const {
+    joinCode,
+    appearance,
+    playerLobbyList,
+    user,
+    mpGameResults,
+    connectType,
+  } = useStore($main);
   const [friendList, setFriendList] = useState(null);
 
   const [readyToReplay, setReadyToReplay] = useState(false);
@@ -47,7 +50,7 @@ const MultiplayerResult = ({
 
   const [newA, setNewA] = useState([]);
 
-  let lasd = playersList;
+  let lasd = playerLobbyList;
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -62,10 +65,10 @@ const MultiplayerResult = ({
   }, [timeLeft]);
 
   useEffect(() => {
-    if (newA.length === 0 && playersList && playersList !== null) {
-      setNewA(playersList);
+    if (newA.length === 0 && playerLobbyList && playerLobbyList !== null) {
+      setNewA(playerLobbyList);
     }
-  }, [playersList]);
+  }, [playerLobbyList]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -121,7 +124,7 @@ const MultiplayerResult = ({
 
   function devideArray() {
     friendList.map((item, index) => {
-      if (item.userId === fetchedUser.id) {
+      if (item.userId === user.id) {
         if (index !== 0) {
           friendList[index - 1].rightResults > item.rightResults
             ? setPlace(index)
@@ -139,9 +142,9 @@ const MultiplayerResult = ({
         await setHaveHash(false);
         await setAgain(true);
         await joinRoom(roomId);
-        await setActiveStory("multiplayer");
+        await setActiveStory(StoryRoute.Multiplayer);
         await setJoinCode(roomId);
-        await setActivePanel("menu");
+        await setActivePanel(PanelRoute.Menu);
       }
 
       onRoomCreate();
@@ -152,7 +155,7 @@ const MultiplayerResult = ({
     <Panel id={id} className="resultPagePanel">
       <div
         style={{
-          background: themeColors === "light" ? "#F7F7FA" : "#1D1D20",
+          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
           height: window.pageYOffset,
         }}
       >
@@ -171,11 +174,11 @@ const MultiplayerResult = ({
           </div>
 
           <div style={{ marginLeft: 18, marginRight: 18, marginTop: 16 }}>
-            {mpGameResults && fetchedUser && (
+            {mpGameResults && user && (
               <Title className="result-task-text">
                 Набрано баллов:{" "}
                 {mpGameResults.players.map((value) => {
-                  if (value.userId === fetchedUser.id) {
+                  if (value.userId === user.id) {
                     return value.rightResults;
                   }
                 })}
@@ -225,7 +228,7 @@ const MultiplayerResult = ({
                                 hasHover={false}
                                 style={{
                                   backgroundColor:
-                                    themeColors === "dark"
+                                    appearance === "dark"
                                       ? "#293950"
                                       : "#F4F9FF",
                                   color: "#1984FF",
@@ -291,14 +294,13 @@ const MultiplayerResult = ({
                   className="result-buttonGroup-notNow"
                   onClick={(e) => {
                     //joinToYourRoom()
-                    leaveRoom(joinCode, fetchedUser.id);
+                    leaveRoom(joinCode, user.id);
                     setAgain(false);
                     setActiveStory("multiplayer");
                     setConnectType("host");
                     setHaveHash(false);
-                    go(e);
+                    setActivePanel(PanelRoute.Menu);
                   }}
-                  data-to="menu"
                   size="l"
                   style={{
                     borderRadius: 25,

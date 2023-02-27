@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 
-import { Button, Div, ModalPage, ModalPageHeader } from "@vkontakte/vkui";
+import {
+  Button,
+  Div,
+  ModalPage,
+  ModalPageHeader,
+  usePlatform,
+} from "@vkontakte/vkui";
 
 import bridge from "@vkontakte/vk-bridge";
 
@@ -11,20 +17,21 @@ import "./style.css";
 import axios from "axios";
 
 import { back, setActivePopout } from "@blumjs/router";
+import { useStore } from "effector-react";
 import { PopoutRoute } from "../../../../constants/router";
+import {
+  $main,
+  setConnectType,
+  setGameInfo,
+  setJoinCode,
+} from "../../../../core/main";
 import { qsSign } from "../../../../hooks/qs-sign";
 import { joinRoom } from "../../../../sockets/game";
 import InputMinimalist from "./InputMinimalist";
 
-export const ModalInputCode = ({
-  id,
-  setGameInfo,
-  gameInfo,
-  setJoinCode,
-  setConnectType,
-  platform,
-  joinCode,
-}) => {
+export const ModalInputCode = ({ id }) => {
+  const { gameInfo, joinCode } = useStore($main);
+  const platform = usePlatform();
   const textInput = React.createRef();
 
   const [disabledButton, setDisabledButton] = useState(true);

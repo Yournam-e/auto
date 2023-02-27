@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import {
-  Alert,
   Avatar,
   Button,
   ButtonGroup,
@@ -10,7 +9,6 @@ import {
   List,
   Panel,
   PanelHeader,
-  ScreenSpinner,
   Separator,
   Title,
 } from "@vkontakte/vkui";
@@ -26,7 +24,38 @@ import "./../Multiplayer/Multiplayer.css";
 
 import bridge from "@vkontakte/vk-bridge";
 
+import {
+  back,
+  setActiveModal,
+  setActivePanel,
+  setActivePopout,
+  useRouter,
+} from "@blumjs/router";
 import axios from "axios";
+import { useStore } from "effector-react";
+import {
+  ModalRoute,
+  PanelRoute,
+  PopoutRoute,
+  StoryRoute,
+} from "../../constants/router";
+import {
+  $main,
+  joinToYourRoom,
+  setActiveStory,
+  setAgain,
+  setAnswersInfo,
+  setConnectType,
+  setFirstStart,
+  setGameExists,
+  setGameInfo,
+  setJoinCode,
+  setLeavingRoom,
+  setNotUserRoom,
+  setPlayerLobbyList,
+  setPlayersId,
+  setTaskInfo,
+} from "../../core/main";
 import { qsSign } from "../../hooks/qs-sign";
 import { useUserId } from "../../hooks/useUserId";
 import {
@@ -38,51 +67,31 @@ import {
 } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
 
-const Multiplayer = ({
-  id,
-  go,
-  fetchedUser,
-  setActiveModal,
-  setGameInfo,
-  gameInfo,
-  playersId,
-  joinCode,
-  setJoinCode,
-  firstStart,
-  setFirstStart,
-  playersList,
-  setActivePanel,
-  activePanel,
-  setAnswersInfo,
-  setTaskInfo,
-  connectType,
-  setConnectType,
-  setPopout,
-  haveHash,
-  themeColors,
-  setPanelsHistory,
-  setActiveStory,
-  itAgain,
-  notAdd,
-  setGameExists,
-  updatePlayersList,
-  setPlayersId,
-  platform,
-  leavingRoom,
-  setLeavingRoom,
-  setAgain,
-}) => {
+export const Multiplayer = ({ id }) => {
+  const {
+    user,
+    gameInfo,
+    playersId,
+    joinCode,
+    isFirstStart,
+    playerLobbyList,
+    connectType,
+    haveHash,
+    appearance,
+    itAgain,
+    leavingRoom,
+    notUserRoom,
+  } = useStore($main);
+  const { activePanel } = useRouter();
   const thisUserId = useUserId();
   const [complexity, setComplexity] = useState("easy");
-
-  const [notUserRoom, setNotUserRoom] = useState(false);
 
   var clickTime = 0;
 
   client.leftRoom = ({ userId }) => {
-    if (userId && activePanel === "menu") {
-      updatePlayersList([
-        ...playersList.filter((item) => item.userId !== userId),
+    if (userId && activePanel === PanelRoute.Menu) {
+      setPlayerLobbyList([
+        ...playerLobbyList.filter((item) => item.userId !== userId),
       ]);
       setPlayersId(
         playersId.filter(function (number) {
@@ -100,16 +109,16 @@ const Multiplayer = ({
     }
     lol();
     setNotUserRoom(false);
-    setActivePanel("multiplayerGame");
+    setActivePanel(PanelRoute.MultiplayerGame);
   };
 
   client.roomCreated = ({ roomId }) => {
     console.log(playersId);
-    console.log(playersList);
+    console.log(playerLobbyList);
     joinRoom(roomId, thisUserId);
     setJoinCode(roomId);
     setNotUserRoom(false);
-    setPopout(null);
+    back();
   };
 
   bridge.subscribe((e) => {
@@ -117,7 +126,7 @@ const Multiplayer = ({
       if (connectType === "join") {
         setConnectType("host");
         joinToYourRoom();
-        leaveRoom(fetchedUser.id);
+        leaveRoom(user.id);
       }
     }
   });
@@ -127,28 +136,9 @@ const Multiplayer = ({
       setConnectType("host");
       joinToYourRoom();
       leaveRoom(joinCode);
-      setPopout(null);
+      back();
     }
   });
-
-  function joinToYourRoom(i) {
-    axios
-      .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
-      .then(async function (response) {
-        await setJoinCode(response.data.data);
-
-        await setGameInfo({ ...gameInfo, roomId: response.data.data });
-        if (firstStart) {
-          await connectRoom(qsSign, response.data.data, thisUserId);
-        } else {
-          await joinRoom(response.data.data, thisUserId);
-          setNotUserRoom(false);
-        }
-
-        setFirstStart(false);
-      })
-      .catch(function (error) {});
-  }
 
   useEffect(() => {
     axios
@@ -160,15 +150,15 @@ const Multiplayer = ({
         console.log(window.location.hash.slice(1));
         if (response.data.data[0].ownerId === useUserId) {
           if (response.data.data[0].started) {
-            setActivePanel("menu");
-            setActiveStory("single");
+            setActivePanel(PanelRoute.Menu);
+            setActiveStory(StoryRoute.Single);
             setGameExists(true);
           }
         }
         if (response.data.data[0].roomId === window.location.hash.slice(1)) {
           if (response.data.data[0].started) {
-            setActivePanel("menu");
-            setActiveStory("single");
+            setActivePanel(PanelRoute.Menu);
+            setActiveStory(StoryRoute.Single);
             setGameExists(true);
           }
         }
@@ -176,11 +166,8 @@ const Multiplayer = ({
       .catch(function (error) {
         console.log(error);
       });
-    if (notAdd === false) {
-      window.history.pushState({ activePanel: "mp" }, "mp");
-    }
 
-    if (haveHash && firstStart) {
+    if (haveHash && isFirstStart) {
       axios
         .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
         .then(async function (response) {
@@ -222,50 +209,14 @@ const Multiplayer = ({
       await setGameInfo({ taskId: id, roomId: joinCode });
     }
     lol();
-    setActivePanel("multiplayerGame");
+    setActivePanel(PanelRoute.MultiplayerGame);
   };
 
   useEffect(() => {
-    if (connectType === "join" && playersList.length === 1 && notUserRoom) {
-      setPopout(
-        <Alert
-          actions={[
-            {
-              title: "Создать",
-              mode: "destructive",
-              autoclose: true,
-              action: () => {
-                setPopout(null);
-                setConnectType("host");
-
-                leaveRoom(joinCode);
-              },
-            },
-            {
-              title: "В меню",
-              mode: "cancel",
-              autoclose: true,
-              action: () => {
-                setConnectType("host");
-
-                setActiveStory("single");
-                setPopout(null);
-              },
-            },
-          ]}
-          actionsLayout="horizontal"
-          onClose={() => {
-            setConnectType("host");
-            joinToYourRoom();
-            leaveRoom(joinCode);
-            setPopout(null);
-          }}
-          header="Лобби не существует"
-          text="Создать свою комнату?"
-        />
-      );
+    if (connectType === "join" && playerLobbyList.length === 1 && notUserRoom) {
+      setActivePopout(PopoutRoute.AlertLobbyNotExist);
     }
-  }, [playersList]);
+  }, [playerLobbyList]);
 
   return (
     <Panel id={id}>
@@ -275,7 +226,7 @@ const Multiplayer = ({
           transparent={true}
           shadow={false}
           separator={false}
-        ></PanelHeader>
+        />
       )}
 
       {connectType === "host" && (
@@ -284,7 +235,7 @@ const Multiplayer = ({
           transparent={true}
           shadow={false}
           separator={false}
-        ></PanelHeader>
+        />
       )}
 
       <Div className="multiplayer-div">
@@ -324,17 +275,17 @@ const Multiplayer = ({
                 className="multiplayer-title-return"
                 fill="#1A84FF"
                 onClick={async function () {
-                  await setPopout(<ScreenSpinner size="large" />);
-                  await createRoom(joinCode);
+                  setActivePopout(PopoutRoute.Loading);
+                  createRoom(joinCode);
 
-                  updatePlayersList([
-                    ...playersList.filter(
-                      (item) => item.userId === fetchedUser.id
+                  setPlayerLobbyList([
+                    ...playerLobbyList.filter(
+                      (item) => item.userId === user.id
                     ),
                   ]);
                   setPlayersId(
                     playersId.filter(function (number) {
-                      return number === fetchedUser.id;
+                      return number === user.id;
                     })
                   );
                 }}
@@ -352,11 +303,11 @@ const Multiplayer = ({
                 className="multiplayer-qr-button"
                 style={{
                   backgroundColor:
-                    themeColors === "dark" ? "#293950" : "#F4F9FF",
+                    appearance === "dark" ? "#293950" : "#F4F9FF",
                   color: "#1984FF",
                 }}
                 onClick={() => {
-                  setActiveModal("inputCodeQR");
+                  setActiveModal(ModalRoute.InputCodeQR);
                 }}
                 before={<Icon20QrCodeOutline />}
                 mode="secondary"
@@ -370,7 +321,7 @@ const Multiplayer = ({
                 className="multiplayer-qr-button"
                 style={{
                   backgroundColor:
-                    themeColors === "dark" ? "#293950" : "#F4F9FF",
+                    appearance === "dark" ? "#293950" : "#F4F9FF",
                   color: "#1984FF",
                 }}
                 onClick={() => {
@@ -384,57 +335,7 @@ const Multiplayer = ({
                     })
                     .catch((error) => {
                       if (error) {
-                        setPopout(
-                          <Alert
-                            actions={[
-                              {
-                                title: "Поделиться",
-                                mode: "destructive",
-                                autoclose: true,
-                                action: () => {
-                                  setPopout(null);
-                                  bridge
-                                    .send("VKWebAppShare", {
-                                      link: `https://vk.com/app51451320#${joinCode}`,
-                                    })
-                                    .then((data) => {
-                                      if (data.result) {
-                                        setActiveModal(null);
-                                      }
-                                    })
-                                    .catch((error) => {
-                                      // Ошибка
-                                      console.log(error);
-                                    });
-                                },
-                              },
-                              {
-                                title: "Потом",
-                                mode: "cancel",
-                                autoclose: true,
-                                action: () => {
-                                  setPopout(null);
-                                  bridge
-                                    .send("VKWebAppShare", {
-                                      link: `https://vk.com/app51451320#${joinCode}`,
-                                    })
-                                    .then((data) => {
-                                      if (data.result) {
-                                        setActiveModal(null);
-                                      }
-                                    })
-                                    .catch((error) => {
-                                      // Ошибка
-                                      console.log(error);
-                                    });
-                                },
-                              },
-                            ]}
-                            actionsLayout="vertical"
-                            header="Временно недоступно"
-                            text="Попробуйте поделиться ссылкой"
-                          />
-                        );
+                        setActivePopout(PopoutRoute.AlertShareGame);
                       }
                     });
                 }}
@@ -447,13 +348,12 @@ const Multiplayer = ({
                 className="multiplayer-qr-button-messenger"
                 style={{
                   backgroundColor:
-                    themeColors === "dark" ? "#293950" : "#F4F9FF",
+                    appearance === "dark" ? "#293950" : "#F4F9FF",
                   color: "#1984FF",
                   marginLeft: 8,
                 }}
                 onClick={() => {
-                  window.history.pushState({ activePanel: "modal" }, "modal");
-                  setActiveModal("inputCodeQR");
+                  setActiveModal(ModalRoute.InputCodeQR);
                 }}
                 before={<Icon20QrCodeOutline />}
                 mode="secondary"
@@ -484,12 +384,11 @@ const Multiplayer = ({
                   className="multiplayer-code-button"
                   style={{
                     backgroundColor:
-                      themeColors === "dark" ? "#293950" : "#F4F9FF",
+                      appearance === "dark" ? "#293950" : "#F4F9FF",
                     color: "#1984FF",
                   }}
                   onClick={() => {
-                    window.history.pushState({ activePanel: "modal" }, "modal");
-                    setActiveModal("inputCode");
+                    setActiveModal(ModalRoute.InputCode);
                   }}
                   mode="secondary"
                 >
@@ -501,18 +400,18 @@ const Multiplayer = ({
         </div>
 
         <List style={{ marginTop: 16, marginBottom: 16 }}>
-          {fetchedUser &&
+          {user &&
             [0, 1, 2, 3].map((item, index) => (
               <Cell
                 key={index}
                 before={
-                  playersList[index] ? (
-                    <Avatar src={playersList[index].avatar} />
+                  playerLobbyList[index] ? (
+                    <Avatar src={playerLobbyList[index].avatar} />
                   ) : (
                     <div
                       style={{
                         borderColor:
-                          themeColors === "light" ? "#E3E3E6" : "#38383B",
+                          appearance === "light" ? "#E3E3E6" : "#38383B",
                       }}
                       className="noneUser"
                     />
@@ -521,14 +420,14 @@ const Multiplayer = ({
                 disabled={
                   index === 0
                     ? true
-                    : false || playersList[index]
+                    : false || playerLobbyList[index]
                     ? false
                     : true
                 }
               >
-                {playersList[index] ? (
+                {playerLobbyList[index] ? (
                   <Title level="3" weight="2" className="player-name-on">
-                    {playersList[index].name}
+                    {playerLobbyList[index].name}
                   </Title>
                 ) : (
                   <Title level="3" weight="3" className="player-name-off">
@@ -560,7 +459,7 @@ const Multiplayer = ({
                   }}
                   className={
                     complexity === "easy"
-                      ? themeColors === "light"
+                      ? appearance === "light"
                         ? "complexity-button-on-light"
                         : "complexity-button-on-dark"
                       : "complexity-button-off"
@@ -582,7 +481,7 @@ const Multiplayer = ({
                   }}
                   className={
                     complexity === "mid"
-                      ? themeColors === "light"
+                      ? appearance === "light"
                         ? "complexity-button-on-light"
                         : "complexity-button-on-dark"
                       : "complexity-button-off"
@@ -603,7 +502,7 @@ const Multiplayer = ({
                   }}
                   className={
                     complexity === "hard"
-                      ? themeColors === "light"
+                      ? appearance === "light"
                         ? "complexity-button-on-light"
                         : "complexity-button-on-dark"
                       : "complexity-button-off"
@@ -630,7 +529,7 @@ const Multiplayer = ({
                 background:
                   connectType === "host"
                     ? "#1A84FF"
-                    : themeColors === "dark"
+                    : appearance === "dark"
                     ? "#293950"
                     : "#EBF1FA",
                 color: connectType === "host" ? "#fff" : "#1A84FF",
@@ -649,7 +548,7 @@ const Multiplayer = ({
                 if (connectType === "join") {
                   setConnectType("host");
                   joinToYourRoom();
-                  leaveRoom(fetchedUser.id);
+                  leaveRoom(user.id);
                 } else {
                   startGame(joinCode, complexity, playersId);
                 }
@@ -663,5 +562,3 @@ const Multiplayer = ({
     </Panel>
   );
 };
-
-export default Multiplayer;

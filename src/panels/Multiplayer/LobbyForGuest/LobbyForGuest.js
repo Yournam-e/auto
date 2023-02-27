@@ -14,29 +14,24 @@ import {
 import { Icon20QrCodeOutline } from "@vkontakte/icons";
 import "../Multiplayer.css";
 
+import { setActiveModal, setActivePanel } from "@blumjs/router";
 import axios from "axios";
+import { useStore } from "effector-react";
+import { ModalRoute, PanelRoute } from "../../../constants/router";
+import {
+  $main,
+  setAnswersInfo,
+  setFirstStart,
+  setGameInfo,
+  setJoinCode,
+  setTaskInfo,
+} from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
-import { useUserId } from "../../../hooks/useUserId";
 import { client } from "../../../sockets/receiver";
 
-const LobbyForGuest = ({
-  id,
-  fetchedUser,
-  setActiveModal,
-  setGameInfo,
-  gameInfo,
-  joinCode,
-  setJoinCode,
-  firstStart,
-  setFirstStart,
-  playersList,
-  setTaskInfo,
-  setAnswersInfo,
-  setActivePanel,
-  themeColors,
-}) => {
-  const userId = useUserId();
-
+const LobbyForGuest = ({ id }) => {
+  const { appearance, user, gameInfo, joinCode, playerLobbyList } =
+    useStore($main);
   client.gameStarted = ({ answers, task, id }) => {
     console.debug("gameStarted", answers, task, id);
     setTaskInfo(task);
@@ -45,7 +40,7 @@ const LobbyForGuest = ({
       setGameInfo({ ...gameInfo, taskId: id });
     }
     lol();
-    setActivePanel("multiplayerGame");
+    setActivePanel(PanelRoute.MultiplayerGame);
   };
 
   useEffect(() => {
@@ -68,7 +63,7 @@ const LobbyForGuest = ({
     <Panel id={id}>
       <div
         style={{
-          background: themeColors === "light" ? "#F7F7FA" : "#1D1D20",
+          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
           height: window.pageYOffset,
         }}
       >
@@ -97,7 +92,7 @@ const LobbyForGuest = ({
                 className="multiplayer-qr-button"
                 style={{ backgroundColor: "#ECF1FA" }}
                 onClick={() => {
-                  setActiveModal("inputCodeQR");
+                  setActiveModal(ModalRoute.InputCodeQR);
                 }}
                 before={<Icon20QrCodeOutline />}
                 mode="secondary"
@@ -108,20 +103,20 @@ const LobbyForGuest = ({
           </div>
 
           <List style={{ marginTop: 16, marginBottom: 16 }}>
-            {fetchedUser &&
+            {user &&
               [0, 1, 2, 3].map((item, index) => (
                 <Cell
                   key={index}
                   mode={
                     index === 0
                       ? false
-                      : "removable" || playersList[index]
+                      : "removable" || playerLobbyList[index]
                       ? false
                       : "removable"
                   }
                   before={
-                    playersList[index] ? (
-                      <Avatar src={playersList[index].avatar} />
+                    playerLobbyList[index] ? (
+                      <Avatar src={playerLobbyList[index].avatar} />
                     ) : (
                       <div className="ory" />
                     )
@@ -129,14 +124,14 @@ const LobbyForGuest = ({
                   disabled={
                     index === 0
                       ? true
-                      : false || playersList[index]
+                      : false || playerLobbyList[index]
                       ? false
                       : true
                   }
                 >
-                  {playersList[index] ? (
+                  {playerLobbyList[index] ? (
                     <Title level="3" weight="2" className="player-name-on">
-                      {playersList[index].name}
+                      {playerLobbyList[index].name}
                     </Title>
                   ) : (
                     <Title level="3" weight="3" className="player-name-off">

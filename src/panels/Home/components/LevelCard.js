@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { setActivePanel, setActivePopout } from "@blumjs/router";
+import { back, setActivePanel, setActivePopout } from "@blumjs/router";
 import {
   Icon16Done,
   Icon24CheckCircleOutline,
@@ -9,21 +9,16 @@ import {
 } from "@vkontakte/icons";
 import { Button, Card, Text, Title } from "@vkontakte/vkui";
 import axios from "axios";
+import { useStore } from "effector-react";
 import { qsSign } from "../../../hooks/qs-sign";
 import "../Home.css";
 
 import { PanelRoute, PopoutRoute } from "../../../constants/router";
+import { $main, setLvlNumber, setReady } from "../../../core/main";
 import "../../../img/Fonts.css";
 
-const LevelCard = ({
-  number,
-  lvlsInfo,
-  setLvlNumber,
-  setReady,
-  themeColors,
-  devideLvl,
-  completeLvls,
-}) => {
+export const LevelCard = ({ number, devideLvl }) => {
+  const { appearance, lvlsInfo } = useStore($main);
   const [cardsStyle, setCardsStyle] = useState(null);
 
   const [thisLvl, setThisLvl] = useState(null);
@@ -84,7 +79,9 @@ const LevelCard = ({
       let searchTerm = devideType(number);
       let findedLevel = inf.find((lvl) => lvl.lvlType === searchTerm);
       setThisLvl(findedLevel);
-    } catch (e) {}
+    } catch (e) {
+      console.log("lvlsInfo err", e);
+    }
   }, [lvlsInfo]);
 
   useEffect(() => {
@@ -109,7 +106,7 @@ const LevelCard = ({
                   `https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`
                 )
                 .then(async function (response) {
-                  await setReady(true);
+                  setReady(true);
                 })
                 .catch(function () {});
             } catch (e) {}
@@ -119,7 +116,8 @@ const LevelCard = ({
     });
 
     promise.then(
-      (result) => setActivePopout(PopoutRoute.Loading),
+      () => setActivePopout(PopoutRoute.Loading),
+      back(),
       setActivePanel(PanelRoute.LvlGame)
     );
   }
@@ -135,7 +133,7 @@ const LevelCard = ({
       <Card
         className="home--level_card"
         style={{
-          backgroundColor: themeColors === "dark" ? "#2C2C31" : "#FFFFFF",
+          backgroundColor: appearance === "dark" ? "#2C2C31" : "#FFFFFF",
           borderRadius: 24,
         }}
         key={number}
@@ -148,7 +146,7 @@ const LevelCard = ({
               style={{
                 paddingLeft: 16,
                 paddingTop: 16,
-                color: themeColors === "dark" ? "#E1E3E6" : "#000000",
+                color: appearance === "dark" ? "#E1E3E6" : "#000000",
               }}
             >
               #{number}
@@ -161,7 +159,7 @@ const LevelCard = ({
                 className="lvl-card-icon"
                 style={{
                   backgroundColor:
-                    themeColors === "dark" ? "#293950" : "#F4F9FF",
+                    appearance === "dark" ? "#293950" : "#F4F9FF",
                 }}
               />
             )}
@@ -219,7 +217,7 @@ const LevelCard = ({
                 : "button-lvl"
             }
             style={{
-              backgroundColor: themeColors === "dark" ? "#293950" : "#F4F9FF",
+              backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
               color: "#1984FF",
               borderRadius: 25,
             }}
@@ -240,5 +238,3 @@ const LevelCard = ({
     </div>
   );
 };
-
-export default LevelCard;

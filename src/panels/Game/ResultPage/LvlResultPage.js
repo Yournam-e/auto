@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { back, setActivePanel, setActivePopout } from "@blumjs/router";
 import {
   Icon20ArrowRightOutline,
   Icon24CancelOutline,
@@ -8,43 +9,23 @@ import {
   Icon56CancelCircleOutline,
   Icon56CheckCircleOutline,
 } from "@vkontakte/icons";
-import {
-  Button,
-  ButtonGroup,
-  Cell,
-  List,
-  Panel,
-  ScreenSpinner,
-  Title,
-} from "@vkontakte/vkui";
+import { Button, ButtonGroup, Cell, List, Panel, Title } from "@vkontakte/vkui";
 import axios from "axios";
+import { useStore } from "effector-react";
+import { PanelRoute, PopoutRoute } from "../../../constants/router";
+import { $main, setAllTasks, setLvlNumber, setReady } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
 import { ReactComponent as ClockIcon } from "../../../img/Сlock.svg";
 import "./LvlResultPage.css";
 
-const LvlResultPage = ({
-  id,
-  go,
-  count,
-  lvlResult,
-  setPopout,
-  lvlNumber,
-  timeFinish,
-  setLvlNumber,
-  setActivePanel,
-  setReady,
-  themeColors,
-  allTasks,
-  setAllTasks,
-  setTimeFinish,
-}) => {
+const LvlResultPage = ({ id }) => {
+  const { allTasks, lvlResult, lvlNumber, appearance, timeFinish } =
+    useStore($main);
   const url = "https://showtime.app-dich.com/api/plus-plus/";
 
   const [complete, setComplete] = useState();
 
   const [finishedTime, setFinishedTime] = useState();
-
-  let findArr = false;
 
   function devideLvl(numberId) {
     switch (numberId) {
@@ -103,7 +84,7 @@ const LvlResultPage = ({
       .get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
         const lvls = await response.data.data;
-        await setPopout(null);
+        back();
 
         const promise = new Promise((resolve, reject) => {
           async function deleted() {
@@ -138,8 +119,8 @@ const LvlResultPage = ({
         });
 
         promise.then(
-          (result) => setPopout(<ScreenSpinner size="large" />),
-          setActivePanel("lvlGame")
+          (result) => setActivePopout(PopoutRoute.Loading),
+          setActivePanel(PanelRoute.LvlGame)
         );
       })
       .catch(function (error) {
@@ -180,14 +161,14 @@ const LvlResultPage = ({
             if (rightResults > devideLvl(lvlNumber)[2] - 1) {
               if (timeFinish - new Date(timeStarted).getTime() < 30000) {
                 await setComplete([true, "right"]);
-                await setPopout(null);
+                back();
               } else {
                 await setComplete([false, "beOnTime"]);
-                await setPopout(null);
+                back();
               }
             } else {
               await setComplete([false, "notright"]);
-              await setPopout(null);
+              back();
             }
           })
           .catch(function (error) {
@@ -203,7 +184,7 @@ const LvlResultPage = ({
     <Panel id={id} style={{ height: window.pageYOffset }}>
       <div
         style={{
-          background: themeColors === "light" ? "#F7F7FA" : "#1D1D20",
+          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
           height: document.pageYOffset,
         }}
       >
@@ -231,7 +212,7 @@ const LvlResultPage = ({
 
             <Title
               className="lvl-res-title-div"
-              style={{ color: themeColors === "light" ? "" : "#fff" }}
+              style={{ color: appearance === "light" ? "" : "#fff" }}
             >
               {complete &&
               allTasks.length > devideLvl(lvlNumber)[2] &&
@@ -321,7 +302,7 @@ const LvlResultPage = ({
                           level="2"
                           className="inCell"
                           style={{
-                            color: themeColors === "light" ? "#000" : "#fff",
+                            color: appearance === "light" ? "#000" : "#fff",
                           }}
                         >
                           {item.number1}
@@ -339,7 +320,7 @@ const LvlResultPage = ({
         <div
           className="lvl-res-absolute-div"
           style={{
-            background: themeColors === "light" ? "#F7F7FA" : "#1D1D20",
+            background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
           }}
         >
           <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
@@ -383,9 +364,8 @@ const LvlResultPage = ({
                   setFinishedTime(0);
 
                   setAllTasks([{}]);
-                  go(e);
+                  setActivePanel(PanelRoute.Menu);
                 }}
-                data-to="menu"
                 size="l"
                 style={{
                   borderRadius: 25,

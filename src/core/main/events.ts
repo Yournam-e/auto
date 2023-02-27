@@ -3,14 +3,14 @@ import { createEvent } from "effector";
 import { StoryRoute } from "../../constants/router";
 import { Appearance, ConnectType, GameInfo } from "../../types";
 
-export const setAppeareance = createEvent<Appearance>();
+export const setAppearance = createEvent<Appearance>();
 export const setActiveStory = createEvent<StoryRoute>();
 export const setUser = createEvent<any>();
 export const setPlatform = createEvent<Platform>();
 export const setCountPoints = createEvent<number>();
 export const setGameInfo = createEvent<GameInfo>();
 export const setTaskInfo = createEvent<any>();
-export const setAnswerInfo = createEvent<any>();
+export const setAnswersInfo = createEvent<any>();
 export const setJoinCode = createEvent<null | string>();
 export const setMpGameResults = createEvent<any[]>();
 export const setPlayersId = createEvent<number[]>();
@@ -42,3 +42,5 @@ export const setAnswer = createEvent<{
 }>();
 export const setLvlData = createEvent<any>();
 export const setGameExists = createEvent<boolean>();
+export const setAgain = createEvent<boolean>();
+export const setNotUserRoom = createEvent<boolean>();

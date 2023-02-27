@@ -1,9 +1,18 @@
 import { back } from "@blumjs/router";
 import { Alert } from "@vkontakte/vkui";
-import { memo } from "react";
-import { setConnectType, setGameExists } from "../../../../core/main/events";
+import { memo, useCallback } from "react";
+import { setConnectType, setGameExists } from "../../../../core/main";
 
 export const AlertGameExistPopout = memo(() => {
+  const handleAction = useCallback(() => {
+    setGameExists(false);
+    setConnectType("host");
+  }, []);
+  const handleClose = useCallback(() => {
+    setGameExists(false);
+    back();
+  }, []);
+
   return (
     <Alert
       actions={[
@@ -11,17 +20,11 @@ export const AlertGameExistPopout = memo(() => {
           title: "Ок",
           mode: "destructive",
           autoclose: true,
-          action: () => {
-            setGameExists(false);
-            setConnectType("host");
-          },
+          action: handleAction,
         },
       ]}
       actionsLayout="vertical"
-      onClose={() => {
-        setGameExists(false);
-        back();
-      }}
+      onClose={handleClose}
       header="Внимание"
       text="Игра уже запущена, попробуйте позже"
     />

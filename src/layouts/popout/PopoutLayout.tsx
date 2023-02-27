@@ -2,7 +2,14 @@ import { useRouter } from "@blumjs/router";
 import { memo, useEffect, useState } from "react";
 import { PopoutRoute } from "../../constants/router";
 import "./PopoutLayout.css";
-import { AlertGameExistPopout, LoadingPopout } from "./popouts";
+import {
+  AlertFinishGamePopout,
+  AlertGameExistPopout,
+  AlertGameExitPopout,
+  AlertLobbyNotExist,
+  AlertShareGamePopout,
+  LoadingPopout,
+} from "./popouts";
 import { AlerLobby } from "./popouts/alert-lobby/AlertLobby";
 
 export const PopoutLayout = memo(() => {
@@ -26,4 +33,8 @@ const popouts = {
   [PopoutRoute.Loading]: <LoadingPopout />,
   [PopoutRoute.AlertLobby]: <AlerLobby />,
   [PopoutRoute.AlertGameExist]: <AlertGameExistPopout />,
+  [PopoutRoute.AlertGameExit]: <AlertGameExitPopout />,
+  [PopoutRoute.AlertLobbyNotExist]: <AlertLobbyNotExist />,
+  [PopoutRoute.AlertShareGame]: <AlertShareGamePopout />,
+  [PopoutRoute.AlertFinishGame]: <AlertFinishGamePopout />,
 };

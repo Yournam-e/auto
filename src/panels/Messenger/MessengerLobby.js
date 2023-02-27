@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import {
-  Alert,
   Avatar,
   Button,
   ButtonGroup,
@@ -25,7 +24,32 @@ import "./../Multiplayer/Multiplayer.css";
 
 import bridge from "@vkontakte/vk-bridge";
 
+import {
+  setActiveModal,
+  setActivePanel,
+  setActivePopout,
+} from "@blumjs/router";
 import axios from "axios";
+import { useStore } from "effector-react";
+import {
+  ModalRoute,
+  PanelRoute,
+  PopoutRoute,
+  StoryRoute,
+} from "../../constants/router";
+import {
+  $main,
+  joinToYourRoom,
+  setActiveStory,
+  setAnswersInfo,
+  setConnectType,
+  setFirstStart,
+  setGameExists,
+  setGameInfo,
+  setJoinCode,
+  setNotUserRoom,
+  setTaskInfo,
+} from "../../core/main";
 import { qsSign } from "../../hooks/qs-sign";
 import { useUserId } from "../../hooks/useUserId";
 import {
@@ -37,41 +61,22 @@ import {
 } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
 
-const MessengerLobby = ({
-  id,
-  go,
-  fetchedUser,
-  setActiveModal,
-  setGameInfo,
-  gameInfo,
-  playersId,
-  joinCode,
-  setJoinCode,
-  firstStart,
-  setFirstStart,
-  playersList,
-  setActivePanel,
-  activePanel,
-  setAnswersInfo,
-  setTaskInfo,
-  connectType,
-  setConnectType,
-  setPopout,
-  haveHash,
-  themeColors,
-  setPanelsHistory,
-  setActiveStory,
-  itAgain,
-  notAdd,
-  setGameExists,
-  updatePlayersList,
-  setPlayersId,
-  platform,
-}) => {
+const MessengerLobby = ({ id }) => {
+  const {
+    notAdd,
+    itAgain,
+    appearance,
+    haveHash,
+    connectType,
+    playerLobbyList,
+    playersId,
+    joinCode,
+    gameInfo,
+    user,
+    notUserRoom,
+  } = useStore($main);
   const userId = useUserId();
   const [complexity, setComplexity] = useState("easy");
-
-  const [notUserRoom, setNotUserRoom] = useState(false);
 
   var clickTime = 0;
 
@@ -83,7 +88,7 @@ const MessengerLobby = ({
     }
     lol();
     setNotUserRoom(false);
-    setActivePanel("multiplayerGame");
+    setActivePanel(PanelRoute.MultiplayerGame);
   };
 
   client.roomCreated = ({ roomId }) => {
@@ -92,47 +97,27 @@ const MessengerLobby = ({
     setNotUserRoom(false);
   };
 
-  function joinToYourRoom(i) {
-    axios
-      .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
-      .then(async function (response) {
-        await setJoinCode(response.data.data);
-
-        await setGameInfo({ ...gameInfo, roomId: response.data.data });
-        if (firstStart) {
-          await connectRoom(qsSign, response.data.data, userId);
-        } else {
-          await joinRoom(response.data.data, userId);
-          setNotUserRoom(false);
-        }
-
-        setFirstStart(false);
-      })
-      .catch(function (error) {});
-  }
-
   useEffect(() => {
     console.log(window.location.href);
 
     axios
       .get(`https://showtime.app-dich.com/api/plus-plus/user-games${qsSign}`)
       .then(async function (response) {
-        await response;
         console.log(response.data.data[0]);
         console.log(response.data.data[0].roomId);
         console.log(window.location.hash.slice(1));
         if (response.data.data[0].ownerId === useUserId) {
           if (response.data.data[0].started) {
-            setActivePanel("menu");
-            setActiveStory("single");
+            setActivePanel(PanelRoute.Menu);
+            setActiveStory(StoryRoute.Single);
             setGameExists(true);
           }
         }
         if (response.data.data[0].roomId === window.location.hash.slice(1)) {
           console.log("asf");
           if (response.data.data[0].started) {
-            setActivePanel("menu");
-            setActiveStory("single");
+            setActivePanel(PanelRoute.Menu);
+            setActiveStory(StoryRoute.Single);
             setGameExists(true);
           }
         }
@@ -148,13 +133,13 @@ const MessengerLobby = ({
       axios
         .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
         .then(async function (response) {
-          await setJoinCode(response.data.data);
+          setJoinCode(response.data.data);
 
-          await setGameInfo({ ...gameInfo, roomId: response.data.data });
+          setGameInfo({ ...gameInfo, roomId: response.data.data });
           if (window.location.hash.slice(1) === response.data.data) {
-            await setConnectType("host");
-            await setJoinCode(window.location.hash.slice(1));
-            await connectRoom(qsSign, window.location.hash.slice(1), userId);
+            setConnectType("host");
+            setJoinCode(window.location.hash.slice(1));
+            connectRoom(qsSign, window.location.hash.slice(1), userId);
           } else {
             setJoinCode(window.location.hash.slice(1));
             connectRoom(qsSign, window.location.hash.slice(1), userId);
@@ -178,39 +163,14 @@ const MessengerLobby = ({
       await setGameInfo({ taskId: id, roomId: joinCode });
     }
     lol();
-    setActivePanel("multiplayerGame");
+    setActivePanel(PanelRoute.MultiplayerGame);
   };
 
   useEffect(() => {
-    if (connectType === "join" && playersList.length === 1 && notUserRoom) {
-      setPopout(
-        <Alert
-          actions={[
-            {
-              title: "Создать",
-              mode: "destructive",
-              autoclose: true,
-              action: () => {
-                setConnectType("host");
-                joinToYourRoom();
-                leaveRoom(fetchedUser.id);
-                setPopout(null);
-              },
-            },
-          ]}
-          actionsLayout="vertical"
-          onClose={() => {
-            setConnectType("host");
-            joinToYourRoom();
-            leaveRoom(fetchedUser.id);
-            setPopout(null);
-          }}
-          header="Лобби не существует"
-          text="Создать свою комнату?"
-        />
-      );
+    if (connectType === "join" && playerLobbyList.length === 1 && notUserRoom) {
+      setActivePopout(PopoutRoute.AlertLobbyNotExist);
     }
-  }, [playersList]);
+  }, [playerLobbyList]);
 
   return (
     <Panel id={id}>
@@ -269,7 +229,6 @@ const MessengerLobby = ({
                 className="multiplayer-title-return"
                 fill="#1A84FF"
                 onClick={async function () {
-                  //await setPopout(<ScreenSpinner size='large' />)
                   await createRoom(joinCode);
                 }}
                 style={{
@@ -286,11 +245,11 @@ const MessengerLobby = ({
                 className="multiplayer-qr-button"
                 style={{
                   backgroundColor:
-                    themeColors === "dark" ? "#293950" : "#F4F9FF",
+                    appearance === "dark" ? "#293950" : "#F4F9FF",
                   color: "#1984FF",
                 }}
                 onClick={() => {
-                  setActiveModal("inputCodeQR");
+                  setActiveModal(ModalRoute.InputCodeQR);
                 }}
                 before={<Icon20QrCodeOutline />}
                 mode="secondary"
@@ -304,7 +263,7 @@ const MessengerLobby = ({
                 className="multiplayer-qr-button"
                 style={{
                   backgroundColor:
-                    themeColors === "dark" ? "#293950" : "#F4F9FF",
+                    appearance === "dark" ? "#293950" : "#F4F9FF",
                   color: "#1984FF",
                 }}
                 onClick={() => {
@@ -318,57 +277,7 @@ const MessengerLobby = ({
                     })
                     .catch((error) => {
                       if (error.type === "access_denied ") {
-                        setPopout(
-                          <Alert
-                            actions={[
-                              {
-                                title: "Поделиться",
-                                mode: "destructive",
-                                autoclose: true,
-                                action: () => {
-                                  setPopout(null);
-                                  bridge
-                                    .send("VKWebAppShare", {
-                                      link: `https://vk.com/app51451320#${joinCode}`,
-                                    })
-                                    .then((data) => {
-                                      if (data.result) {
-                                        setActiveModal(null);
-                                      }
-                                    })
-                                    .catch((error) => {
-                                      // Ошибка
-                                      console.log(error);
-                                    });
-                                },
-                              },
-                              {
-                                title: "Потом",
-                                mode: "cancel",
-                                autoclose: true,
-                                action: () => {
-                                  setPopout(null);
-                                  bridge
-                                    .send("VKWebAppShare", {
-                                      link: `https://vk.com/app51451320#${joinCode}`,
-                                    })
-                                    .then((data) => {
-                                      if (data.result) {
-                                        setActiveModal(null);
-                                      }
-                                    })
-                                    .catch((error) => {
-                                      // Ошибка
-                                      console.log(error);
-                                    });
-                                },
-                              },
-                            ]}
-                            actionsLayout="vertical"
-                            header="Временно недоступно"
-                            text="Попробуйте поделиться ссылкой"
-                          />
-                        );
+                        setActivePopout(PopoutRoute.AlertShareGame);
                       }
                     });
                 }}
@@ -381,12 +290,12 @@ const MessengerLobby = ({
                 className="multiplayer-qr-button-messenger"
                 style={{
                   backgroundColor:
-                    themeColors === "dark" ? "#293950" : "#F4F9FF",
+                    appearance === "dark" ? "#293950" : "#F4F9FF",
                   color: "#1984FF",
                   marginLeft: 8,
                 }}
                 onClick={() => {
-                  setActiveModal("inputCodeQR");
+                  setActiveModal(ModalRoute.InputCodeQR);
                 }}
                 before={<Icon20QrCodeOutline />}
                 mode="secondary"
@@ -417,11 +326,11 @@ const MessengerLobby = ({
                   className="multiplayer-code-button"
                   style={{
                     backgroundColor:
-                      themeColors === "dark" ? "#293950" : "#F4F9FF",
+                      appearance === "dark" ? "#293950" : "#F4F9FF",
                     color: "#1984FF",
                   }}
                   onClick={() => {
-                    setActiveModal("inputCode");
+                    setActiveModal(ModalRoute.InputCode);
                   }}
                   mode="secondary"
                 >
@@ -433,18 +342,18 @@ const MessengerLobby = ({
         </div>
 
         <List style={{ marginTop: 16, marginBottom: 16 }}>
-          {fetchedUser &&
+          {user &&
             [0, 1, 2, 3].map((item, index) => (
               <Cell
                 key={index}
                 before={
-                  playersList[index] ? (
-                    <Avatar src={playersList[index].avatar} />
+                  playerLobbyList[index] ? (
+                    <Avatar src={playerLobbyList[index].avatar} />
                   ) : (
                     <div
                       style={{
                         borderColor:
-                          themeColors === "light" ? "#E3E3E6" : "#38383B",
+                          appearance === "light" ? "#E3E3E6" : "#38383B",
                       }}
                       className="noneUser"
                     />
@@ -453,14 +362,14 @@ const MessengerLobby = ({
                 disabled={
                   index === 0
                     ? true
-                    : false || playersList[index]
+                    : false || playerLobbyList[index]
                     ? false
                     : true
                 }
               >
-                {playersList[index] ? (
+                {playerLobbyList[index] ? (
                   <Title level="3" weight="2" className="player-name-on">
-                    {playersList[index].name}
+                    {playerLobbyList[index].name}
                   </Title>
                 ) : (
                   <Title level="3" weight="3" className="player-name-off">
@@ -492,7 +401,7 @@ const MessengerLobby = ({
                   }}
                   className={
                     complexity === "easy"
-                      ? themeColors === "light"
+                      ? appearance === "light"
                         ? "complexity-button-on-light"
                         : "complexity-button-on-dark"
                       : "complexity-button-off"
@@ -514,7 +423,7 @@ const MessengerLobby = ({
                   }}
                   className={
                     complexity === "mid"
-                      ? themeColors === "light"
+                      ? appearance === "light"
                         ? "complexity-button-on-light"
                         : "complexity-button-on-dark"
                       : "complexity-button-off"
@@ -535,7 +444,7 @@ const MessengerLobby = ({
                   }}
                   className={
                     complexity === "hard"
-                      ? themeColors === "light"
+                      ? appearance === "light"
                         ? "complexity-button-on-light"
                         : "complexity-button-on-dark"
                       : "complexity-button-off"
@@ -576,7 +485,7 @@ const MessengerLobby = ({
                 if (connectType === "join") {
                   setConnectType("host");
                   joinToYourRoom();
-                  leaveRoom(fetchedUser.id);
+                  leaveRoom(user.id);
                 } else {
                   startGame(joinCode, complexity, playersId);
                 }

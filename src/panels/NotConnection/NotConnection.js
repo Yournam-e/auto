@@ -1,38 +1,33 @@
 import { useEffect } from "react";
 
-import { Button, Panel, ScreenSpinner, Text, Title } from "@vkontakte/vkui";
+import { Button, Panel, Text, Title } from "@vkontakte/vkui";
 
 import "../Home/Home.css";
 
+import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import { useStore } from "effector-react";
+import { PanelRoute, PopoutRoute, StoryRoute } from "../../constants/router";
+import { $main, setActiveStory } from "../../core/main";
 import "../../img/Fonts.css";
 
-const NotConnection = ({
-  id,
-  go,
-  setPopout,
-  themeColors,
-  setActivePanel,
-  setActiveStory,
-  Eyes,
-}) => {
+const NotConnection = ({ id }) => {
+  const { appearance } = useStore($main);
   useEffect(() => {
-    setPopout(null);
+    back();
   }, []);
 
   function updateOnlineStatus(event) {
     if (navigator.onLine) {
-      setActiveStory("single");
-      setActivePanel("menu");
-      setPopout(null);
-    } else {
-      setPopout(null);
+      setActiveStory(StoryRoute.Single);
+      setActivePanel(PanelRoute.Menu);
     }
+    back();
   }
 
   return (
     <Panel id={id}>
       <div
-        style={{ background: themeColors === "light" ? "#F7F7FA" : "#1D1D20" }}
+        style={{ background: appearance === "light" ? "#F7F7FA" : "#1D1D20" }}
       >
         <div
           className="not-Connection--main-div"
@@ -53,11 +48,11 @@ const NotConnection = ({
             <Button
               className="result-getFriend-button"
               onClick={() => {
-                setPopout(<ScreenSpinner size="large" />);
+                setActivePopout(PopoutRoute.Loading);
                 updateOnlineStatus();
               }}
               style={{
-                backgroundColor: themeColors === "dark" ? "#293950" : "#F4F9FF",
+                backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
                 color: "#1984FF",
                 borderRadius: 25,
                 marginBottom: 24,

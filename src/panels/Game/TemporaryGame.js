@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 
 import {
-  Alert,
   Button,
   Div,
   Panel,
   PanelHeader,
   PanelHeaderButton,
-  ScreenSpinner,
   Title,
+  usePlatform,
 } from "@vkontakte/vkui";
 
 import "./Game.css";
@@ -21,32 +20,20 @@ import { getPadTime } from "../../scripts/getPadTime";
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
+import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import { useStore } from "effector-react";
+import { PanelRoute, PopoutRoute } from "../../constants/router";
+import { $main, setAnswer } from "../../core/main";
 import "../../img/Fonts.css";
 
-const TemporaryGame = ({
-  id,
-  go,
-  count,
-  setCount,
-  setActivePanel,
-  setPopout,
-  singleType,
-  answer,
-  setAnswer,
-  themeColors,
-  setActiveStory,
-  activeStory,
-  platform,
-}) => {
+const TemporaryGame = ({ id }) => {
+  const { answer, appearance } = useStore($main);
+  const platform = usePlatform();
   const [first, setFirst] = useState(true); //первый запуск
 
   const [gameData, setGameData] = useState(false);
 
   const [taskNumber, setTaskNumber] = useState(0);
-
-  const [equation, setEquation] = useState([2, 2, "+", 4]); //задача
-
-  const [tasks, setTasks] = useState(null); //варианты ответов
 
   const [timeLeft, setTimeLeft] = useState(30); //время
   const [isCounting, setIsCounting] = useState(false); //время
@@ -57,32 +44,20 @@ const TemporaryGame = ({
 
   useEffect(() => {
     if (timeLeft === 0) {
-      setPopout(<ScreenSpinner size="large" />);
       setTaskNumber(0);
-      setActivePanel("result");
+      setActivePanel(PanelRoute.Result);
     }
   }, [timeLeft]);
 
   useEffect(() => {
-    window.history.pushState({ activePanel: "lvlGame" }, "lvlGame");
-
-    setPopout(null);
-
-    //lol()
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
+    setInterval(() => {
       isCounting &&
         setTimeLeft((timeLeft) => (timeLeft >= 1 ? timeLeft - 1 : 0));
     }, 1000);
   }, [isCounting]);
 
-  useEffect(() => {}, [answer]);
-
-  //код времени не мой кст :)
-
   function createLvl() {
+    setActivePopout(PopoutRoute.Loading);
     axios
       .post(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
         lvlType: "single30",
@@ -96,16 +71,20 @@ const TemporaryGame = ({
         });
 
         setGameData(response.data.data);
-        setPopout(null);
       })
-      .catch(function (error) {});
+      .catch(function (error) {
+        console.log("create lvl err", error);
+      })
+      .finally(() => {
+        back();
+      });
   }
 
   return (
     <Panel id={id}>
       <div
         style={{
-          background: themeColors === "light" ? "#F7F7FA" : "#1D1D20",
+          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
           height: document.documentElement.scrollHeight,
         }}
       >
@@ -117,29 +96,7 @@ const TemporaryGame = ({
           before={
             <PanelHeaderButton
               onClick={() => {
-                setPopout(
-                  <Alert
-                    actions={[
-                      {
-                        title: "Завершить",
-                        mode: "destructive",
-                        autoclose: true,
-                        action: () => setActivePanel("menu"),
-                      },
-                      {
-                        title: "Отмена",
-                        autoclose: true,
-                        mode: "cancel",
-                      },
-                    ]}
-                    actionsLayout="vertical"
-                    onClose={() => {
-                      setPopout(null);
-                    }}
-                    header="Подтвердите действие"
-                    text="Вы уверены, что хотите завершить игру?"
-                  />
-                );
+                setActivePopout(PopoutRoute.AlertFinishGame);
               }}
             >
               {platform === "ios" ? (
@@ -167,7 +124,7 @@ const TemporaryGame = ({
                   level="1"
                   className="equation"
                   style={{
-                    background: themeColors === "light" ? "#F0F1F5" : "#2E2E33",
+                    background: appearance === "light" ? "#F0F1F5" : "#2E2E33",
                   }}
                 >
                   {gameData.tasks[taskNumber].task[0]}
@@ -186,7 +143,7 @@ const TemporaryGame = ({
                   level="1"
                   className="equation"
                   style={{
-                    background: themeColors === "light" ? "#F0F1F5" : "#2E2E33",
+                    background: appearance === "light" ? "#F0F1F5" : "#2E2E33",
                   }}
                 >
                   1+2 =<span className="equationMark">?</span>
@@ -249,13 +206,12 @@ const TemporaryGame = ({
                   className="item"
                   id={"button" + index}
                   style={{
-                    background: themeColors === "light" ? "#FFFFFF" : "#2E2E33",
-                    color: themeColors === "light" ? "#000" : "#F0F1F5",
+                    background: appearance === "light" ? "#FFFFFF" : "#2E2E33",
+                    color: appearance === "light" ? "#000" : "#F0F1F5",
                   }}
                   key={index}
                   onClick={() => {
                     if (first) {
-                      setPopout(<ScreenSpinner size="large" />);
                       createLvl();
                     }
 
@@ -273,8 +229,6 @@ const TemporaryGame = ({
                     }
                     setFirst(false);
                     setTaskNumber(taskNumber + 1);
-
-                    //setIsCounting(true)
                   }}
                 >
                   <Title>
