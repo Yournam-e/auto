@@ -13,13 +13,14 @@ import {
 import "../Game/Game.css";
 
 import { Icon24Back, Icon24ChevronLeft } from "@vkontakte/icons";
+import { browserBack } from "../../scripts/browserBack";
 import { getPadTime } from "../../scripts/getPadTime";
 import { answerTask } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
 
 import { back, setActivePanel, setActivePopout } from "@blumjs/router";
 import { useStore } from "effector-react";
-import { PopoutRoute } from "../../constants/router";
+import { PanelRoute, PopoutRoute } from "../../constants/router";
 import {
   $main,
   setAnswersInfo,
@@ -43,24 +44,23 @@ export const MultiplayerGame = ({ id }) => {
   const seconds = getPadTime(timeLeft - minutes * 60); //секунды
 
   client.gameFinished = ({ game }) => {
+    console.log("game finished", game);
     setGameInfo(null);
-    setMpGameResults([]);
     setMpGameResults(game);
   };
 
   useEffect(() => {
-    timeLeft === 0 ? setActivePanel("multiplayerResult") : console.log();
+    timeLeft === 0
+      ? setActivePanel(PanelRoute.MultiplayerResult)
+      : console.log();
   }, [timeLeft]);
-
-  useEffect(() => {
-    window.history.pushState({ activePanel: "mpGame" }, "mpGame");
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       isCounting &&
         setTimeLeft((timeLeft) => (timeLeft >= 1 ? timeLeft - 1 : 0));
     }, 1000);
+    return () => clearInterval(interval);
   }, [isCounting]);
 
   //код времени не мой кст :)
@@ -89,12 +89,7 @@ export const MultiplayerGame = ({ id }) => {
           shadow={false}
           separator={false}
           before={
-            <PanelHeaderButton
-              aria-label="Выйти из игры"
-              onClick={() => {
-                setActivePopout(PopoutRoute.AlertGameExit);
-              }}
-            >
+            <PanelHeaderButton aria-label="Выйти из игры" onClick={browserBack}>
               {platform === "ios" ? (
                 <Icon24ChevronLeft width={28} height={28} fill="#1A84FF" />
               ) : (
@@ -193,12 +188,14 @@ export const MultiplayerGame = ({ id }) => {
                     onClick={() => {
                       //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
                       async function callNextTask() {
-                        await answerTask(
-                          gameInfo.roomId,
-                          value,
-                          gameInfo.taskId
-                        );
-                        setActivePopout(PopoutRoute.Loading);
+                        if (gameInfo) {
+                          await answerTask(
+                            gameInfo.roomId,
+                            value,
+                            gameInfo.taskId
+                          );
+                          setActivePopout(PopoutRoute.Loading);
+                        }
                       }
                       callNextTask();
                       //setIsCounting(true)

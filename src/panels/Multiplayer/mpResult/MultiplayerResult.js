@@ -37,7 +37,7 @@ const MultiplayerResult = ({ id }) => {
     mpGameResults,
     connectType,
   } = useStore($main);
-  const [friendList, setFriendList] = useState(null);
+  const [friendList, setFriendList] = useState([]);
 
   const [readyToReplay, setReadyToReplay] = useState(false);
 
@@ -49,8 +49,6 @@ const MultiplayerResult = ({ id }) => {
   const [buttonTitle, setButtonTitle] = useState("");
 
   const [newA, setNewA] = useState([]);
-
-  let lasd = playerLobbyList;
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -75,6 +73,7 @@ const MultiplayerResult = ({ id }) => {
       isCounting &&
         setTimeLeft((timeLeft) => (timeLeft >= 1 ? timeLeft - 1 : 0));
     }, 1000);
+    return () => clearInterval(interval);
   }, [isCounting]);
 
   useEffect(() => {
@@ -90,7 +89,7 @@ const MultiplayerResult = ({ id }) => {
   }, [timeLeft]);
 
   useEffect(() => {
-    if (mpGameResults) {
+    if (mpGameResults && mpGameResults.players) {
       const newArr = mpGameResults.players.sort((a, b) =>
         a.rightResults > b.rightResults ? -1 : 1
       );
@@ -177,11 +176,12 @@ const MultiplayerResult = ({ id }) => {
             {mpGameResults && user && (
               <Title className="result-task-text">
                 Набрано баллов:{" "}
-                {mpGameResults.players.map((value) => {
-                  if (value.userId === user.id) {
-                    return value.rightResults;
-                  }
-                })}
+                {mpGameResults.players &&
+                  mpGameResults.players.map((value) => {
+                    if (value.userId === user.id) {
+                      return value.rightResults;
+                    }
+                  })}
               </Title>
             )}
           </div>
@@ -296,7 +296,7 @@ const MultiplayerResult = ({ id }) => {
                     //joinToYourRoom()
                     leaveRoom(joinCode, user.id);
                     setAgain(false);
-                    setActiveStory("multiplayer");
+                    setActiveStory(StoryRoute.Multiplayer);
                     setConnectType("host");
                     setHaveHash(false);
                     setActivePanel(PanelRoute.Menu);

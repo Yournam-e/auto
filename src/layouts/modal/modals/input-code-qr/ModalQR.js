@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { back } from "@blumjs/router";
 import {
   Button,
@@ -19,16 +17,17 @@ import "./ModalQR.css";
 
 import qr from "@vkontakte/vk-qr";
 import { useStore } from "effector-react";
+import { useCallback, useMemo } from "react";
 import { $main } from "../../../../core/main";
 
 export const ModalQRCode = ({ id }) => {
   const { joinCode } = useStore($main);
-  let options = {};
+  let options = useMemo(() => ({
+    foregroundColor: "#0077FF",
+    logoData: "https://i.ibb.co/xLkkGgd/vk-logo-3674340.png",
+  }));
 
   const platform = usePlatform();
-
-  options.foregroundColor = "#0077FF";
-  options.logoData = "https://i.ibb.co/xLkkGgd/vk-logo-3674340.png";
 
   const qrSvg = qr.createQR(
     `vk.com/app51451320#${joinCode}`,
@@ -37,7 +36,7 @@ export const ModalQRCode = ({ id }) => {
     options
   );
 
-  function share() {
+  const share = useCallback(() => {
     bridge
       .send("VKWebAppShare", {
         link: `https://vk.com/app51451320#${joinCode}`,
@@ -49,11 +48,7 @@ export const ModalQRCode = ({ id }) => {
         // Ошибка
         console.log(error);
       });
-  }
-
-  useEffect(() => {
-    console.log(platform);
-  }, []);
+  }, [joinCode]);
 
   return (
     <ModalPage
@@ -89,9 +84,7 @@ export const ModalQRCode = ({ id }) => {
             before={<Icon24ShareOutline />}
             className="qr-code-share-button"
             appearance="accent"
-            onClick={() => {
-              share();
-            }}
+            onClick={share}
           >
             Поделиться
           </Button>

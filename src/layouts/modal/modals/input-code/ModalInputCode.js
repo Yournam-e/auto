@@ -42,7 +42,7 @@ export const ModalInputCode = ({ id }) => {
         `https://showtime.app-dich.com/api/plus-plus/room/exists/${textInput.current.state.value}${qsSign}`
       ) //получил инфу о лвлах
       .then(async function (res) {
-        await console.log(res.data.data);
+        await console.log(res.data.data, textInput.current.state.value);
         if (res.data.data === true) {
           const user = await bridge.send("VKWebAppGetUserInfo");
           //await connectRoom(qsSign, textInput.current.value, user.id);

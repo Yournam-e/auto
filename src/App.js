@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { Icon28FavoriteOutline, Icon28Users3Outline } from "@vkontakte/icons";
 
 import "@vkontakte/vkui/dist/vkui.css";
+import "./App.css";
 import Eyes from "./img/Eyes.png";
 import "./img/Fonts.css";
 
@@ -38,13 +39,12 @@ import { client } from "./sockets/receiver";
 import { useEventListener } from "./scripts/useEventListener";
 
 import {
-  blumRouter,
+  createCatchBackBrowserRouteMiddleware,
   createDisableBackBrowserRouteMiddleware,
   setActivePanel,
   setActivePopout,
   useInitRouter,
   useRouter,
-  _setActivePopout,
 } from "@blumjs/router";
 import { useStore } from "effector-react";
 import {
@@ -79,55 +79,58 @@ const App = () => {
       view: ViewRoute.Main,
       panel: PanelRoute.Menu,
     },
-    createDisableBackBrowserRouteMiddleware(
+    ...[
+      PanelRoute.Result,
+      PanelRoute.ResultLvl,
+      PanelRoute.MultiplayerResult,
+    ].map((p) =>
+      createCatchBackBrowserRouteMiddleware(p, () => {
+        setActivePanel(PanelRoute.Menu);
+      })
+    ),
+    ...[
       PanelRoute.TemporaryGame,
-      (s, prevRoutes) => {
-        console.log("try close temp game");
-        if (s.popout === PopoutRoute.AlertFinishGame) {
-          _setActivePopout(null);
-        } else {
+      PanelRoute.LvlGame,
+      PanelRoute.MultiplayerGame,
+    ].map((p) =>
+      createCatchBackBrowserRouteMiddleware(p, (s) => {
+        if (!s.popout) {
+          setActivePanel(p);
           setActivePopout(PopoutRoute.AlertFinishGame);
         }
+      })
+    ),
+    createDisableBackBrowserRouteMiddleware(PopoutRoute.Loading),
+    createCatchBackBrowserRouteMiddleware(PanelRoute.Menu, (s) => {
+      if (s.modal || s.popout) {
+        return false;
       }
-    )
+      if (activeStory === StoryRoute.Multiplayer) {
+        setActiveStory(StoryRoute.Single);
+      }
+      if (activeStory === StoryRoute.Single) {
+        bridge.send("VKWebAppClose", { status: "success" });
+      }
+    })
   );
 
   const { activePanel, activePopout, activeView, isRouteInit } = useRouter();
-  useEffect(() => {
-    console.log(blumRouter.subscribers);
-  }, []);
 
   useEventListener("offline", () => {
     setActivePanel(PanelRoute.NotConnection);
   });
 
   client.joinedRoom = ({ users }) => {
-    async function joinFunction() {
-      // setPopout(<ScreenSpinner size='large' />)
-
-      users !== 0 ? setPlayerLobbyList(users) : console.log("");
-
-      setPlayersId(null);
-
-      const newArr = [];
-      for (const item of users) {
-        //setPlayersId([...playersId, item.userId]);
-        newArr.push(item.userId);
-      }
-      setPlayersId(newArr);
-      //setPopout(null)
-    }
-
-    joinFunction();
+    users !== 0 ? setPlayerLobbyList(users) : console.log("");
+    setPlayersId(null);
+    const newArr = users.map((u) => u.userId);
+    setPlayersId(newArr);
   };
 
   client.gameStarted = ({ task, answers, id }) => {
     setTaskInfo(task);
     setAnswersInfo(answers);
-    async function lol() {
-      setGameInfo({ ...gameInfo, taskId: id });
-    }
-    lol();
+    setGameInfo({ ...gameInfo, taskId: id });
     setActivePanel(PanelRoute.MultiplayerGame);
   };
 
@@ -171,30 +174,24 @@ const App = () => {
       searchToObject().vk_ref === "im_app_action" &&
       window.location.hash
     ) {
-      async function startToHash() {
-        setGameInfo({
-          ...gameInfo,
-          roomId: window.location.hash.slice(1),
-        });
-        setHaveHash(true);
-        setConnectType("join");
-        setActivePanel(PanelRoute.Menu);
-        setActiveStory(StoryRoute.Multiplayer);
-      }
-      startToHash();
+      setGameInfo({
+        ...gameInfo,
+        roomId: window.location.hash.slice(1),
+      });
+      setHaveHash(true);
+      setConnectType("join");
+      setActivePanel(PanelRoute.Menu);
+      setActiveStory(StoryRoute.Multiplayer);
     } else if (!window.location.hash || window.location.hash === "#") {
-      setHaveHash(false);
+      setHaveHash("");
     } else {
-      async function startToHash() {
-        setGameInfo({
-          ...gameInfo,
-          roomId: window.location.hash.slice(1),
-        });
-        setHaveHash(true);
-        setConnectType("join");
-        setActiveStory(PanelRoute.Multiplayer);
-      }
-      startToHash();
+      setGameInfo({
+        ...gameInfo,
+        roomId: window.location.hash.slice(1),
+      });
+      setHaveHash(true);
+      setConnectType("join");
+      setActiveStory(PanelRoute.Multiplayer);
     }
   }, []);
 

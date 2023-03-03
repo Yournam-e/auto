@@ -8,6 +8,7 @@ import {
   Icon24RefreshOutline,
   Icon56CancelCircleOutline,
   Icon56CheckCircleOutline,
+  Icon56RecentOutline,
 } from "@vkontakte/icons";
 import { Button, ButtonGroup, Cell, List, Panel, Title } from "@vkontakte/vkui";
 import axios from "axios";
@@ -19,8 +20,7 @@ import { ReactComponent as ClockIcon } from "../../../img/Сlock.svg";
 import "./LvlResultPage.css";
 
 const LvlResultPage = ({ id }) => {
-  const { allTasks, lvlResult, lvlNumber, appearance, timeFinish } =
-    useStore($main);
+  const { allTasks, lvlResult, lvlNumber, appearance } = useStore($main);
   const url = "https://showtime.app-dich.com/api/plus-plus/";
 
   const [complete, setComplete] = useState();
@@ -84,7 +84,6 @@ const LvlResultPage = ({ id }) => {
       .get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
         const lvls = await response.data.data;
-        back();
 
         const promise = new Promise((resolve, reject) => {
           async function deleted() {
@@ -99,8 +98,8 @@ const LvlResultPage = ({ id }) => {
                       `https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`
                     )
                     .then(async function (response) {
-                      await setReady(true);
-                      await resolve();
+                      setReady(true);
+                      resolve();
                     })
 
                     .catch(function () {});
@@ -118,10 +117,7 @@ const LvlResultPage = ({ id }) => {
           deleted();
         });
 
-        promise.then(
-          (result) => setActivePopout(PopoutRoute.Loading),
-          setActivePanel(PanelRoute.LvlGame)
-        );
+        promise.then((result) => setActivePanel(PanelRoute.LvlGame));
       })
       .catch(function (error) {
         console.warn(error);
@@ -129,10 +125,8 @@ const LvlResultPage = ({ id }) => {
   }
 
   useEffect(() => {
-    var lastTime = Date.now();
-
+    setActivePopout(PopoutRoute.Loading);
     setReady(false);
-
     axios
       .put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
         id: lvlResult.id,
@@ -143,39 +137,37 @@ const LvlResultPage = ({ id }) => {
         axios
           .get(`${url}info${qsSign}`) //получил инфу о лвлах
           .then(async function (response) {
-            await console.log(response.data.data);
-            let items = response.data.data;
-            let searchTerm = lvlResult.lvlType;
-            let rightResults = items.find(
+            const items = response.data.data;
+            console.log(items);
+            const searchTerm = lvlResult.lvlType;
+            const rightResults = items.find(
               (one) => one.lvlType === searchTerm
             ).rightResults;
-            let timeStarted = items.find(
-              (one) => one.lvlType === searchTerm
-            ).started;
+            const time = items.find((one) => one.lvlType === searchTerm);
 
-            await timeFinish;
-            if (timeFinish === 0) {
-            }
-            const timeMs = timeFinish - new Date(timeStarted).getTime();
+            const timeMs =
+              new Date(time.finished) - new Date(time.started).getTime();
             setFinishedTime(timeMs / 1000);
-            if (rightResults > devideLvl(lvlNumber)[2] - 1) {
-              if (timeFinish - new Date(timeStarted).getTime() < 30000) {
-                await setComplete([true, "right"]);
-                back();
+            console.log(rightResults, devideLvl(lvlNumber)[2] - 1, lvlNumber);
+            if (rightResults > devideLvl(lvlNumber)[2] - 1 || timeMs >= 30000) {
+              if (timeMs < 30000) {
+                setComplete([true, "right"]);
               } else {
-                await setComplete([false, "beOnTime"]);
-                back();
+                setComplete([false, "beOnTime"]);
               }
             } else {
-              await setComplete([false, "notright"]);
-              back();
+              setComplete([false, "notright"]);
             }
           })
           .catch(function (error) {
             console.warn(error);
+          })
+          .finally(() => {
+            back();
           });
       })
       .catch(function (error) {
+        back();
         console.warn(error);
       });
   }, []);
@@ -190,19 +182,27 @@ const LvlResultPage = ({ id }) => {
       >
         <div className="main-div-resilt-page">
           <div className="lvl-res-headDiv">
-            {complete &&
-            allTasks.length > devideLvl(lvlNumber)[2] &&
-            complete[0] ? (
-              <Icon56CheckCircleOutline
-                fill="#1A84FF"
-                style={{
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                }}
-              />
+            {complete ? (
+              complete[0] ? (
+                <Icon56CheckCircleOutline
+                  fill="#1A84FF"
+                  style={{
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                />
+              ) : (
+                <Icon56CancelCircleOutline
+                  fill="#FF2525"
+                  style={{
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                />
+              )
             ) : (
-              <Icon56CancelCircleOutline
-                fill="#FF2525"
+              <Icon56RecentOutline
+                fill="#1A84FF"
                 style={{
                   marginLeft: "auto",
                   marginRight: "auto",
@@ -214,11 +214,11 @@ const LvlResultPage = ({ id }) => {
               className="lvl-res-title-div"
               style={{ color: appearance === "light" ? "" : "#fff" }}
             >
-              {complete &&
-              allTasks.length > devideLvl(lvlNumber)[2] &&
-              complete[0]
-                ? "Уровень пройден!"
-                : "Попробуйте снова"}
+              {complete
+                ? complete[0]
+                  ? "Уровень пройден!"
+                  : "Попробуйте снова"
+                : "Подытоживаем результаты"}
             </Title>
 
             {complete &&
@@ -233,13 +233,16 @@ const LvlResultPage = ({ id }) => {
                 Вы не успели
               </Title>
             )}
-            <div className="not-right-button">
-              {complete && !complete[0] && allTasks.length > 10 && (
-                <Title style={{}} className="lvl-res-sub-title-div" weight="1">
-                  Вы не успели
-                </Title>
-              )}
-            </div>
+            {complete && complete[1] === "notright" && (
+              <Title className="lvl-res-sub-title-div" weight="1">
+                Есть ошибки
+              </Title>
+            )}
+            {!complete && (
+              <Title className="lvl-res-sub-title-div" weight="1">
+                Ждем...
+              </Title>
+            )}
 
             <div
               style={{ height: 30, marginTop: 12 }}
@@ -330,8 +333,8 @@ const LvlResultPage = ({ id }) => {
                   size="l"
                   onClick={() => {
                     async function deleteAndStart() {
-                      await setFinishedTime(0);
-                      await setAllTasks([{}]);
+                      setFinishedTime(0);
+                      setAllTasks([{}]);
                       playNext();
                     }
                     deleteAndStart();

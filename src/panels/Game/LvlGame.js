@@ -75,6 +75,7 @@ const LvlGame = ({ id }) => {
   }
 
   function createLvl() {
+    setActivePopout(PopoutRoute.Loading);
     axios
       .post(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
         lvlType: devideType(),
@@ -86,9 +87,9 @@ const LvlGame = ({ id }) => {
           lvlType: devideType(),
           answers: [],
         });
-        back();
       })
-      .catch(function (error) {});
+      .catch(function (error) {})
+      .finally(() => back());
   }
 
   useEffect(() => {
@@ -100,32 +101,13 @@ const LvlGame = ({ id }) => {
   }, [timeLeft]);
 
   useEffect(() => {
-    if (isReady) {
-      createLvl();
-    }
-  }, [isReady]);
-
-  useEffect(() => {
-    //createLvl()
-    async function lol() {
-      setActivePopout(PopoutRoute.Loading);
-      back();
-    }
-
-    lol();
-  }, []);
-
-  useEffect(() => {
     const interval = setInterval(() => {
       isCounting &&
         setTimeLeft((timeLeft) => (timeLeft >= 1 ? timeLeft - 1 : 0));
     }, 1000);
+    return () => clearInterval(interval);
   }, [isCounting]);
   //код времени не мой кст :)
-
-  useEffect(() => {}, [taskNumber]);
-
-  useEffect(() => {}, [allTasks]);
 
   return (
     <Panel id={id}>
@@ -243,6 +225,7 @@ const LvlGame = ({ id }) => {
                   onClick={() => {
                     //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
                     if (first === true) {
+                      setIsCounting(true);
                       setFirst(false);
                       createLvl();
                     } else {
@@ -251,9 +234,9 @@ const LvlGame = ({ id }) => {
                           //eсли последняя задача
 
                           async function finished() {
-                            await setTimeFinish(Date.now());
+                            setTimeFinish(Date.now());
 
-                            const checkRight = await decideTask(
+                            const checkRight = decideTask(
                               taskNumber,
                               lvlData.tasks[taskNumber].task[0],
                               lvlData.tasks[taskNumber].task[1],
@@ -261,7 +244,7 @@ const LvlGame = ({ id }) => {
                               lvlData.tasks[taskNumber].answers[index]
                             );
 
-                            await setAllTasks([
+                            setAllTasks([
                               ...allTasks,
                               {
                                 id: lvlData.tasks[taskNumber].id,
@@ -282,9 +265,8 @@ const LvlGame = ({ id }) => {
 
                             const copy = Object.assign({}, lvlResult);
                             copy.answers = [...lvlResult.answers, newItem];
-                            await setLvlResult(copy);
+                            setLvlResult(copy);
 
-                            setActivePopout(PopoutRoute.Loading);
                             setActivePanel(PanelRoute.ResultLvl);
                           }
 
@@ -324,8 +306,6 @@ const LvlGame = ({ id }) => {
                         }
                       }
                     }
-
-                    setIsCounting(true);
                   }}
                 >
                   <Title>

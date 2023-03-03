@@ -1,28 +1,41 @@
-import { useEffect } from "react";
-
 import { Button, Panel, Text, Title } from "@vkontakte/vkui";
 
 import "../Home/Home.css";
 
-import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import {
+  back,
+  setActivePanel,
+  setActivePopout,
+  useRouter,
+} from "@blumjs/router";
 import { useStore } from "effector-react";
+import { useCallback, useEffect } from "react";
 import { PanelRoute, PopoutRoute, StoryRoute } from "../../constants/router";
 import { $main, setActiveStory } from "../../core/main";
 import "../../img/Fonts.css";
 
 const NotConnection = ({ id }) => {
   const { appearance } = useStore($main);
-  useEffect(() => {
-    back();
-  }, []);
+  const { activePopout } = useRouter();
 
-  function updateOnlineStatus(event) {
+  useEffect(() => {
+    let timerId = null;
+    if (activePopout) {
+      timerId = setTimeout(() => {
+        back();
+      }, 2000);
+    }
+    return () => clearTimeout(timerId);
+  }, [activePopout]);
+
+  const updateOnlineStatus = useCallback(() => {
     if (navigator.onLine) {
       setActiveStory(StoryRoute.Single);
       setActivePanel(PanelRoute.Menu);
+    } else {
+      setActivePopout(PopoutRoute.Loading);
     }
-    back();
-  }
+  }, []);
 
   return (
     <Panel id={id}>
@@ -47,10 +60,7 @@ const NotConnection = ({ id }) => {
           <div className="result-task-button-div">
             <Button
               className="result-getFriend-button"
-              onClick={() => {
-                setActivePopout(PopoutRoute.Loading);
-                updateOnlineStatus();
-              }}
+              onClick={updateOnlineStatus}
               style={{
                 backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
                 color: "#1984FF",

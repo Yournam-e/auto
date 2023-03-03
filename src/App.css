@@ -1,0 +1,7 @@
+.vkuiRoot > *,
+.vkuiRoot > *::after,
+.vkuiRoot > *::before,
+.vkuiView__panels > *,
+.vkuiPanel__fade {
+  animation-fill-mode: forwards !important;
+}

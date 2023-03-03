@@ -5,14 +5,16 @@ import { PanelRoute } from "../../../../constants/router";
 import { setAllTasks } from "../../../../core/main";
 
 export const AlertFinishGamePopout = memo(() => {
-  const handleAction = useCallback(() => {
-    console.log("action fired");
-    back();
-    setAllTasks([{}]);
-  }, []);
   const handleClose = useCallback(() => {
-    console.log("close fired");
-    setActivePanel(PanelRoute.Menu);
+    back();
+  }, []);
+  const handleAction = useCallback(() => {
+    back({
+      afterBackHandledCallback: () => {
+        setActivePanel(PanelRoute.Menu);
+        setAllTasks([{}]);
+      },
+    });
   }, []);
 
   return (
@@ -21,7 +23,6 @@ export const AlertFinishGamePopout = memo(() => {
         {
           title: "Завершить",
           mode: "destructive",
-          autoclose: true,
           action: handleAction,
         },
         {

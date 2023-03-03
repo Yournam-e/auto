@@ -88,34 +88,28 @@ export const Multiplayer = ({ id }) => {
 
   var clickTime = 0;
 
+  useEffect(() => {
+    console.log("players", playerLobbyList, playersId);
+  }, [playerLobbyList, playersId]);
+
   client.leftRoom = ({ userId }) => {
     if (userId && activePanel === PanelRoute.Menu) {
-      setPlayerLobbyList([
-        ...playerLobbyList.filter((item) => item.userId !== userId),
-      ]);
-      setPlayersId(
-        playersId.filter(function (number) {
-          return number !== userId;
-        })
-      );
+      setPlayerLobbyList((pLL) => pLL.filter((item) => item.userId !== userId));
+      setPlayersId((p) => p.filter((n) => n !== userId));
     }
   };
 
   client.gameStarted = ({ answers, task, id }) => {
     setTaskInfo(task);
     setAnswersInfo(answers);
-    async function lol() {
-      setGameInfo({ ...gameInfo, taskId: id });
-    }
-    lol();
+    setGameInfo({ ...gameInfo, taskId: id });
     setNotUserRoom(false);
     setActivePanel(PanelRoute.MultiplayerGame);
   };
 
   client.roomCreated = ({ roomId }) => {
-    console.log(playersId);
-    console.log(playerLobbyList);
-    joinRoom(roomId, thisUserId);
+    console.log(roomId, "created");
+    joinRoom(roomId);
     setJoinCode(roomId);
     setNotUserRoom(false);
     back();
@@ -125,7 +119,7 @@ export const Multiplayer = ({ id }) => {
     if (e.detail.type === "VKWebAppViewHide") {
       if (connectType === "join") {
         setConnectType("host");
-        joinToYourRoom();
+        joinToYourRoom({ gameInfo, isFirstStart });
         leaveRoom(user.id);
       }
     }
@@ -134,7 +128,7 @@ export const Multiplayer = ({ id }) => {
   bridge.subscribe((e) => {
     if (e.detail.type === "VKWebAppViewRestore") {
       setConnectType("host");
-      joinToYourRoom();
+      joinToYourRoom({ gameInfo, isFirstStart });
       leaveRoom(joinCode);
       back();
     }
@@ -145,7 +139,7 @@ export const Multiplayer = ({ id }) => {
       .get(`https://showtime.app-dich.com/api/plus-plus/user-games${qsSign}`)
       .then(async function (response) {
         await response;
-        console.log(response.data.data[0]);
+        console.log(response.data.data[0], "user-games");
         console.log(response.data.data[0].roomId);
         console.log(window.location.hash.slice(1));
         if (response.data.data[0].ownerId === useUserId) {
@@ -170,35 +164,30 @@ export const Multiplayer = ({ id }) => {
     if (haveHash && isFirstStart) {
       axios
         .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
-        .then(async function (response) {
-          await setJoinCode(response.data.data);
+        .then(async (response) => {
+          setJoinCode(response.data.data);
 
-          await setGameInfo({ ...gameInfo, roomId: response.data.data });
+          setGameInfo({ ...gameInfo, roomId: response.data.data });
           if (window.location.hash.slice(1) === response.data.data) {
-            await setConnectType("host");
-            await setJoinCode(window.location.hash.slice(1));
-            await connectRoom(
-              qsSign,
-              window.location.hash.slice(1),
-              thisUserId
-            );
+            setConnectType("host");
+            setJoinCode(window.location.hash.slice(1));
+            connectRoom(qsSign, window.location.hash.slice(1), thisUserId);
           } else {
             setJoinCode(window.location.hash.slice(1));
             connectRoom(qsSign, window.location.hash.slice(1), thisUserId);
             setNotUserRoom(true);
           }
-
           setFirstStart(false);
         })
         .catch(function (error) {});
     } else if (leavingRoom === true) {
-      joinToYourRoom();
+      joinToYourRoom({ gameInfo, isFirstStart });
       setLeavingRoom(false);
     } else if (itAgain) {
       setGameInfo({ ...gameInfo, roomId: joinCode });
       setAgain(false);
     } else {
-      joinToYourRoom();
+      joinToYourRoom({ gameInfo, isFirstStart });
     }
   }, []);
 
@@ -278,16 +267,10 @@ export const Multiplayer = ({ id }) => {
                   setActivePopout(PopoutRoute.Loading);
                   createRoom(joinCode);
 
-                  setPlayerLobbyList([
-                    ...playerLobbyList.filter(
-                      (item) => item.userId === user.id
-                    ),
-                  ]);
-                  setPlayersId(
-                    playersId.filter(function (number) {
-                      return number === user.id;
-                    })
+                  setPlayerLobbyList((pLL) =>
+                    pLL.filter((item) => item.userId === user.id)
                   );
+                  setPlayersId((p) => p.filter((n) => n === user.id));
                 }}
                 style={{
                   display: "inline-block",
@@ -547,7 +530,7 @@ export const Multiplayer = ({ id }) => {
               onClick={() => {
                 if (connectType === "join") {
                   setConnectType("host");
-                  joinToYourRoom();
+                  joinToYourRoom({ gameInfo, isFirstStart });
                   leaveRoom(user.id);
                 } else {
                   startGame(joinCode, complexity, playersId);

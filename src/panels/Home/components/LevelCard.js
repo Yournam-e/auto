@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { back, setActivePanel, setActivePopout } from "@blumjs/router";
 import {
@@ -95,7 +95,6 @@ export const LevelCard = ({ number, devideLvl }) => {
 
   async function mapingLvls() {
     setActivePopout(PopoutRoute.Loading);
-
     const promise = new Promise((resolve, reject) => {
       lvlsInfo &&
         lvlsInfo.map((item, index) => {
@@ -115,12 +114,19 @@ export const LevelCard = ({ number, devideLvl }) => {
       resolve();
     });
 
-    promise.then(
-      () => setActivePopout(PopoutRoute.Loading),
-      back(),
-      setActivePanel(PanelRoute.LvlGame)
+    promise.then(() =>
+      back({
+        afterBackHandledCallback: () => {
+          setActivePanel(PanelRoute.LvlGame);
+        },
+      })
     );
   }
+
+  const isCompleted = useMemo(
+    () => thisLvl && thisLvl.rightResults === devideLvl(number)[2],
+    [thisLvl, number]
+  );
 
   return (
     <div
@@ -154,7 +160,7 @@ export const LevelCard = ({ number, devideLvl }) => {
           </div>
 
           <div className="lvl-card-icon-div" style={{ marginTop: -48 }}>
-            {thisLvl && thisLvl.rightResults === thisLvl.totalResults && (
+            {isCompleted && (
               <Icon16Done
                 className="lvl-card-icon"
                 style={{
@@ -229,9 +235,7 @@ export const LevelCard = ({ number, devideLvl }) => {
             mode="accent"
             size="s"
           >
-            {thisLvl && thisLvl.rightResults === thisLvl.totalResults
-              ? "Перепройти"
-              : "Играть"}
+            {isCompleted ? "Перепройти" : "Играть"}
           </Button>
         </div>
       </Card>

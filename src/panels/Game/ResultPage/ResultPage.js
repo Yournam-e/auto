@@ -310,8 +310,8 @@ const ResultPage = ({ id }) => {
             {
               <Title className="result-task-title">
                 {right
-                  ? `${decOfNum(right, ["задача", "задачи", "задач"])}`
-                  : "0 задач"}
+                  ? `${decOfNum(right, ["балл", "балла", "баллов"])}`
+                  : "0 баллов"}
               </Title>
             }
           </div>

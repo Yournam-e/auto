@@ -98,7 +98,7 @@ export const $main = createStore<Store>({
   joinCode: null,
   mpGameResults: [],
   playersId: [],
-  isFirstStart: false,
+  isFirstStart: true,
   playerLobbyList: [],
   connectType: "host",
   itNeedRestartGame: false,
