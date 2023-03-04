@@ -176,7 +176,7 @@ export const LevelCard = ({ number, devideLvl }) => {
               className="lvl-card-parametr-div"
               style={{ width: 141, height: 30, paddingLeft: 16 }}
             >
-              <Icon24CheckCircleOutline
+              <Icon28RecentOutline
                 className="lvl-card-parametr-icon"
                 style={{ display: "inline-block" }}
                 width={20}
@@ -197,7 +197,7 @@ export const LevelCard = ({ number, devideLvl }) => {
               className="lvl-card-parametr-div"
               style={{ width: 141, height: 30, paddingLeft: 16 }}
             >
-              <Icon28RecentOutline
+              <Icon24CheckCircleOutline
                 className="lvl-card-parametr-icon"
                 style={{ display: "inline-block" }}
                 width={20}

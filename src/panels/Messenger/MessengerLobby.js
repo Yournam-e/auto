@@ -180,7 +180,7 @@ const MessengerLobby = ({ id }) => {
           transparent={true}
           shadow={false}
           separator={false}
-        ></PanelHeader>
+        />
       )}
 
       {connectType === "host" && (
@@ -189,7 +189,7 @@ const MessengerLobby = ({ id }) => {
           transparent={true}
           shadow={false}
           separator={false}
-        ></PanelHeader>
+        />
       )}
 
       <Div className="multiplayer-div">

@@ -13,7 +13,6 @@ import {
   Cell,
   Div,
   List,
-  Panel,
   Text,
   Title,
 } from "@vkontakte/vkui";
@@ -21,6 +20,7 @@ import axios from "axios";
 import { createCanvas } from "canvas";
 import { useStore } from "effector-react";
 import { useCallback, useEffect, useState } from "react";
+import { CustomPanel } from "../../../atoms/CustomPanel";
 import { PanelRoute, PopoutRoute } from "../../../constants/router";
 import { $main, checkToDelete } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
@@ -292,213 +292,204 @@ const ResultPage = ({ id }) => {
   }, []);
 
   return (
-    <Panel id={id} className="resultPagePanel">
-      <div
-        style={{ background: appearance === "light" ? "#FFFFFF" : "#1D1D20" }}
-        className="full-div"
-      >
-        <Div className="check-circle-outline">
-          <div>
-            <Icon56CheckCircleOutline
-              fill="#1A84FF"
-              style={{ marginLeft: "auto", marginRight: "auto" }}
-            />
-          </div>
-          <div
-            style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}
-          >
-            {
-              <Title className="result-task-title">
-                {right
-                  ? `${decOfNum(right, ["балл", "балла", "баллов"])}`
-                  : "0 баллов"}
-              </Title>
-            }
-          </div>
-
-          <div style={{ marginLeft: 18, marginRight: 18, marginTop: 16 }}>
-            <Title className="result-task-text">
-              {right !== null && right !== 0 ? "Неплохо!" : ""} Поделись
-              результатами с друзьями:
+    <CustomPanel id={id} className="resultPagePanel">
+      <Div className="check-circle-outline">
+        <div>
+          <Icon56CheckCircleOutline
+            fill="#1A84FF"
+            style={{ marginLeft: "auto", marginRight: "auto" }}
+          />
+        </div>
+        <div style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}>
+          {
+            <Title className="result-task-title">
+              {right
+                ? `${decOfNum(right, ["балл", "балла", "баллов"])}`
+                : "0 баллов"}
             </Title>
-          </div>
+          }
+        </div>
 
-          <div
-            className="result-task-button-div"
-            style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}
+        <div style={{ marginLeft: 18, marginRight: 18, marginTop: 16 }}>
+          <Title className="result-task-text">
+            {right !== null && right !== 0 ? "Неплохо!" : ""} Поделись
+            результатами с друзьями:
+          </Title>
+        </div>
+
+        <div
+          className="result-task-button-div"
+          style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}
+        >
+          <Button
+            onClick={async function () {
+              if (right !== null) {
+                showStoryBox(right);
+              }
+            }}
+            className="result-task-button"
+            style={{
+              backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
+              color: "#1984FF",
+              borderRadius: 25,
+            }}
+            before={<Icon24StoryOutline height={16} width={16} />}
+            mode="accent"
+            size="l"
           >
-            <Button
-              onClick={async function () {
-                if (right !== null) {
-                  showStoryBox(right);
-                }
-              }}
-              className="result-task-button"
-              style={{
-                backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
-                color: "#1984FF",
-                borderRadius: 25,
-              }}
-              before={<Icon24StoryOutline height={16} width={16} />}
-              mode="accent"
-              size="l"
-            >
-              Поделиться в истории
-            </Button>
-          </div>
-          <p className="hide">content</p>
-          {tokenAvailability === true && (
-            <div>
-              <div className="result-task-resTitle-div">
-                <Title className="result-task-resTitle">
-                  Результаты друзей:
-                </Title>
-              </div>
+            Поделиться в истории
+          </Button>
+        </div>
+        <p className="hide">content</p>
+        {tokenAvailability === true && (
+          <div>
+            <div className="result-task-resTitle-div">
+              <Title className="result-task-resTitle">Результаты друзей:</Title>
+            </div>
 
-              <List className="result-friendList" style={{ marginTop: 8 }}>
-                {friendsResult &&
-                  friendsResult.data.map((item, idx) => (
-                    <Cell
-                      style={{ marginLeft: 5, marginRight: 5 }}
-                      key={idx}
-                      before={
-                        <div style={{ width: 100 }}>
-                          <Avatar
-                            size={56}
-                            className="friendsAvatar"
-                            src={item.user.avatar}
-                          />{" "}
-                          <Title
-                            style={{ verticalAlign: "middle" }}
-                            className="result-friend-position"
-                          >
-                            #{idx + 1}
-                          </Title>
-                        </div>
-                      }
-                    >
-                      <div style={{ height: 65, marginLeft: 16 }}>
-                        <Title level="3" style={{ paddingBottom: 8 }}>
-                          {item.user.name}
-                        </Title>
-
-                        <Button
-                          className="friendsPoint"
-                          before={<Icon16Done />}
-                          hasActive={false}
-                          hasHover={false}
-                          style={{
-                            backgroundColor:
-                              appearance === "dark" ? "#293950" : "#F4F9FF",
-                            color: "#1984FF",
-                            borderRadius: 25,
-                          }}
+            <List className="result-friendList" style={{ marginTop: 8 }}>
+              {friendsResult &&
+                friendsResult.data.map((item, idx) => (
+                  <Cell
+                    style={{ marginLeft: 5, marginRight: 5 }}
+                    key={idx}
+                    before={
+                      <div style={{ width: 100 }}>
+                        <Avatar
+                          size={56}
+                          className="friendsAvatar"
+                          src={item.user.avatar}
+                        />{" "}
+                        <Title
+                          style={{ verticalAlign: "middle" }}
+                          className="result-friend-position"
                         >
-                          <p style={{ textAlign: "center" }}>
-                            {item.rightResults}
-                          </p>
-                        </Button>
+                          #{idx + 1}
+                        </Title>
                       </div>
-                    </Cell>
-                  ))}
-              </List>
-            </div>
-          )}
-
-          {tokenAvailability === false && (
-            <div style={{ marginBottom: 160 }}>
-              <div
-                className="notFriend-div"
-                style={{
-                  marginRight: "auto",
-                  marginLeft: "auto",
-                  marginTop: 24,
-                }}
-              >
-                <img
-                  className="eyes-photo"
-                  style={{ marginTop: 16 }}
-                  src={Eyes}
-                  width={44}
-                  height={44}
-                ></img>
-
-                <Title level="3" style={{ textAlign: "center" }}>
-                  Тут никого нет
-                </Title>
-
-                <Text
-                  className="result-getFriend-text"
-                  style={{ textAlign: "center" }}
-                >
-                  Разрешите доступ к списку друзей, чтобы видеть их результаты
-                </Text>
-
-                <div className="result-task-button-div">
-                  <Button
-                    className="result-getFriend-button"
-                    onClick={() => {
-                      setActivePopout(PopoutRoute.Loading);
-                      getFriendsAndCheck();
-                    }}
-                    style={{
-                      backgroundColor:
-                        appearance === "dark" ? "#293950" : "#F4F9FF",
-                      color: "#1984FF",
-                      borderRadius: 25,
-                      marginBottom: 24,
-                    }}
-                    mode="accent"
-                    size="l"
+                    }
                   >
-                    Разрешить доступ
-                  </Button>
-                </div>
+                    <div style={{ height: 65, marginLeft: 16 }}>
+                      <Title level="3" style={{ paddingBottom: 8 }}>
+                        {item.user.name}
+                      </Title>
+
+                      <Button
+                        className="friendsPoint"
+                        before={<Icon16Done />}
+                        hasActive={false}
+                        hasHover={false}
+                        style={{
+                          backgroundColor:
+                            appearance === "dark" ? "#293950" : "#F4F9FF",
+                          color: "#1984FF",
+                          borderRadius: 25,
+                        }}
+                      >
+                        <p style={{ textAlign: "center" }}>
+                          {item.rightResults}
+                        </p>
+                      </Button>
+                    </div>
+                  </Cell>
+                ))}
+            </List>
+          </div>
+        )}
+
+        {tokenAvailability === false && (
+          <div style={{ marginBottom: 160 }}>
+            <div
+              className="notFriend-div"
+              style={{
+                marginRight: "auto",
+                marginLeft: "auto",
+                marginTop: 24,
+              }}
+            >
+              <img
+                className="eyes-photo"
+                style={{ marginTop: 16 }}
+                src={Eyes}
+                width={44}
+                height={44}
+              ></img>
+
+              <Title level="3" style={{ textAlign: "center" }}>
+                Тут никого нет
+              </Title>
+
+              <Text
+                className="result-getFriend-text"
+                style={{ textAlign: "center" }}
+              >
+                Разрешите доступ к списку друзей, чтобы видеть их результаты
+              </Text>
+
+              <div className="result-task-button-div">
+                <Button
+                  className="result-getFriend-button"
+                  onClick={() => {
+                    setActivePopout(PopoutRoute.Loading);
+                    getFriendsAndCheck();
+                  }}
+                  style={{
+                    backgroundColor:
+                      appearance === "dark" ? "#293950" : "#F4F9FF",
+                    color: "#1984FF",
+                    borderRadius: 25,
+                    marginBottom: 24,
+                  }}
+                  mode="accent"
+                  size="l"
+                >
+                  Разрешить доступ
+                </Button>
               </div>
             </div>
-          )}
-
-          <div className="result-absolute-div">
-            <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
-              <div className="result-buttonRetry-div">
-                <Button
-                  size="l"
-                  style={{
-                    backgroundColor: "#1A84FF",
-                    borderRadius: 100,
-                  }}
-                  before={<Icon24RefreshOutline />}
-                  className="result-buttonGroup-retry"
-                  appearance="accent"
-                  onClick={playAgain}
-                  stretched
-                >
-                  Попробовать снова
-                </Button>
-              </div>
-              <div className="result-buttonNotNow-div">
-                <Button
-                  className="result-buttonGroup-notNow"
-                  onClick={() => {
-                    setActivePanel(PanelRoute.Menu);
-                  }}
-                  size="l"
-                  style={{
-                    borderRadius: 25,
-                    color: "#1A84FF",
-                  }}
-                  appearance="accent"
-                  mode="tertiary"
-                  stretched
-                >
-                  В меню
-                </Button>
-              </div>
-            </ButtonGroup>
           </div>
-        </Div>
-      </div>
-    </Panel>
+        )}
+
+        <div className="result-absolute-div">
+          <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
+            <div className="result-buttonRetry-div">
+              <Button
+                size="l"
+                style={{
+                  backgroundColor: "#1A84FF",
+                  borderRadius: 100,
+                }}
+                before={<Icon24RefreshOutline />}
+                className="result-buttonGroup-retry"
+                appearance="accent"
+                onClick={playAgain}
+                stretched
+              >
+                Попробовать снова
+              </Button>
+            </div>
+            <div className="result-buttonNotNow-div">
+              <Button
+                className="result-buttonGroup-notNow"
+                onClick={() => {
+                  setActivePanel(PanelRoute.Menu);
+                }}
+                size="l"
+                style={{
+                  borderRadius: 25,
+                  color: "#1A84FF",
+                }}
+                appearance="accent"
+                mode="tertiary"
+                stretched
+              >
+                В меню
+              </Button>
+            </div>
+          </ButtonGroup>
+        </div>
+      </Div>
+    </CustomPanel>
   );
 };
 

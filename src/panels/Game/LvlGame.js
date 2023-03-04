@@ -1,21 +1,12 @@
 import { useEffect, useState } from "react";
 
-import {
-  Button,
-  Div,
-  Panel,
-  PanelHeader,
-  PanelHeaderButton,
-  Title,
-  usePlatform,
-} from "@vkontakte/vkui";
+import { Button, Div, Title, usePlatform } from "@vkontakte/vkui";
 
 import "./Game.css";
 
 import decideTask from "../../scripts/decideTask";
 
 import { back, setActivePanel, setActivePopout } from "@blumjs/router";
-import { Icon24Back, Icon24ChevronLeft } from "@vkontakte/icons";
 import axios from "axios";
 import { qsSign } from "../../hooks/qs-sign";
 import { getPadTime } from "../../scripts/getPadTime";
@@ -23,6 +14,8 @@ import { getPadTime } from "../../scripts/getPadTime";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
 import { useStore } from "effector-react";
+import { CustomPanel } from "../../atoms/CustomPanel";
+import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
 import {
   $main,
@@ -110,168 +103,105 @@ const LvlGame = ({ id }) => {
   //код времени не мой кст :)
 
   return (
-    <Panel id={id}>
-      <div
-        style={{
-          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
-          height: document.documentElement.scrollHeight,
-        }}
-      >
-        <PanelHeader
-          style={{ backgroundColor: "transparent" }}
-          transparent={true}
-          shadow={false}
-          separator={false}
-          before={
-            <PanelHeaderButton
-              onClick={() => {
-                setActivePopout(PopoutRoute.AlertFinishGame);
+    <CustomPanel id={id}>
+      <GamePanelHeader />
+
+      <div className="game-div-margin">
+        <Title
+          level="2"
+          className="selectAnswer"
+          style={{ textAlign: "center" }}
+        >
+          {(!lvlData && "Выбери любой ответ, чтобы начать") ||
+            (lvlData && "Выбери правильный ответ:")}
+        </Title>
+        <div className="equationDiv">
+          <div className="temporaryGame--inDiv">
+            <span
+              level="1"
+              className="equation"
+              style={{
+                background: appearance === "light" ? "#F0F1F5" : "#2E2E33",
               }}
             >
-              {platform === "ios" ? (
-                <Icon24ChevronLeft width={28} height={28} fill="#1A84FF" />
-              ) : (
-                <Icon24Back width={28} height={28} fill="#1A84FF" />
-              )}
-            </PanelHeaderButton>
-          }
-        ></PanelHeader>
-
-        <div className="game-div-margin">
-          <Title
-            level="2"
-            className="selectAnswer"
-            style={{ textAlign: "center" }}
-          >
-            {(!lvlData && "Выбери любой ответ, чтобы начать") ||
-              (lvlData && "Выбери правильный ответ:")}
-          </Title>
-          <div className="equationDiv">
-            <div className="temporaryGame--inDiv">
-              <span
-                level="1"
-                className="equation"
-                style={{
-                  background: appearance === "light" ? "#F0F1F5" : "#2E2E33",
-                }}
-              >
-                {lvlData && lvlData.tasks[taskNumber].task[0]}
-                {lvlData && lvlData.tasks[taskNumber].task[2]}
-                {lvlData && lvlData.tasks[taskNumber].task[1]}
-                {!lvlData && "1+2"}=<span className="equationMark">?</span>
-              </span>
-            </div>
+              {lvlData && lvlData.tasks[taskNumber].task[0]}
+              {lvlData && lvlData.tasks[taskNumber].task[2]}
+              {lvlData && lvlData.tasks[taskNumber].task[1]}
+              {!lvlData && "1+2"}=<span className="equationMark">?</span>
+            </span>
           </div>
+        </div>
 
-          <div
-            style={{ height: 30, marginTop: 12 }}
-            className="single-clock-div"
-          >
-            {seconds > 5 ? (
-              <ClockIcon
-                width={16}
-                height={16}
-                className="multiplayer-title-return"
-                style={{
-                  display: "inline-block",
-                  paddingLeft: 5,
-                  marginTop: 3,
-                }}
-              />
-            ) : (
-              <RedClockIcon
-                width={16}
-                height={16}
-                className="multiplayer-title-return"
-                style={{
-                  display: "inline-block",
-                  paddingLeft: 5,
-                  marginTop: 3,
-                }}
-              />
-            )}
-            <Title
-              className="multiplayer-title-code"
+        <div style={{ height: 30, marginTop: 12 }} className="single-clock-div">
+          {seconds > 5 ? (
+            <ClockIcon
+              width={16}
+              height={16}
+              className="multiplayer-title-return"
               style={{
                 display: "inline-block",
                 paddingLeft: 5,
-                color: "#99A2AD",
-                color: seconds > 5 ? "#99A2AD" : "#FF2525",
-                fontSize: 14,
+                marginTop: 3,
               }}
-            >
-              <span>{minutes}</span>
-              <span>:</span>
-              <span>{seconds}</span>
-            </Title>
-          </div>
+            />
+          ) : (
+            <RedClockIcon
+              width={16}
+              height={16}
+              className="multiplayer-title-return"
+              style={{
+                display: "inline-block",
+                paddingLeft: 5,
+                marginTop: 3,
+              }}
+            />
+          )}
+          <Title
+            className="multiplayer-title-code"
+            style={{
+              display: "inline-block",
+              paddingLeft: 5,
+              color: "#99A2AD",
+              color: seconds > 5 ? "#99A2AD" : "#FF2525",
+              fontSize: 14,
+            }}
+          >
+            <span>{minutes}</span>
+            <span>:</span>
+            <span>{seconds}</span>
+          </Title>
+        </div>
 
-          <Div className="container">
-            {[0, 1, 2, 3].map((value, index) => {
-              return (
-                <Button
-                  stretched
-                  size="l"
-                  sizeY="regular"
-                  mode="neutral"
-                  className="item"
-                  id={"button" + index}
-                  key={index}
-                  style={{
-                    background: appearance === "light" ? "#FFFFFF" : "#2E2E33",
-                    color: appearance === "light" ? "#000" : "#F0F1F5",
-                  }}
-                  onPointerDown={(e) => {}}
-                  onClick={() => {
-                    //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
-                    if (first === true) {
-                      setIsCounting(true);
-                      setFirst(false);
-                      createLvl();
-                    } else {
-                      if (lvlData) {
-                        if (lvlData.tasks.length - 1 === taskNumber) {
-                          //eсли последняя задача
+        <Div className="container">
+          {[0, 1, 2, 3].map((value, index) => {
+            return (
+              <Button
+                stretched
+                size="l"
+                sizeY="regular"
+                mode="neutral"
+                className="item"
+                id={"button" + index}
+                key={index}
+                style={{
+                  background: appearance === "light" ? "#FFFFFF" : "#2E2E33",
+                  color: appearance === "light" ? "#000" : "#F0F1F5",
+                }}
+                onPointerDown={(e) => {}}
+                onClick={() => {
+                  //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
+                  if (first === true) {
+                    setIsCounting(true);
+                    setFirst(false);
+                    createLvl();
+                  } else {
+                    if (lvlData) {
+                      if (lvlData.tasks.length - 1 === taskNumber) {
+                        //eсли последняя задача
 
-                          async function finished() {
-                            setTimeFinish(Date.now());
+                        async function finished() {
+                          setTimeFinish(Date.now());
 
-                            const checkRight = decideTask(
-                              taskNumber,
-                              lvlData.tasks[taskNumber].task[0],
-                              lvlData.tasks[taskNumber].task[1],
-                              lvlData.tasks[taskNumber].task[2],
-                              lvlData.tasks[taskNumber].answers[index]
-                            );
-
-                            setAllTasks([
-                              ...allTasks,
-                              {
-                                id: lvlData.tasks[taskNumber].id,
-                                answer:
-                                  lvlData.tasks[taskNumber].answers[index],
-                                number1: `${lvlData.tasks[taskNumber].task[0]}`,
-                                sign: `${lvlData.tasks[taskNumber].task[2]}`,
-                                number3: `${lvlData.tasks[taskNumber].task[1]}`,
-                                pcAnswer: checkRight[1],
-                                complete: checkRight[0],
-                              },
-                            ]);
-
-                            const newItem = {
-                              id: lvlData.tasks[taskNumber].id,
-                              answer: lvlData.tasks[taskNumber].answers[index],
-                            };
-
-                            const copy = Object.assign({}, lvlResult);
-                            copy.answers = [...lvlResult.answers, newItem];
-                            setLvlResult(copy);
-
-                            setActivePanel(PanelRoute.ResultLvl);
-                          }
-
-                          finished();
-                        } else {
                           const checkRight = decideTask(
                             taskNumber,
                             lvlData.tasks[taskNumber].task[0],
@@ -293,8 +223,6 @@ const LvlGame = ({ id }) => {
                             },
                           ]);
 
-                          setTaskNumber(taskNumber + 1);
-
                           const newItem = {
                             id: lvlData.tasks[taskNumber].id,
                             answer: lvlData.tasks[taskNumber].answers[index],
@@ -303,22 +231,58 @@ const LvlGame = ({ id }) => {
                           const copy = Object.assign({}, lvlResult);
                           copy.answers = [...lvlResult.answers, newItem];
                           setLvlResult(copy);
+
+                          setActivePanel(PanelRoute.ResultLvl);
                         }
+
+                        finished();
+                      } else {
+                        const checkRight = decideTask(
+                          taskNumber,
+                          lvlData.tasks[taskNumber].task[0],
+                          lvlData.tasks[taskNumber].task[1],
+                          lvlData.tasks[taskNumber].task[2],
+                          lvlData.tasks[taskNumber].answers[index]
+                        );
+
+                        setAllTasks([
+                          ...allTasks,
+                          {
+                            id: lvlData.tasks[taskNumber].id,
+                            answer: lvlData.tasks[taskNumber].answers[index],
+                            number1: `${lvlData.tasks[taskNumber].task[0]}`,
+                            sign: `${lvlData.tasks[taskNumber].task[2]}`,
+                            number3: `${lvlData.tasks[taskNumber].task[1]}`,
+                            pcAnswer: checkRight[1],
+                            complete: checkRight[0],
+                          },
+                        ]);
+
+                        setTaskNumber(taskNumber + 1);
+
+                        const newItem = {
+                          id: lvlData.tasks[taskNumber].id,
+                          answer: lvlData.tasks[taskNumber].answers[index],
+                        };
+
+                        const copy = Object.assign({}, lvlResult);
+                        copy.answers = [...lvlResult.answers, newItem];
+                        setLvlResult(copy);
                       }
                     }
-                  }}
-                >
-                  <Title>
-                    {lvlData && lvlData.tasks[taskNumber].answers[index]}
-                    {!lvlData && value}
-                  </Title>
-                </Button>
-              );
-            })}
-          </Div>
-        </div>
+                  }
+                }}
+              >
+                <Title>
+                  {lvlData && lvlData.tasks[taskNumber].answers[index]}
+                  {!lvlData && value}
+                </Title>
+              </Button>
+            );
+          })}
+        </Div>
       </div>
-    </Panel>
+    </CustomPanel>
   );
 };
 

@@ -7,7 +7,6 @@ import {
   Cell,
   Div,
   List,
-  Panel,
   Title,
 } from "@vkontakte/vkui";
 
@@ -17,6 +16,7 @@ import "../Multiplayer.css";
 import { setActiveModal, setActivePanel } from "@blumjs/router";
 import axios from "axios";
 import { useStore } from "effector-react";
+import { CustomPanel } from "../../../atoms/CustomPanel";
 import { ModalRoute, PanelRoute } from "../../../constants/router";
 import {
   $main,
@@ -60,108 +60,98 @@ const LobbyForGuest = ({ id }) => {
   }, []);
 
   return (
-    <Panel id={id}>
-      <div
-        style={{
-          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
-          height: window.pageYOffset,
-        }}
-      >
-        <Div className="multiplayer-div">
-          <div style={{ paddingLeft: "auto", paddingRight: "auto" }}>
+    <CustomPanel id={id}>
+      <Div className="multiplayer-div">
+        <div style={{ paddingLeft: "auto", paddingRight: "auto" }}>
+          <Title className="multiplayer-title" style={{ textAlign: "center" }}>
+            Лобби друга
+          </Title>
+
+          <div style={{ height: 30 }} className="multiplayer-title-div">
             <Title
-              className="multiplayer-title"
-              style={{ textAlign: "center" }}
+              className="multiplayer-title-code"
+              style={{
+                display: "inline-block",
+                paddingLeft: 5,
+              }}
             >
-              Лобби друга
+              {joinCode}
             </Title>
-
-            <div style={{ height: 30 }} className="multiplayer-title-div">
-              <Title
-                className="multiplayer-title-code"
-                style={{
-                  display: "inline-block",
-                  paddingLeft: 5,
-                }}
-              >
-                {joinCode}
-              </Title>
-            </div>
-            <div className="multiplayer-qr-button-div">
-              <Button
-                className="multiplayer-qr-button"
-                style={{ backgroundColor: "#ECF1FA" }}
-                onClick={() => {
-                  setActiveModal(ModalRoute.InputCodeQR);
-                }}
-                before={<Icon20QrCodeOutline />}
-                mode="secondary"
-              >
-                Поделиться QR
-              </Button>
-            </div>
           </div>
-
-          <List style={{ marginTop: 16, marginBottom: 16 }}>
-            {user &&
-              [0, 1, 2, 3].map((item, index) => (
-                <Cell
-                  key={index}
-                  mode={
-                    index === 0
-                      ? false
-                      : "removable" || playerLobbyList[index]
-                      ? false
-                      : "removable"
-                  }
-                  before={
-                    playerLobbyList[index] ? (
-                      <Avatar src={playerLobbyList[index].avatar} />
-                    ) : (
-                      <div className="ory" />
-                    )
-                  }
-                  disabled={
-                    index === 0
-                      ? true
-                      : false || playerLobbyList[index]
-                      ? false
-                      : true
-                  }
-                >
-                  {playerLobbyList[index] ? (
-                    <Title level="3" weight="2" className="player-name-on">
-                      {playerLobbyList[index].name}
-                    </Title>
-                  ) : (
-                    <Title level="3" weight="3" className="player-name-off">
-                      Пусто
-                    </Title>
-                  )}
-                </Cell>
-              ))}
-          </List>
-
-          <div className="multiplayer-play-group">
-            <ButtonGroup
-              gap="space"
-              style={{ marginTop: 10 }}
-              className="multiplayer-play-div"
+          <div className="multiplayer-qr-button-div">
+            <Button
+              className="multiplayer-qr-button"
+              style={{ backgroundColor: "#ECF1FA" }}
+              onClick={() => {
+                setActiveModal(ModalRoute.InputCodeQR);
+              }}
+              before={<Icon20QrCodeOutline />}
+              mode="secondary"
             >
-              <Button
-                size="s"
-                className="multiplayer-play-button"
-                appearance="accent"
-                disabled={true}
-                loading={true}
-              >
-                Играть
-              </Button>
-            </ButtonGroup>
+              Поделиться QR
+            </Button>
           </div>
-        </Div>
-      </div>
-    </Panel>
+        </div>
+
+        <List style={{ marginTop: 16, marginBottom: 16 }}>
+          {user &&
+            [0, 1, 2, 3].map((item, index) => (
+              <Cell
+                key={index}
+                mode={
+                  index === 0
+                    ? false
+                    : "removable" || playerLobbyList[index]
+                    ? false
+                    : "removable"
+                }
+                before={
+                  playerLobbyList[index] ? (
+                    <Avatar src={playerLobbyList[index].avatar} />
+                  ) : (
+                    <div className="ory" />
+                  )
+                }
+                disabled={
+                  index === 0
+                    ? true
+                    : false || playerLobbyList[index]
+                    ? false
+                    : true
+                }
+              >
+                {playerLobbyList[index] ? (
+                  <Title level="3" weight="2" className="player-name-on">
+                    {playerLobbyList[index].name}
+                  </Title>
+                ) : (
+                  <Title level="3" weight="3" className="player-name-off">
+                    Пусто
+                  </Title>
+                )}
+              </Cell>
+            ))}
+        </List>
+
+        <div className="multiplayer-play-group">
+          <ButtonGroup
+            gap="space"
+            style={{ marginTop: 10 }}
+            className="multiplayer-play-div"
+          >
+            <Button
+              size="s"
+              className="multiplayer-play-button"
+              appearance="accent"
+              disabled={true}
+              loading={true}
+            >
+              Играть
+            </Button>
+          </ButtonGroup>
+        </div>
+      </Div>
+    </CustomPanel>
   );
 };
 

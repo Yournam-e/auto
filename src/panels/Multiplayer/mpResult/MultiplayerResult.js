@@ -7,13 +7,13 @@ import {
   Cell,
   Div,
   List,
-  Panel,
   Title,
 } from "@vkontakte/vkui";
 
 import { setActivePanel } from "@blumjs/router";
 import { Icon16Done, Icon16Spinner } from "@vkontakte/icons";
 import { useStore } from "effector-react";
+import { CustomPanel } from "../../../atoms/CustomPanel";
 import { PanelRoute, StoryRoute } from "../../../constants/router";
 import {
   $main,
@@ -151,173 +151,160 @@ const MultiplayerResult = ({ id }) => {
   }
 
   return (
-    <Panel id={id} className="resultPagePanel">
-      <div
-        style={{
-          background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
-          height: window.pageYOffset,
-        }}
-      >
-        <Div className="check-circle-outline">
-          <div
-            style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}
-          >
-            <Title className="result-task-title">
-              Вы заняли
-              <span
-                style={{ color: "#2BD328", paddingRight: 5, paddingLeft: 5 }}
-              >
-                {mpGameResults && place + 1}-e место!
-              </span>
-            </Title>
-          </div>
+    <CustomPanel id={id} className="resultPagePanel">
+      <Div className="check-circle-outline">
+        <div style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}>
+          <Title className="result-task-title">
+            Вы заняли
+            <span style={{ color: "#2BD328", paddingRight: 5, paddingLeft: 5 }}>
+              {mpGameResults && place + 1}-e место!
+            </span>
+          </Title>
+        </div>
 
-          <div style={{ marginLeft: 18, marginRight: 18, marginTop: 16 }}>
-            {mpGameResults && user && (
-              <Title className="result-task-text">
-                Набрано баллов:{" "}
-                {mpGameResults.players &&
-                  mpGameResults.players.map((value) => {
-                    if (value.userId === user.id) {
-                      return value.rightResults;
+        <div style={{ marginLeft: 18, marginRight: 18, marginTop: 16 }}>
+          {mpGameResults && user && (
+            <Title className="result-task-text">
+              Набрано баллов:{" "}
+              {mpGameResults.players &&
+                mpGameResults.players.map((value) => {
+                  if (value.userId === user.id) {
+                    return value.rightResults;
+                  }
+                })}
+            </Title>
+          )}
+        </div>
+
+        <List className="result-friendList" style={{ marginTop: 20 }}>
+          {friendList &&
+            friendList.map((item, idx) => (
+              <div style={{ height: 65, marginLeft: 16, marginTop: 25 }}>
+                {mpGameResults &&
+                  newA &&
+                  newA.map((inItem, index) => {
+                    if (item.userId === inItem.userId) {
+                      return (
+                        <Cell
+                          style={{ marginLeft: 5, marginRight: 5 }}
+                          key={idx}
+                          before={
+                            <div style={{ width: 100 }}>
+                              <Avatar
+                                size={56}
+                                className="friendsAvatar"
+                                src={inItem.avatar}
+                              />
+                              <Title
+                                style={{ verticalAlign: "middle" }}
+                                className="result-friend-position"
+                              >
+                                #{countPosition(item.rightResults, idx) + 1}
+                              </Title>
+                            </div>
+                          }
+                        >
+                          <div key={inItem}>
+                            <Title
+                              level="3"
+                              style={{ paddingBottom: 8, marginLeft: 10 }}
+                            >
+                              {inItem.name}
+                            </Title>
+                            <Button
+                              className="friendsPoint"
+                              before={<Icon16Done />}
+                              hasActive={false}
+                              hasHover={false}
+                              style={{
+                                backgroundColor:
+                                  appearance === "dark" ? "#293950" : "#F4F9FF",
+                                color: "#1984FF",
+                                borderRadius: 25,
+                                marginLeft: 10,
+                              }}
+                            >
+                              <p style={{ textAlign: "center" }}>
+                                {item.rightResults}
+                              </p>
+                            </Button>
+                          </div>
+                        </Cell>
+                      );
                     }
                   })}
-              </Title>
-            )}
-          </div>
+              </div>
+            ))}
+        </List>
 
-          <List className="result-friendList" style={{ marginTop: 20 }}>
-            {friendList &&
-              friendList.map((item, idx) => (
-                <div style={{ height: 65, marginLeft: 16, marginTop: 25 }}>
-                  {mpGameResults &&
-                    newA &&
-                    newA.map((inItem, index) => {
-                      if (item.userId === inItem.userId) {
-                        return (
-                          <Cell
-                            style={{ marginLeft: 5, marginRight: 5 }}
-                            key={idx}
-                            before={
-                              <div style={{ width: 100 }}>
-                                <Avatar
-                                  size={56}
-                                  className="friendsAvatar"
-                                  src={inItem.avatar}
-                                />
-                                <Title
-                                  style={{ verticalAlign: "middle" }}
-                                  className="result-friend-position"
-                                >
-                                  #{countPosition(item.rightResults, idx) + 1}
-                                </Title>
-                              </div>
-                            }
-                          >
-                            <div key={inItem}>
-                              <Title
-                                level="3"
-                                style={{ paddingBottom: 8, marginLeft: 10 }}
-                              >
-                                {inItem.name}
-                              </Title>
-                              <Button
-                                className="friendsPoint"
-                                before={<Icon16Done />}
-                                hasActive={false}
-                                hasHover={false}
-                                style={{
-                                  backgroundColor:
-                                    appearance === "dark"
-                                      ? "#293950"
-                                      : "#F4F9FF",
-                                  color: "#1984FF",
-                                  borderRadius: 25,
-                                  marginLeft: 10,
-                                }}
-                              >
-                                <p style={{ textAlign: "center" }}>
-                                  {item.rightResults}
-                                </p>
-                              </Button>
-                            </div>
-                          </Cell>
-                        );
-                      }
-                    })}
-                </div>
-              ))}
-          </List>
-
-          <div className="result-absolute-div">
-            <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
-              <div className="result-buttonRetry-div">
-                <Button
-                  size="l"
-                  onClick={() => {
-                    setReadyToReplay(true);
-                  }}
-                  before={
-                    readyToReplay ? (
-                      timeLeft ? (
-                        <div className="loaderIcon">
-                          <Icon16Spinner />
-                        </div>
-                      ) : (
-                        false
-                      )
+        <div className="result-absolute-div">
+          <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
+            <div className="result-buttonRetry-div">
+              <Button
+                size="l"
+                onClick={() => {
+                  setReadyToReplay(true);
+                }}
+                before={
+                  readyToReplay ? (
+                    timeLeft ? (
+                      <div className="loaderIcon">
+                        <Icon16Spinner />
+                      </div>
                     ) : (
                       false
                     )
-                  }
-                  disabled={timeLeft ? (readyToReplay ? true : false) : true}
-                  style={{
-                    backgroundColor: "#1A84FF",
-                    borderRadius: 100,
-                  }}
-                  className="result-buttonGroup-retry"
-                  appearance="accent"
-                  stretched
-                >
-                  {timeLeft
-                    ? readyToReplay
-                      ? timeLeft + " сек до начала..."
-                      : "Сыграть снова " + timeLeft + " сек"
-                    : buttonTitle}
-                </Button>
-              </div>
-              <div
-                className="result-buttonNotNow-div"
-                style={{ paddingBottom: 21 }}
+                  ) : (
+                    false
+                  )
+                }
+                disabled={timeLeft ? (readyToReplay ? true : false) : true}
+                style={{
+                  backgroundColor: "#1A84FF",
+                  borderRadius: 100,
+                }}
+                className="result-buttonGroup-retry"
+                appearance="accent"
+                stretched
               >
-                <Button
-                  className="result-buttonGroup-notNow"
-                  onClick={(e) => {
-                    //joinToYourRoom()
-                    leaveRoom(joinCode, user.id);
-                    setAgain(false);
-                    setActiveStory(StoryRoute.Multiplayer);
-                    setConnectType("host");
-                    setHaveHash(false);
-                    setActivePanel(PanelRoute.Menu);
-                  }}
-                  size="l"
-                  style={{
-                    borderRadius: 25,
-                    color: "#1A84FF",
-                  }}
-                  appearance="accent"
-                  mode="tertiary"
-                  stretched
-                >
-                  В меню
-                </Button>
-              </div>
-            </ButtonGroup>
-          </div>
-        </Div>
-      </div>
-    </Panel>
+                {timeLeft
+                  ? readyToReplay
+                    ? timeLeft + " сек до начала..."
+                    : "Сыграть снова " + timeLeft + " сек"
+                  : buttonTitle}
+              </Button>
+            </div>
+            <div
+              className="result-buttonNotNow-div"
+              style={{ paddingBottom: 21 }}
+            >
+              <Button
+                className="result-buttonGroup-notNow"
+                onClick={(e) => {
+                  //joinToYourRoom()
+                  leaveRoom(joinCode, user.id);
+                  setAgain(false);
+                  setActiveStory(StoryRoute.Multiplayer);
+                  setConnectType("host");
+                  setHaveHash(false);
+                  setActivePanel(PanelRoute.Menu);
+                }}
+                size="l"
+                style={{
+                  borderRadius: 25,
+                  color: "#1A84FF",
+                }}
+                appearance="accent"
+                mode="tertiary"
+                stretched
+              >
+                В меню
+              </Button>
+            </div>
+          </ButtonGroup>
+        </div>
+      </Div>
+    </CustomPanel>
   );
 };
 
