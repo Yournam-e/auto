@@ -1,7 +1,7 @@
 import { Platform } from "@vkontakte/vkui";
 import { createEvent } from "effector";
 import { StoryRoute } from "../../constants/router";
-import { Appearance, ConnectType, GameInfo } from "../../types";
+import { Appearance, Complexity, ConnectType, GameInfo } from "../../types";
 
 export const setAppearance = createEvent<Appearance>();
 export const setActiveStory = createEvent<StoryRoute>();
@@ -44,3 +44,4 @@ export const setLvlData = createEvent<any>();
 export const setGameExists = createEvent<boolean>();
 export const setAgain = createEvent<boolean>();
 export const setNotUserRoom = createEvent<boolean>();
+export const setComplexity = createEvent<Complexity>();

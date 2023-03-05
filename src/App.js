@@ -41,10 +41,14 @@ import { useEventListener } from "./scripts/useEventListener";
 import {
   createCatchBackBrowserRouteMiddleware,
   createDisableBackBrowserRouteMiddleware,
+  createRouteMiddleware,
   setActivePanel,
   setActivePopout,
+  setActiveViewPanel,
   useInitRouter,
   useRouter,
+  _setActiveModal,
+  _setActivePopout,
 } from "@blumjs/router";
 import { useStore } from "effector-react";
 import {
@@ -106,11 +110,29 @@ const App = () => {
         return false;
       }
       if (activeStory === StoryRoute.Multiplayer) {
+        setActiveViewPanel({ view: ViewRoute.Main, panel: PanelRoute.Menu });
         setActiveStory(StoryRoute.Single);
       }
       if (activeStory === StoryRoute.Single) {
         bridge.send("VKWebAppClose", { status: "success" });
       }
+    }),
+    createRouteMiddleware((storeRoutes) => {
+      if (!window.history.state || window.history.state.view === undefined) {
+        bridge.send("VKWebAppClose", { status: "success" });
+        return false;
+      }
+      if (navigator.onLine) {
+        return true;
+      }
+      setActiveViewPanel({
+        view: ViewRoute.Main,
+        panel: PanelRoute.NotConnection,
+      });
+      _setActiveModal(null);
+      _setActivePopout(null);
+      bridge.send("VKWebAppClose", { status: "success" });
+      return false;
     })
   );
 
@@ -195,8 +217,6 @@ const App = () => {
     }
   }, []);
 
-  const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
-
   bridge.subscribe((e) => {
     if (e.detail.type === "VKWebAppViewHide") {
       if (connectType === "join") {
@@ -209,9 +229,11 @@ const App = () => {
   console.log(isRouteInit);
   if (!isRouteInit) {
     return (
-      <AppRoot>
-        <ScreenSpinner size="large" />
-      </AppRoot>
+      <ConfigProvider appearance={appearance}>
+        <AppRoot>
+          <ScreenSpinner size="large" />
+        </AppRoot>
+      </ConfigProvider>
     );
   }
   return (
@@ -238,12 +260,11 @@ const App = () => {
                         tabbar={
                           <Tabbar>
                             <TabbarItem
-                              onClick={(e) => {
-                                onStoryChange(e);
+                              onClick={() => {
+                                setActiveStory(StoryRoute.Single);
                                 setConnectType("host");
                               }}
                               selected={activeStory === StoryRoute.Single}
-                              data-story={StoryRoute.Single}
                               text={
                                 <span
                                   style={{
@@ -275,9 +296,10 @@ const App = () => {
                               />
                             </TabbarItem>
                             <TabbarItem
-                              onClick={onStoryChange}
+                              onClick={() => {
+                                setActiveStory(StoryRoute.Multiplayer);
+                              }}
                               selected={activeStory === StoryRoute.Multiplayer}
-                              data-story={StoryRoute.Multiplayer}
                               text={
                                 <span
                                   style={{

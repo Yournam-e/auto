@@ -39,12 +39,12 @@ export const LongCard = memo(() => {
                   color: appearance === "dark" ? "#C4C8CC" : "#2C2D2E",
                 }}
               >
-                Попробуй 30-секундный режим
+                Попробуйте 30-секундный режим
               </Title>
             </div>
             <div>
               <Title level="3" className="long-card-text">
-                Реши как можно больше задач за 30 секунд
+                Решите как можно больше задач за 30 секунд
               </Title>
             </div>
           </Div>

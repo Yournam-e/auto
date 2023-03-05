@@ -4,3 +4,4 @@ export type GameInfo = {
 };
 
 export type ConnectType = "host" | "join";
+export type Complexity = "easy" | "mid" | "hard";

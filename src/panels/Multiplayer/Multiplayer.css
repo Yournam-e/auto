@@ -150,6 +150,7 @@
 }
 
 .complexity-button-on-light {
+  transition: all 400ms ease;
   padding-top: 6px;
   padding-bottom: 4px;
   padding-right: 5px;
@@ -166,6 +167,7 @@
 }
 
 .complexity-button-on-dark {
+  transition: all 400ms ease;
   padding-top: 6px;
   padding-bottom: 4px;
   padding-right: 5px;
@@ -178,6 +180,7 @@
 }
 
 .complexity-button-off {
+  transition: all 400ms ease;
   padding-top: 6px;
   padding-bottom: 4px;
   padding-right: 5px;

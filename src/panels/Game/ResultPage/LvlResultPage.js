@@ -294,7 +294,7 @@ const LvlResultPage = ({ id }) => {
                           )}
                         </div>
                       }
-                      subtitle={"Твой ответ: " + item.answer}
+                      subtitle={"Ваш ответ: " + item.answer}
                     >
                       <Title
                         level="2"

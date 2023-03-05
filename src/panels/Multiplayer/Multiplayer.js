@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import {
   Avatar,
@@ -45,6 +45,7 @@ import {
   setActiveStory,
   setAgain,
   setAnswersInfo,
+  setComplexity,
   setConnectType,
   setFirstStart,
   setGameExists,
@@ -81,10 +82,10 @@ export const Multiplayer = ({ id }) => {
     itAgain,
     leavingRoom,
     notUserRoom,
+    complexity,
   } = useStore($main);
   const { activePanel } = useRouter();
   const thisUserId = useUserId();
-  const [complexity, setComplexity] = useState("easy");
 
   var clickTime = 0;
 
@@ -280,71 +281,52 @@ export const Multiplayer = ({ id }) => {
               />
             )}
           </div>
-          {true ? (
-            <div className="multiplayer-qr-button-div">
-              <Button
-                className="multiplayer-qr-button"
-                style={{
-                  backgroundColor:
-                    appearance === "dark" ? "#293950" : "#F4F9FF",
-                  color: "#1984FF",
-                }}
-                onClick={() => {
-                  setActiveModal(ModalRoute.InputCodeQR);
-                }}
-                before={<Icon20QrCodeOutline />}
-                mode="secondary"
-              >
-                Поделиться QR
-              </Button>
-            </div>
-          ) : (
-            <div className="multiplayer-qr-button-div">
-              <Button
-                className="multiplayer-qr-button"
-                style={{
-                  backgroundColor:
-                    appearance === "dark" ? "#293950" : "#F4F9FF",
-                  color: "#1984FF",
-                }}
-                onClick={() => {
-                  bridge
-                    .send("VKWebAppAddToChat", {
-                      action_title: "Присоединиться к лобби",
-                      hash: joinCode,
-                    })
-                    .then((data) => {
-                      console.log(data);
-                    })
-                    .catch((error) => {
-                      if (error) {
-                        setActivePopout(PopoutRoute.AlertShareGame);
-                      }
-                    });
-                }}
-                before={<Icon20MessageOutline width={22} height={22} />}
-                mode="secondary"
-              >
-                Пригласить чат
-              </Button>
-              <Button
-                className="multiplayer-qr-button-messenger"
-                style={{
-                  backgroundColor:
-                    appearance === "dark" ? "#293950" : "#F4F9FF",
-                  color: "#1984FF",
-                  marginLeft: 8,
-                }}
-                onClick={() => {
-                  setActiveModal(ModalRoute.InputCodeQR);
-                }}
-                before={<Icon20QrCodeOutline />}
-                mode="secondary"
-              >
-                QR
-              </Button>
-            </div>
-          )}
+
+          <div className="multiplayer-qr-button-div">
+            <Button
+              className="multiplayer-qr-button"
+              style={{
+                backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
+                color: "#1984FF",
+              }}
+              onClick={() => {
+                setActiveModal(ModalRoute.InputCodeQR);
+              }}
+              before={<Icon20QrCodeOutline />}
+              mode="secondary"
+            >
+              Поделиться QR
+            </Button>
+          </div>
+          <div className="multiplayer-qr-button-div">
+            <Button
+              className="multiplayer-qr-button"
+              style={{
+                backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
+                color: "#1984FF",
+              }}
+              onClick={() => {
+                bridge
+                  .send("VKWebAppAddToChat", {
+                    action_title: "Присоединиться к лобби",
+                    hash: joinCode,
+                  })
+                  .then((data) => {
+                    console.log(data);
+                  })
+                  .catch((error) => {
+                    console.log("addToChat err", error);
+                    if (error) {
+                      setActivePopout(PopoutRoute.AlertShareGame);
+                    }
+                  });
+              }}
+              before={<Icon20MessageOutline width={22} height={22} />}
+              mode="secondary"
+            >
+              Пригласить чат
+            </Button>
+          </div>
 
           {connectType === "host" && (
             <div>

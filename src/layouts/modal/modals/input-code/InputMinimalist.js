@@ -23,6 +23,7 @@ class InputMinimalist extends React.Component {
       { placeholder, defaultValue, maxLength, onKeyUp } = this.props;
     return (
       <Input
+        lang="en"
         className="textInput"
         value={value}
         onChange={this.onChange}
