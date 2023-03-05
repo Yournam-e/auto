@@ -10,11 +10,11 @@ import {
   Title,
 } from "@vkontakte/vkui";
 
-import { setActivePanel } from "@blumjs/router";
+import { setActivePanel, useRouter, _setActivePopout } from "@blumjs/router";
 import { Icon16Done, Icon16Spinner } from "@vkontakte/icons";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../../atoms/CustomPanel";
-import { PanelRoute, StoryRoute } from "../../../constants/router";
+import { PanelRoute, PopoutRoute, StoryRoute } from "../../../constants/router";
 import {
   $main,
   setActiveStory,
@@ -37,6 +37,7 @@ const MultiplayerResult = ({ id }) => {
     mpGameResults,
     connectType,
   } = useStore($main);
+  const { activePopot } = useRouter();
   const [friendList, setFriendList] = useState([]);
 
   const [readyToReplay, setReadyToReplay] = useState(false);
@@ -49,6 +50,12 @@ const MultiplayerResult = ({ id }) => {
   const [buttonTitle, setButtonTitle] = useState("");
 
   const [newA, setNewA] = useState([]);
+
+  useEffect(() => {
+    if (activePopot === PopoutRoute.Loading) {
+      _setActivePopout(null);
+    }
+  }, [activePopot]);
 
   useEffect(() => {
     if (timeLeft === 0) {

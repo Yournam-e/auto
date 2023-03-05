@@ -59,6 +59,7 @@ import {
 } from "./constants/router";
 import {
   $main,
+  joinToYourRoom,
   setActiveStory,
   setAnswersInfo,
   setAppearance,
@@ -144,7 +145,6 @@ const App = () => {
 
   client.joinedRoom = ({ users }) => {
     users !== 0 ? setPlayerLobbyList(users) : console.log("");
-    setPlayersId(null);
     const newArr = users.map((u) => u.userId);
     setPlayersId(newArr);
   };
@@ -217,14 +217,25 @@ const App = () => {
     }
   }, []);
 
-  bridge.subscribe((e) => {
-    if (e.detail.type === "VKWebAppViewHide") {
-      if (connectType === "join") {
-        setConnectType("host");
-        leaveRoom(user.id);
+  useEffect(() => {
+    const callback = async (e) => {
+      if (e.detail.type === "VKWebAppViewHide") {
+        if (connectType === "join" && user && user.id) {
+          setConnectType("host");
+          leaveRoom(user.id);
+        }
       }
-    }
-  });
+      if (e.detail.type === "VKWebAppViewRestore") {
+        const user = await bridge.send("VKWebAppGetUserInfo");
+        setUser(user);
+        joinToYourRoom({ isFirstStart: true, gameInfo });
+      }
+    };
+    bridge.subscribe(callback);
+    return () => {
+      bridge.unsubscribe(callback);
+    };
+  }, [user, gameInfo]);
 
   console.log(isRouteInit);
   if (!isRouteInit) {

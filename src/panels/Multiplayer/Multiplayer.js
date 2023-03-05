@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 
 import {
-  Avatar,
   Button,
   ButtonGroup,
-  Cell,
   Div,
   List,
   Panel,
@@ -33,6 +31,7 @@ import {
 } from "@blumjs/router";
 import axios from "axios";
 import { useStore } from "effector-react";
+import { UserCell } from "../../atoms/UserCell";
 import {
   ModalRoute,
   PanelRoute,
@@ -88,10 +87,6 @@ export const Multiplayer = ({ id }) => {
   const thisUserId = useUserId();
 
   var clickTime = 0;
-
-  useEffect(() => {
-    console.log("players", playerLobbyList, playersId);
-  }, [playerLobbyList, playersId]);
 
   client.leftRoom = ({ userId }) => {
     if (userId && activePanel === PanelRoute.Menu) {
@@ -243,18 +238,8 @@ export const Multiplayer = ({ id }) => {
                 display: "inline-block",
                 paddingLeft: 5,
               }}
-              onMouseDown={() => {
-                clickTime = Date.now();
-              }}
-              onMouseUp={() => {
-                if (Date.now() - clickTime > 499) {
-                  navigator.clipboard
-                    .writeText(joinCode)
-                    .then(() => {
-                      alert(`Copied!`);
-                    })
-                    .catch((error) => {});
-                }
+              onClick={() => {
+                bridge.send("VKWebAppCopyText", { text: joinCode });
               }}
             >
               {joinCode}
@@ -367,39 +352,7 @@ export const Multiplayer = ({ id }) => {
         <List style={{ marginTop: 16, marginBottom: 16 }}>
           {user &&
             [0, 1, 2, 3].map((item, index) => (
-              <Cell
-                key={index}
-                before={
-                  playerLobbyList[index] ? (
-                    <Avatar src={playerLobbyList[index].avatar} />
-                  ) : (
-                    <div
-                      style={{
-                        borderColor:
-                          appearance === "light" ? "#E3E3E6" : "#38383B",
-                      }}
-                      className="noneUser"
-                    />
-                  )
-                }
-                disabled={
-                  index === 0
-                    ? true
-                    : false || playerLobbyList[index]
-                    ? false
-                    : true
-                }
-              >
-                {playerLobbyList[index] ? (
-                  <Title level="3" weight="2" className="player-name-on">
-                    {playerLobbyList[index].name}
-                  </Title>
-                ) : (
-                  <Title level="3" weight="3" className="player-name-off">
-                    Пусто
-                  </Title>
-                )}
-              </Cell>
+              <UserCell index={index} key={index} />
             ))}
         </List>
 

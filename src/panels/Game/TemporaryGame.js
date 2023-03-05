@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Button, Div, Title, usePlatform } from "@vkontakte/vkui";
+import { Button, Div, Title } from "@vkontakte/vkui";
 
 import "./Game.css";
 
@@ -11,7 +11,12 @@ import { getPadTime } from "../../scripts/getPadTime";
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
-import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import {
+  back,
+  setActivePanel,
+  setActivePopout,
+  useRouter,
+} from "@blumjs/router";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../atoms/CustomPanel";
 import { GamePanelHeader } from "../../atoms/GamePanelHeader";
@@ -20,8 +25,8 @@ import { $main, setAnswer } from "../../core/main";
 import "../../img/Fonts.css";
 
 const TemporaryGame = ({ id }) => {
+  const { activePopout } = useRouter();
   const { answer, appearance } = useStore($main);
-  const platform = usePlatform();
   const [first, setFirst] = useState(true); //первый запуск
 
   const [gameData, setGameData] = useState(false);
@@ -66,7 +71,7 @@ const TemporaryGame = ({ id }) => {
         setGameData(response.data.data);
       })
       .catch(function (error) {
-        console.log("create lvl err", error);
+        console.log("create err", error);
       })
       .finally(() => {
         back();
@@ -164,6 +169,7 @@ const TemporaryGame = ({ id }) => {
           {[0, 1, 2, 3].map((value, index) => {
             return (
               <Button
+                disabled={!!activePopout}
                 stretched
                 size="l"
                 sizeY="regular"

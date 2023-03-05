@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Button, Div, Title, usePlatform } from "@vkontakte/vkui";
+import { Button, Div, Title } from "@vkontakte/vkui";
 
 import "../Game/Game.css";
 
@@ -8,7 +8,12 @@ import { getPadTime } from "../../scripts/getPadTime";
 import { answerTask } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
 
-import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import {
+  back,
+  setActivePanel,
+  setActivePopout,
+  useRouter,
+} from "@blumjs/router";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../atoms/CustomPanel";
 import { GamePanelHeader } from "../../atoms/GamePanelHeader";
@@ -24,9 +29,8 @@ import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
 export const MultiplayerGame = ({ id }) => {
+  const { activePopout } = useRouter();
   const { gameInfo, taskInfo, answersInfo, appearance } = useStore($main);
-  const platform = usePlatform();
-  //const [equation, setEquation] = useState([2, 2, '+', 4]); //задача
 
   const [timeLeft, setTimeLeft] = useState(30); //время
   const [isCounting, setIsCounting] = useState(true); //время
@@ -58,13 +62,15 @@ export const MultiplayerGame = ({ id }) => {
   //код времени не мой кст :)
 
   client.nextTask = ({ answers, task, id }) => {
-    async function newTask() {
-      await setGameInfo({ ...gameInfo, taskId: id });
-      await setAnswersInfo(answers);
-      await setTaskInfo(task);
+    try {
+      setGameInfo({ ...gameInfo, taskId: id });
+      setAnswersInfo(answers);
+      setTaskInfo(task);
+    } catch (e) {
+      console.log("next task err");
+    } finally {
       back();
     }
-    newTask();
   };
 
   return (
@@ -141,6 +147,7 @@ export const MultiplayerGame = ({ id }) => {
             answersInfo.map((value, index) => {
               return (
                 <Button
+                  disabled={!!activePopout}
                   stretched
                   size="l"
                   sizeY="regular"
@@ -154,7 +161,6 @@ export const MultiplayerGame = ({ id }) => {
                   }}
                   onPointerDown={(e) => {}}
                   onClick={() => {
-                    //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
                     async function callNextTask() {
                       if (gameInfo) {
                         await answerTask(
@@ -166,7 +172,6 @@ export const MultiplayerGame = ({ id }) => {
                       }
                     }
                     callNextTask();
-                    //setIsCounting(true)
                   }}
                 >
                   <Title>{answersInfo[index]}</Title>

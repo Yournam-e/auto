@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 
-import { Button, Div, Title, usePlatform } from "@vkontakte/vkui";
+import { Button, Div, Title } from "@vkontakte/vkui";
 
 import "./Game.css";
 
 import decideTask from "../../scripts/decideTask";
 
-import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import {
+  back,
+  setActivePanel,
+  setActivePopout,
+  useRouter,
+} from "@blumjs/router";
 import axios from "axios";
 import { qsSign } from "../../hooks/qs-sign";
 import { getPadTime } from "../../scripts/getPadTime";
@@ -26,9 +31,8 @@ import {
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 
 const LvlGame = ({ id }) => {
-  const { lvlNumber, isReady, lvlResult, allTasks, appearance } =
-    useStore($main);
-  const platform = usePlatform();
+  const { activePopout } = useRouter();
+  const { lvlNumber, lvlResult, allTasks, appearance } = useStore($main);
   const [lvlData, setLvlData] = useState(false);
 
   const [taskNumber, setTaskNumber] = useState(0);
@@ -81,7 +85,9 @@ const LvlGame = ({ id }) => {
           answers: [],
         });
       })
-      .catch(function (error) {})
+      .catch(function (error) {
+        console.log("create err", error);
+      })
       .finally(() => back());
   }
 
@@ -176,6 +182,7 @@ const LvlGame = ({ id }) => {
           {[0, 1, 2, 3].map((value, index) => {
             return (
               <Button
+                disabled={!!activePopout}
                 stretched
                 size="l"
                 sizeY="regular"
@@ -187,7 +194,6 @@ const LvlGame = ({ id }) => {
                   background: appearance === "light" ? "#FFFFFF" : "#2E2E33",
                   color: appearance === "light" ? "#000" : "#F0F1F5",
                 }}
-                onPointerDown={(e) => {}}
                 onClick={() => {
                   //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
                   if (first === true) {
