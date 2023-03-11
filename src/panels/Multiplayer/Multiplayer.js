@@ -32,16 +32,10 @@ import {
 import axios from "axios";
 import { useStore } from "effector-react";
 import { UserCell } from "../../atoms/UserCell";
-import {
-  ModalRoute,
-  PanelRoute,
-  PopoutRoute,
-  StoryRoute,
-} from "../../constants/router";
+import { ModalRoute, PanelRoute, PopoutRoute } from "../../constants/router";
 import {
   $main,
   joinToYourRoom,
-  setActiveStory,
   setAgain,
   setAnswersInfo,
   setComplexity,
@@ -58,6 +52,7 @@ import {
 } from "../../core/main";
 import { qsSign } from "../../hooks/qs-sign";
 import { useUserId } from "../../hooks/useUserId";
+import { browserBack } from "../../scripts/browserBack";
 import {
   connectRoom,
   createRoom,
@@ -140,15 +135,13 @@ export const Multiplayer = ({ id }) => {
         console.log(window.location.hash.slice(1));
         if (response.data.data[0].ownerId === useUserId) {
           if (response.data.data[0].started) {
-            setActivePanel(PanelRoute.Menu);
-            setActiveStory(StoryRoute.Single);
+            browserBack();
             setGameExists(true);
           }
         }
         if (response.data.data[0].roomId === window.location.hash.slice(1)) {
           if (response.data.data[0].started) {
-            setActivePanel(PanelRoute.Menu);
-            setActiveStory(StoryRoute.Single);
+            browserBack();
             setGameExists(true);
           }
         }
@@ -161,6 +154,7 @@ export const Multiplayer = ({ id }) => {
       axios
         .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
         .then(async (response) => {
+          console.log(response);
           setJoinCode(response.data.data);
 
           setGameInfo({ ...gameInfo, roomId: response.data.data });
@@ -175,7 +169,9 @@ export const Multiplayer = ({ id }) => {
           }
           setFirstStart(false);
         })
-        .catch(function (error) {});
+        .catch(function (error) {
+          console.log("err connect to room", error);
+        });
     } else if (leavingRoom === true) {
       joinToYourRoom({ gameInfo, isFirstStart });
       setLeavingRoom(false);
@@ -190,10 +186,7 @@ export const Multiplayer = ({ id }) => {
   client.gameStarted = ({ answers, task, id }) => {
     setTaskInfo(task);
     setAnswersInfo(answers);
-    async function lol() {
-      await setGameInfo({ taskId: id, roomId: joinCode });
-    }
-    lol();
+    setGameInfo({ taskId: id, roomId: joinCode });
     setActivePanel(PanelRoute.MultiplayerGame);
   };
 
@@ -283,35 +276,38 @@ export const Multiplayer = ({ id }) => {
               Поделиться QR
             </Button>
           </div>
-          <div className="multiplayer-qr-button-div">
-            <Button
-              className="multiplayer-qr-button"
-              style={{
-                backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
-                color: "#1984FF",
-              }}
-              onClick={() => {
-                bridge
-                  .send("VKWebAppAddToChat", {
-                    action_title: "Присоединиться к лобби",
-                    hash: joinCode,
-                  })
-                  .then((data) => {
-                    console.log(data);
-                  })
-                  .catch((error) => {
-                    console.log("addToChat err", error);
-                    if (error) {
-                      setActivePopout(PopoutRoute.AlertShareGame);
-                    }
-                  });
-              }}
-              before={<Icon20MessageOutline width={22} height={22} />}
-              mode="secondary"
-            >
-              Пригласить чат
-            </Button>
-          </div>
+          {false && (
+            <div className="multiplayer-qr-button-div">
+              <Button
+                className="multiplayer-qr-button"
+                style={{
+                  backgroundColor:
+                    appearance === "dark" ? "#293950" : "#F4F9FF",
+                  color: "#1984FF",
+                }}
+                onClick={() => {
+                  bridge
+                    .send("VKWebAppAddToChat", {
+                      action_title: "Присоединиться к лобби",
+                      hash: joinCode,
+                    })
+                    .then((data) => {
+                      console.log(data);
+                    })
+                    .catch((error) => {
+                      console.log("addToChat err", error);
+                      if (error) {
+                        setActivePopout(PopoutRoute.AlertShareGame);
+                      }
+                    });
+                }}
+                before={<Icon20MessageOutline width={22} height={22} />}
+                mode="secondary"
+              >
+                Пригласить чат
+              </Button>
+            </div>
+          )}
 
           {connectType === "host" && (
             <div>
@@ -349,12 +345,44 @@ export const Multiplayer = ({ id }) => {
           )}
         </div>
 
-        <List style={{ marginTop: 16, marginBottom: 16 }}>
-          {user &&
-            [0, 1, 2, 3].map((item, index) => (
-              <UserCell index={index} key={index} />
+        {user && connectType === "host" ? (
+          <List style={{ marginTop: 16, marginBottom: 16 }}>
+            <UserCell
+              name={`${user.first_name} ${user.last_name}`}
+              avatar={user.photo_200}
+            />
+            {[0, 1, 2, 3]
+              .filter(
+                (i) =>
+                  !playerLobbyList[i] ||
+                  (playerLobbyList[i] && playerLobbyList[i].userId != user.id)
+              )
+              .slice(0, 3)
+              .map((i) => (
+                <UserCell
+                  name={
+                    playerLobbyList[i] ? playerLobbyList[i].name : undefined
+                  }
+                  avatar={
+                    playerLobbyList[i] ? playerLobbyList[i].avatar : undefined
+                  }
+                  key={i}
+                />
+              ))}
+          </List>
+        ) : (
+          <List>
+            {[0, 1, 2, 3].map((i) => (
+              <UserCell
+                name={playerLobbyList[i] ? playerLobbyList[i].name : undefined}
+                avatar={
+                  playerLobbyList[i] ? playerLobbyList[i].avatar : undefined
+                }
+                key={i}
+              />
             ))}
-        </List>
+          </List>
+        )}
 
         <div className="multiplayer-play-group">
           {connectType === "host" && (

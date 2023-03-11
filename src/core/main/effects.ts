@@ -4,8 +4,9 @@ import { createEffect } from "effector";
 import { PanelRoute } from "../../constants/router";
 import { qsSign } from "../../hooks/qs-sign";
 import { connectRoom, joinRoom } from "../../sockets/game";
-import { GameInfo } from "../../types";
+import { BestLvlResult, GameInfo } from "../../types";
 import {
+  setBestLvlsResult,
   setFirstStart,
   setGameInfo,
   setJoinCode,
@@ -60,4 +61,17 @@ export const checkToDelete = createEffect<any, void>((lvlsInfo) => {
       }
     });
   }
+});
+
+export const loadBestLvlsResult = createEffect(() => {
+  axios
+    .get<{ data: BestLvlResult[] }>(
+      `https://showtime.app-dich.com/api/plus-plus/best${qsSign}`
+    )
+    .then((res) => {
+      setBestLvlsResult(res.data.data);
+    })
+    .catch((e) => {
+      console.log("loadBestLvlsResult err", e);
+    });
 });

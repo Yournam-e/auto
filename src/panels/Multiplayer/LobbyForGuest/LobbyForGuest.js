@@ -1,14 +1,6 @@
 import { useEffect } from "react";
 
-import {
-  Avatar,
-  Button,
-  ButtonGroup,
-  Cell,
-  Div,
-  List,
-  Title,
-} from "@vkontakte/vkui";
+import { Button, ButtonGroup, Div, List, Title } from "@vkontakte/vkui";
 
 import { Icon20QrCodeOutline } from "@vkontakte/icons";
 import "../Multiplayer.css";
@@ -17,6 +9,7 @@ import { setActiveModal, setActivePanel } from "@blumjs/router";
 import axios from "axios";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../../atoms/CustomPanel";
+import { UserCell } from "../../../atoms/UserCell";
 import { ModalRoute, PanelRoute } from "../../../constants/router";
 import {
   $main,
@@ -30,16 +23,12 @@ import { qsSign } from "../../../hooks/qs-sign";
 import { client } from "../../../sockets/receiver";
 
 const LobbyForGuest = ({ id }) => {
-  const { appearance, user, gameInfo, joinCode, playerLobbyList } =
-    useStore($main);
+  const { user, gameInfo, joinCode, playerLobbyList } = useStore($main);
   client.gameStarted = ({ answers, task, id }) => {
     console.debug("gameStarted", answers, task, id);
     setTaskInfo(task);
     setAnswersInfo(answers);
-    async function lol() {
-      setGameInfo({ ...gameInfo, taskId: id });
-    }
-    lol();
+    setGameInfo({ ...gameInfo, taskId: id });
     setActivePanel(PanelRoute.MultiplayerGame);
   };
 
@@ -47,7 +36,7 @@ const LobbyForGuest = ({ id }) => {
     axios
       .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
       .then(async function (response) {
-        console.log(response.data.data);
+        console.log(response.data.data, "lobby guests");
         await setJoinCode(response.data.data);
 
         console.log("12");
@@ -95,41 +84,20 @@ const LobbyForGuest = ({ id }) => {
 
         <List style={{ marginTop: 16, marginBottom: 16 }}>
           {user &&
-            [0, 1, 2, 3].map((item, index) => (
-              <Cell
+            [0, 1, 2, 3].map((index) => (
+              <UserCell
+                name={
+                  playerLobbyList[index]
+                    ? playerLobbyList[index].name
+                    : undefined
+                }
+                avatar={
+                  playerLobbyList[index]
+                    ? playerLobbyList[index].avatar
+                    : undefined
+                }
                 key={index}
-                mode={
-                  index === 0
-                    ? false
-                    : "removable" || playerLobbyList[index]
-                    ? false
-                    : "removable"
-                }
-                before={
-                  playerLobbyList[index] ? (
-                    <Avatar src={playerLobbyList[index].avatar} />
-                  ) : (
-                    <div className="ory" />
-                  )
-                }
-                disabled={
-                  index === 0
-                    ? true
-                    : false || playerLobbyList[index]
-                    ? false
-                    : true
-                }
-              >
-                {playerLobbyList[index] ? (
-                  <Title level="3" weight="2" className="player-name-on">
-                    {playerLobbyList[index].name}
-                  </Title>
-                ) : (
-                  <Title level="3" weight="3" className="player-name-off">
-                    Пусто
-                  </Title>
-                )}
-              </Cell>
+              />
             ))}
         </List>
 

@@ -12,7 +12,7 @@ import { LongCard } from "./components/LongCard";
 
 import { setActivePopout } from "@blumjs/router";
 import { PopoutRoute } from "../../constants/router";
-import { $main, setLvlsInfo } from "../../core/main";
+import { $main, loadBestLvlsResult, setLvlsInfo } from "../../core/main";
 import "../../img/Fonts.css";
 
 export const Home = ({ id }) => {
@@ -85,6 +85,7 @@ export const Home = ({ id }) => {
 
   useEffect(() => {
     document.body.classList.add("body-dark");
+    loadBestLvlsResult();
     axios
       .get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
@@ -115,7 +116,6 @@ export const Home = ({ id }) => {
       <div className="long-card-div">
         <CardGrid size="l" style={{ marginBottom: 56 }}>
           <LongCard />
-
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => {
             return (
               <LevelCard key={number} number={number} devideLvl={devideLvl} />

@@ -10,16 +10,12 @@ import { leaveRoom } from "../../../../sockets/game";
 export const AlertLobbyNotExist = memo(() => {
   const { joinCode, gameInfo, isFirstStart } = useStore($main);
   const handleActionCreate = useCallback(() => {
-    back();
-    setConnectType("host");
     if (joinCode) {
       leaveRoom(joinCode);
     }
   }, [joinCode]);
   const handleActionMenu = useCallback(() => {
-    setConnectType("host");
     setActiveStory(StoryRoute.Single);
-    back();
   }, []);
   const handleClose = useCallback(() => {
     setConnectType("host");

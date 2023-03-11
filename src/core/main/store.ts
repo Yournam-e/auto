@@ -1,7 +1,13 @@
 import { Platform } from "@vkontakte/vkui";
 import { createStore } from "effector";
 import { StoryRoute } from "../../constants/router";
-import { Appearance, Complexity, ConnectType, GameInfo } from "../../types";
+import {
+  Appearance,
+  BestLvlResult,
+  Complexity,
+  ConnectType,
+  GameInfo,
+} from "../../types";
 import {
   setActiveStory,
   setAgain,
@@ -9,6 +15,7 @@ import {
   setAnswer,
   setAnswersInfo,
   setAppearance,
+  setBestLvlsResult,
   setCompleteLvl,
   setComplexity,
   setConnectType,
@@ -82,6 +89,7 @@ type Store = {
   gameExists: boolean;
   itAgain: boolean;
   complexity: Complexity;
+  bestLvlsResult: BestLvlResult[];
 };
 
 export const $main = createStore<Store>({
@@ -130,6 +138,7 @@ export const $main = createStore<Store>({
   gameExists: false,
   itAgain: false,
   complexity: "easy",
+  bestLvlsResult: [],
 })
   .on(setAppearance, (state, appearance) => ({
     ...state,
@@ -266,4 +275,8 @@ export const $main = createStore<Store>({
   .on(setComplexity, (state, complexity) => ({
     ...state,
     complexity,
+  }))
+  .on(setBestLvlsResult, (state, bestLvlsResult) => ({
+    ...state,
+    bestLvlsResult,
   }));

@@ -2,18 +2,20 @@ import { Avatar, Cell, Title } from "@vkontakte/vkui";
 import { useStore } from "effector-react";
 import { memo } from "react";
 import { $main } from "../core/main";
+import "./UserCell.css";
 
 type Props = {
-  index: number;
+  name?: string;
+  avatar?: string;
 };
 
-export const UserCell = memo<Props>(({ index }) => {
-  const { playerLobbyList, appearance } = useStore($main);
+export const UserCell = memo<Props>(({ name, avatar }) => {
+  const { appearance } = useStore($main);
   return (
     <Cell
       before={
-        playerLobbyList[index] ? (
-          <Avatar src={playerLobbyList[index].avatar} />
+        avatar ? (
+          <Avatar className="user_avatar_connected" src={avatar} />
         ) : (
           <div
             style={{
@@ -23,13 +25,15 @@ export const UserCell = memo<Props>(({ index }) => {
           />
         )
       }
-      disabled={
-        index === 0 ? true : false || playerLobbyList[index] ? false : true
-      }
+      disabled={name ? false : true}
     >
-      {playerLobbyList[index] ? (
-        <Title level="3" weight="2" className="player-name-on">
-          {playerLobbyList[index].name}
+      {name ? (
+        <Title
+          level="3"
+          weight="2"
+          className={"player-name-on user_name_connected"}
+        >
+          {name}
         </Title>
       ) : (
         <Title level="3" weight="3" className="player-name-off">

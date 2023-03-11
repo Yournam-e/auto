@@ -1,0 +1,24 @@
+.user_avatar_connected {
+  opacity: 0;
+  animation: appear 1s forwards;
+}
+.user_name_connected {
+  position: relative;
+  animation: left_slide 1s forwards;
+}
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes left_slide {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 0px;
+  }
+}

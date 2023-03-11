@@ -3,9 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { back, setActivePanel, setActivePopout } from "@blumjs/router";
 import {
   Icon16Done,
+  Icon20BombOutline,
+  Icon20RecentOutline,
   Icon24CheckCircleOutline,
   Icon24Play,
-  Icon28RecentOutline,
 } from "@vkontakte/icons";
 import { Button, Card, Text, Title } from "@vkontakte/vkui";
 import axios from "axios";
@@ -18,10 +19,11 @@ import { $main, setLvlNumber, setReady } from "../../../core/main";
 import "../../../img/Fonts.css";
 
 export const LevelCard = ({ number, devideLvl }) => {
-  const { appearance, lvlsInfo } = useStore($main);
+  const { appearance, lvlsInfo, bestLvlsResult } = useStore($main);
   const [cardsStyle, setCardsStyle] = useState(null);
 
   const [thisLvl, setThisLvl] = useState(null);
+  const [bestResult, setBestResult] = useState(null);
 
   function devideTypes(i) {
     switch (i) {
@@ -83,6 +85,23 @@ export const LevelCard = ({ number, devideLvl }) => {
       console.log("lvlsInfo err", e);
     }
   }, [lvlsInfo]);
+  useEffect(() => {
+    if (bestLvlsResult) {
+      const lvlType = devideType();
+      const lvl = bestLvlsResult.find((l) => l.lvlType === lvlType);
+      if (lvl) {
+        setBestResult({
+          ...lvl.bestTime,
+          milliseconds:
+            String(lvl.bestTime).length === 1
+              ? `00${lvl.bestTime.milliseconds}`
+              : String(lvl.bestTime).length === 2
+              ? `0${lvl.bestTime.milliseconds}`
+              : String(lvl.bestTime.milliseconds),
+        });
+      }
+    }
+  }, [bestLvlsResult]);
 
   useEffect(() => {
     const pageWidth = document.documentElement.scrollWidth;
@@ -123,10 +142,7 @@ export const LevelCard = ({ number, devideLvl }) => {
     );
   }
 
-  const isCompleted = useMemo(
-    () => thisLvl && thisLvl.rightResults === devideLvl(number)[2],
-    [thisLvl, number]
-  );
+  const isCompleted = useMemo(() => !!bestResult, [bestResult]);
 
   return (
     <div
@@ -176,7 +192,28 @@ export const LevelCard = ({ number, devideLvl }) => {
               className="lvl-card-parametr-div"
               style={{ width: 141, height: 30, paddingLeft: 16 }}
             >
-              <Icon28RecentOutline
+              <Icon24CheckCircleOutline
+                className="lvl-card-parametr-icon"
+                style={{ display: "inline-block" }}
+                width={20}
+                height={20}
+              />
+              <Text
+                className="lvl-card-parametr-text"
+                style={{
+                  display: "inline-block",
+                  verticalAlign: "middle",
+                  paddingLeft: 5,
+                }}
+              >
+                {lvlsInfo && devideLvl(number)[1]}
+              </Text>
+            </div>
+            <div
+              className="lvl-card-parametr-div"
+              style={{ width: 141, height: 30, paddingLeft: 16 }}
+            >
+              <Icon20BombOutline
                 className="lvl-card-parametr-icon"
                 style={{ display: "inline-block" }}
                 width={20}
@@ -193,11 +230,12 @@ export const LevelCard = ({ number, devideLvl }) => {
                 {lvlsInfo && devideLvl(number)[0]}
               </Text>
             </div>
+
             <div
               className="lvl-card-parametr-div"
               style={{ width: 141, height: 30, paddingLeft: 16 }}
             >
-              <Icon24CheckCircleOutline
+              <Icon20RecentOutline
                 className="lvl-card-parametr-icon"
                 style={{ display: "inline-block" }}
                 width={20}
@@ -211,7 +249,10 @@ export const LevelCard = ({ number, devideLvl }) => {
                   paddingLeft: 5,
                 }}
               >
-                {lvlsInfo && devideLvl(number)[1]}
+                {bestResult
+                  ? `${bestResult.seconds}:${bestResult.milliseconds}`
+                  : "--:--"}{" "}
+                рекорд
               </Text>
             </div>
           </div>

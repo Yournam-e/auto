@@ -76,7 +76,7 @@ import { PopoutLayout } from "./layouts/popout/PopoutLayout";
 import { leaveRoom } from "./sockets/game";
 
 const App = () => {
-  const { appearance, activeStory, user, gameInfo, connectType, timeFinish } =
+  const { appearance, activeStory, user, gameInfo, connectType } =
     useStore($main);
 
   useInitRouter(
@@ -156,9 +156,8 @@ const App = () => {
     setActivePanel(PanelRoute.MultiplayerGame);
   };
 
-  useEffect(() => {}, [timeFinish]);
-
   useEffect(() => {
+    console.log(window.location.hash, "cash");
     const img = new Image();
     img.src = Eyes;
 
@@ -205,7 +204,7 @@ const App = () => {
       setActivePanel(PanelRoute.Menu);
       setActiveStory(StoryRoute.Multiplayer);
     } else if (!window.location.hash || window.location.hash === "#") {
-      setHaveHash("");
+      setHaveHash(null);
     } else {
       setGameInfo({
         ...gameInfo,
@@ -213,19 +212,21 @@ const App = () => {
       });
       setHaveHash(true);
       setConnectType("join");
-      setActiveStory(PanelRoute.Multiplayer);
+      setActiveStory(StoryRoute.Multiplayer);
     }
   }, []);
 
   useEffect(() => {
     const callback = async (e) => {
       if (e.detail.type === "VKWebAppViewHide") {
+        console.log("app hidden");
         if (connectType === "join" && user && user.id) {
           setConnectType("host");
           leaveRoom(user.id);
         }
       }
       if (e.detail.type === "VKWebAppViewRestore") {
+        console.log("restored app");
         const user = await bridge.send("VKWebAppGetUserInfo");
         setUser(user);
         joinToYourRoom({ isFirstStart: true, gameInfo });
@@ -237,7 +238,6 @@ const App = () => {
     };
   }, [user, gameInfo]);
 
-  console.log(isRouteInit);
   if (!isRouteInit) {
     return (
       <ConfigProvider appearance={appearance}>
