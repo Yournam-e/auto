@@ -110,8 +110,8 @@ const App = () => {
       if (s.modal || s.popout) {
         return false;
       }
+      setActiveViewPanel({ view: ViewRoute.Main, panel: PanelRoute.Menu });
       if (activeStory === StoryRoute.Multiplayer) {
-        setActiveViewPanel({ view: ViewRoute.Main, panel: PanelRoute.Menu });
         setActiveStory(StoryRoute.Single);
       }
       if (activeStory === StoryRoute.Single) {
@@ -120,6 +120,7 @@ const App = () => {
     }),
     createRouteMiddleware((storeRoutes) => {
       if (!window.history.state || window.history.state.view === undefined) {
+        setActiveViewPanel({ view: ViewRoute.Main, panel: PanelRoute.Menu });
         bridge.send("VKWebAppClose", { status: "success" });
         return false;
       }

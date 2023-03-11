@@ -90,7 +90,7 @@ export const Home = ({ id }) => {
       .get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
         setLvlsInfo(response.data.data);
-        response.data.data.map((item, index) => {
+        response.data.data.map((item) => {
           setCompleteLvls([
             ...completeLvls.map((todo) =>
               item.lvlType === todo.id && item.rightResults > todo.needComplete

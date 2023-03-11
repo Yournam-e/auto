@@ -2,6 +2,7 @@ import { Input } from "@vkontakte/vkui";
 import "./style.css";
 
 import React from "react";
+import { isEnglishAndNumericOnly } from "../../../../scripts/inputMask";
 class InputMinimalist extends React.Component {
   constructor(props) {
     super(props);
@@ -13,9 +14,12 @@ class InputMinimalist extends React.Component {
 
   onChange(e) {
     const value = e.target.value;
-    this.setState({ value });
-    if (this.props.onChange && typeof this.props.onChange === "function")
-      this.props.onChange(value);
+    if (isEnglishAndNumericOnly(value)) {
+      this.setState({ value });
+      if (this.props.onChange && typeof this.props.onChange === "function") {
+        this.props.onChange(value);
+      }
+    }
   }
 
   render() {
