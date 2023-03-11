@@ -1,10 +1,10 @@
 .user_avatar_connected {
   opacity: 0;
-  animation: appear 1s forwards;
+  animation: appear 1s ease-in-out forwards;
 }
 .user_name_connected {
   position: relative;
-  animation: left_slide 1s forwards;
+  animation: left_slide 1s ease-in-out forwards;
 }
 @keyframes appear {
   0% {

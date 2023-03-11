@@ -251,8 +251,7 @@ export const LevelCard = ({ number, devideLvl }) => {
               >
                 {bestResult
                   ? `${bestResult.seconds}:${bestResult.milliseconds}`
-                  : "--:--"}{" "}
-                рекорд
+                  : "--:--"}
               </Text>
             </div>
           </div>

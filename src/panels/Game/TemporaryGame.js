@@ -61,7 +61,6 @@ const TemporaryGame = ({ id }) => {
         lvlType: "single30",
       })
       .then(async function (response) {
-        setIsCounting(true);
         setAnswer({
           id: response.data.data.id,
           lvlType: "single30",
@@ -75,6 +74,10 @@ const TemporaryGame = ({ id }) => {
       })
       .finally(() => {
         back();
+        if (first) {
+          setFirst(false);
+          setIsCounting(true);
+        }
       });
   }
 
@@ -198,7 +201,6 @@ const TemporaryGame = ({ id }) => {
                       setAnswer(copy);
                     }
                   }
-                  setFirst(false);
                   setTaskNumber(taskNumber + 1);
                 }}
               >

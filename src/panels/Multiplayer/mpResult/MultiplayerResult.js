@@ -277,7 +277,7 @@ const MultiplayerResult = ({ id }) => {
                 {timeLeft
                   ? readyToReplay
                     ? timeLeft + " сек до начала..."
-                    : "Сыграть снова " + timeLeft + " сек"
+                    : "Остаться в лобби " + timeLeft + " сек"
                   : buttonTitle}
               </Button>
             </div>

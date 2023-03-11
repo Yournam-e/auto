@@ -88,7 +88,13 @@ const LvlGame = ({ id }) => {
       .catch(function (error) {
         console.log("create err", error);
       })
-      .finally(() => back());
+      .finally(() => {
+        back();
+        if (first) {
+          setFirst(false);
+          setIsCounting(true);
+        }
+      });
   }
 
   useEffect(() => {
@@ -196,9 +202,7 @@ const LvlGame = ({ id }) => {
                 }}
                 onClick={() => {
                   //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
-                  if (first === true) {
-                    setIsCounting(true);
-                    setFirst(false);
+                  if (first) {
                     createLvl();
                   } else {
                     if (lvlData) {

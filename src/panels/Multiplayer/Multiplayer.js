@@ -194,7 +194,7 @@ export const Multiplayer = ({ id }) => {
     if (connectType === "join" && playerLobbyList.length === 1 && notUserRoom) {
       setActivePopout(PopoutRoute.AlertLobbyNotExist);
     }
-  }, [playerLobbyList]);
+  }, [playerLobbyList.length, connectType, notUserRoom]);
 
   return (
     <Panel id={id}>
