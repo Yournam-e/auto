@@ -91,11 +91,14 @@ export const LevelCard = ({ number, devideLvl }) => {
       const lvl = bestLvlsResult.find((l) => l.lvlType === lvlType);
       if (lvl) {
         setBestResult({
-          ...lvl.bestTime,
+          seconds:
+            String(lvl.bestTime.seconds).length === 1
+              ? `0${lvl.bestTime.seconds}`
+              : String(lvl.bestTime.seconds),
           milliseconds:
-            String(lvl.bestTime).length === 1
+            String(lvl.bestTime.milliseconds).length === 1
               ? `00${lvl.bestTime.milliseconds}`
-              : String(lvl.bestTime).length === 2
+              : String(lvl.bestTime.milliseconds).length === 2
               ? `0${lvl.bestTime.milliseconds}`
               : String(lvl.bestTime.milliseconds),
         });

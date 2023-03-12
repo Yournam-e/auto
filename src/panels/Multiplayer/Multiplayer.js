@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Button,
@@ -51,6 +51,7 @@ import {
   setTaskInfo,
 } from "../../core/main";
 import { qsSign } from "../../hooks/qs-sign";
+import { useTimeout } from "../../hooks/useTimeout";
 import { useUserId } from "../../hooks/useUserId";
 import { browserBack } from "../../scripts/browserBack";
 import {
@@ -81,8 +82,6 @@ export const Multiplayer = ({ id }) => {
   const { activePanel } = useRouter();
   const thisUserId = useUserId();
 
-  var clickTime = 0;
-
   client.leftRoom = ({ userId }) => {
     console.log("fired left room");
     if (userId && activePanel === PanelRoute.Menu) {
@@ -92,6 +91,7 @@ export const Multiplayer = ({ id }) => {
   };
 
   client.gameStarted = ({ answers, task, id }) => {
+    console.log("fired game started");
     setTaskInfo(task);
     setAnswersInfo(answers);
     setGameInfo({ ...gameInfo, taskId: id });
@@ -106,37 +106,12 @@ export const Multiplayer = ({ id }) => {
     setNotUserRoom(false);
     back();
   };
-  useEffect(() => {
-    const bridgeHandler = (e) => {
-      console.log("bridge event", e.detail.type);
-      if (e.detail.type === "VKWebAppViewHide") {
-        if (connectType === "join") {
-          setConnectType("host");
-          joinToYourRoom({ gameInfo, isFirstStart });
-          leaveRoom(user.id);
-        }
-      }
-      if (e.detail.type === "VKWebAppViewRestore") {
-        setConnectType("host");
-        joinToYourRoom({ gameInfo, isFirstStart });
-        leaveRoom(user.id);
-        back();
-      }
-    };
-    bridge.subscribe(bridgeHandler);
-    return () => {
-      bridge.unsubscribe(bridgeHandler);
-    };
-  }, [gameInfo, isFirstStart, user]);
 
   useEffect(() => {
     axios
       .get(`https://showtime.app-dich.com/api/plus-plus/user-games${qsSign}`)
       .then(async function (response) {
-        await response;
-        console.log(response.data.data[0], "user-games");
-        console.log(response.data.data[0].roomId);
-        console.log(window.location.hash.slice(1));
+        console.log(response.data.data[0], "user-games", window.location.hash);
         if (response.data.data[0].ownerId === useUserId) {
           if (response.data.data[0].started) {
             browserBack();
@@ -200,6 +175,17 @@ export const Multiplayer = ({ id }) => {
     }
   }, [playerLobbyList.length, connectType, notUserRoom]);
 
+  const [isCodeCopied, setCodeCopied] = useState(false);
+  useTimeout(
+    () => {
+      if (isCodeCopied) {
+        setCodeCopied(false);
+      }
+    },
+    1500,
+    [isCodeCopied]
+  );
+
   return (
     <Panel id={id}>
       {connectType === "join" && (
@@ -230,25 +216,33 @@ export const Multiplayer = ({ id }) => {
 
           <div style={{ height: 30 }} className="multiplayer-title-div">
             <Title
-              className="multiplayer-title-code"
+              className={`multiplayer-title-code${
+                joinCode && !isCodeCopied ? " trigger-change-code" : ""
+              }`}
               style={{
                 display: "inline-block",
                 paddingLeft: 5,
               }}
               onClick={() => {
-                bridge.send("VKWebAppCopyText", { text: joinCode });
+                if (!isCodeCopied) {
+                  bridge
+                    .send("VKWebAppCopyText", { text: joinCode })
+                    .then(() => setCodeCopied(true));
+                }
               }}
             >
-              {joinCode}
+              {isCodeCopied ? "Код скопирован" : joinCode}
             </Title>
-
-            {connectType === "host" && (
+            {connectType === "host" && !isCodeCopied && (
               <Icon20Sync
-                className="multiplayer-title-return"
+                className={`multiplayer-title-return${
+                  joinCode ? " trigger-change-code-reverse" : ""
+                }`}
                 fill="#1A84FF"
                 onClick={async function () {
                   setActivePopout(PopoutRoute.Loading);
                   createRoom(joinCode);
+                  setJoinCode(null);
 
                   setPlayerLobbyList((pLL) =>
                     pLL.filter((item) => item.userId === user.id)

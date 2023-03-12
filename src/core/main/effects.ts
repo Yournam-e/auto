@@ -1,7 +1,7 @@
-import { setActivePanel } from "@blumjs/router";
+import { back, setActivePanel } from "@blumjs/router";
 import axios from "axios";
 import { createEffect } from "effector";
-import { PanelRoute } from "../../constants/router";
+import { PanelRoute, PopoutRoute } from "../../constants/router";
 import { qsSign } from "../../hooks/qs-sign";
 import { connectRoom, joinRoom } from "../../sockets/game";
 import { BestLvlResult, GameInfo } from "../../types";
@@ -12,6 +12,7 @@ import {
   setJoinCode,
   setNotUserRoom,
   setSingleType,
+  setTimeFinish,
 } from "./events";
 
 type JoinToYourRoom = {
@@ -74,4 +75,20 @@ export const loadBestLvlsResult = createEffect(() => {
     .catch((e) => {
       console.log("loadBestLvlsResult err", e);
     });
+});
+
+export const finishGame = createEffect<
+  { activePopout: PopoutRoute; activePanel: PanelRoute },
+  void
+>(({ activePanel, activePopout }) => {
+  setTimeFinish(Date.now());
+  if (activePopout === PopoutRoute.AlertFinishGame) {
+    back({
+      afterBackHandledCallback: () => {
+        setActivePanel(activePanel);
+      },
+    });
+  } else {
+    setActivePanel(activePanel);
+  }
 });

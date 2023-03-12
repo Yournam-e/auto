@@ -6,6 +6,10 @@
   animation-fill-mode: forwards !important;
 }
 
+body,
+div {
+  user-select: none;
+}
 /*@media only screen and (orientation: landscape) {
   body {
     height: 100vh;

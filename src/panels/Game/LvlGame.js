@@ -24,6 +24,7 @@ import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
 import {
   $main,
+  finishGame,
   setAllTasks,
   setLvlResult,
   setTimeFinish,
@@ -98,12 +99,10 @@ const LvlGame = ({ id }) => {
   }
 
   useEffect(() => {
-    function pastTime() {
-      setTimeFinish(Date.now());
-      setActivePanel(PanelRoute.ResultLvl);
-    }
-    timeLeft === 0 ? pastTime() : console.log();
-  }, [timeLeft]);
+    timeLeft === 0
+      ? finishGame({ activePanel: PanelRoute.ResultLvl, activePopout })
+      : console.log();
+  }, [timeLeft, activePopout]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -117,7 +116,6 @@ const LvlGame = ({ id }) => {
   return (
     <CustomPanel id={id}>
       <GamePanelHeader />
-
       <div className="game-div-margin">
         <Title
           level="2"
@@ -204,7 +202,7 @@ const LvlGame = ({ id }) => {
                   //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
                   if (first) {
                     createLvl();
-                  } else {
+                  } else if (timeLeft > 0) {
                     if (lvlData) {
                       if (lvlData.tasks.length - 1 === taskNumber) {
                         //eсли последняя задача

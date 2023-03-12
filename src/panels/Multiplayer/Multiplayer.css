@@ -23,6 +23,33 @@
   justify-content: center;
 }
 
+@keyframes change-code {
+  0% {
+    opacity: 0;
+    right: 21px;
+  }
+  100% {
+    opacity: 1;
+    right: 0px;
+  }
+}
+@keyframes change-code-reverse {
+  0% {
+    left: -41px;
+  }
+  100% {
+    left: 0px;
+  }
+}
+.trigger-change-code {
+  opacity: 0;
+  position: relative;
+  animation: change-code 1s ease-in-out forwards;
+}
+.trigger-change-code-reverse {
+  position: relative;
+  animation: change-code-reverse 1s ease-in-out forwards;
+}
 .multiplayer-title-code {
   font-family: "SF Pro Text";
   font-style: normal;

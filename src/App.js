@@ -13,7 +13,7 @@ import {
   TabbarItem,
   View,
 } from "@vkontakte/vkui";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { Icon28FavoriteOutline, Icon28Users3Outline } from "@vkontakte/icons";
 
@@ -76,16 +76,37 @@ import { PopoutLayout } from "./layouts/popout/PopoutLayout";
 import { leaveRoom } from "./sockets/game";
 
 const App = () => {
-  const { appearance, activeStory, user, gameInfo, connectType } =
-    useStore($main);
+  const {
+    appearance,
+    activeStory,
+    user,
+    gameInfo,
+    connectType,
+    playerLobbyList,
+  } = useStore($main);
+  const { activePanel, activePopout, activeView, isRouteInit } = useRouter();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    document.getElementById("root").style.overscrollBehavior = "none";
     return () => {
-      document.body.style.overflow = "scroll";
+      document.body.style.overflow = "auto";
+      document.getElementById("root").style.overscrollBehavior = "auto";
     };
   }, []);
 
+  const leaveMultiplayerRoom = useCallback(() => {
+    if (
+      playerLobbyList &&
+      playerLobbyList.length > 1 &&
+      activePopout !== PopoutRoute.AlertGameExit
+    ) {
+      setActivePopout(PopoutRoute.AlertLobbyExit);
+    } else {
+      setConnectType("host");
+      setActiveStory(StoryRoute.Single);
+    }
+  }, [activePopout, playerLobbyList]);
   useInitRouter(
     {
       view: ViewRoute.Main,
@@ -119,7 +140,7 @@ const App = () => {
       }
       setActiveViewPanel({ view: ViewRoute.Main, panel: PanelRoute.Menu });
       if (activeStory === StoryRoute.Multiplayer) {
-        setActiveStory(StoryRoute.Single);
+        leaveMultiplayerRoom();
       }
       if (activeStory === StoryRoute.Single) {
         bridge.send("VKWebAppClose", { status: "success" });
@@ -145,8 +166,6 @@ const App = () => {
     })
   );
 
-  const { activePanel, activePopout, activeView, isRouteInit } = useRouter();
-
   useEventListener("offline", () => {
     setActivePanel(PanelRoute.NotConnection);
   });
@@ -168,26 +187,6 @@ const App = () => {
     console.log(window.location.hash, "cash");
     const img = new Image();
     img.src = Eyes;
-
-    bridge.subscribe(({ detail: { type, data } }) => {
-      if (type === "VKWebAppUpdateConfig") {
-        const theme = data.appearance;
-        if (bridge.supports("VKWebAppSetViewSettings")) {
-          if (theme === "dark") {
-            bridge.send("VKWebAppSetViewSettings", {
-              status_bar_style: "light",
-              action_bar_color: "#1D1D20",
-            });
-          } else {
-            bridge.send("VKWebAppSetViewSettings", {
-              status_bar_style: "dark",
-              action_bar_color: "#fff",
-            });
-          }
-        }
-        setAppearance(theme);
-      }
-    });
 
     async function fetchData() {
       const user = await bridge.send("VKWebAppGetUserInfo");
@@ -226,6 +225,23 @@ const App = () => {
 
   useEffect(() => {
     const callback = async (e) => {
+      if (e.detail.type === "VKWebAppUpdateConfig") {
+        const theme = e.detail.data.appearance;
+        if (bridge.supports("VKWebAppSetViewSettings")) {
+          if (theme === "dark") {
+            bridge.send("VKWebAppSetViewSettings", {
+              status_bar_style: "light",
+              action_bar_color: "#1D1D20",
+            });
+          } else {
+            bridge.send("VKWebAppSetViewSettings", {
+              status_bar_style: "dark",
+              action_bar_color: "#fff",
+            });
+          }
+        }
+        setAppearance(theme);
+      }
       if (e.detail.type === "VKWebAppViewHide") {
         console.log("app hidden");
         if (connectType === "join" && user && user.id) {
@@ -235,6 +251,7 @@ const App = () => {
       }
       if (e.detail.type === "VKWebAppViewRestore") {
         console.log("restored app");
+        setConnectType("host");
         const user = await bridge.send("VKWebAppGetUserInfo");
         setUser(user);
         joinToYourRoom({ isFirstStart: true, gameInfo });
@@ -244,7 +261,7 @@ const App = () => {
     return () => {
       bridge.unsubscribe(callback);
     };
-  }, [user, gameInfo]);
+  }, [user, gameInfo, connectType]);
 
   if (!isRouteInit) {
     return (
@@ -279,10 +296,7 @@ const App = () => {
                         tabbar={
                           <Tabbar>
                             <TabbarItem
-                              onClick={() => {
-                                setActiveStory(StoryRoute.Single);
-                                setConnectType("host");
-                              }}
+                              onClick={leaveMultiplayerRoom}
                               selected={activeStory === StoryRoute.Single}
                               text={
                                 <span

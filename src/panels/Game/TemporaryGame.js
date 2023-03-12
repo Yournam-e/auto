@@ -11,17 +11,12 @@ import { getPadTime } from "../../scripts/getPadTime";
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
-import {
-  back,
-  setActivePanel,
-  setActivePopout,
-  useRouter,
-} from "@blumjs/router";
+import { back, setActivePopout, useRouter } from "@blumjs/router";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../atoms/CustomPanel";
 import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
-import { $main, setAnswer } from "../../core/main";
+import { $main, finishGame, setAnswer } from "../../core/main";
 import "../../img/Fonts.css";
 
 const TemporaryGame = ({ id }) => {
@@ -42,10 +37,9 @@ const TemporaryGame = ({ id }) => {
 
   useEffect(() => {
     if (timeLeft === 0) {
-      setTaskNumber(0);
-      setActivePanel(PanelRoute.Result);
+      finishGame({ activePopout, activePanel: PanelRoute.Result });
     }
-  }, [timeLeft]);
+  }, [timeLeft, activePopout]);
 
   useEffect(() => {
     setInterval(() => {

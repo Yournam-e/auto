@@ -10,9 +10,9 @@ import { client } from "../../sockets/receiver";
 
 import {
   back,
-  setActivePanel,
   setActivePopout,
   useRouter,
+  _setActivePopout,
 } from "@blumjs/router";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../atoms/CustomPanel";
@@ -20,6 +20,7 @@ import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
 import {
   $main,
+  finishGame,
   setAnswersInfo,
   setGameInfo,
   setMpGameResults,
@@ -29,7 +30,7 @@ import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
 export const MultiplayerGame = ({ id }) => {
-  const { activePopout } = useRouter();
+  const { activePanel, activePopout } = useRouter();
   const { gameInfo, taskInfo, answersInfo, appearance } = useStore($main);
 
   const [timeLeft, setTimeLeft] = useState(30); //время
@@ -47,9 +48,9 @@ export const MultiplayerGame = ({ id }) => {
 
   useEffect(() => {
     timeLeft === 0
-      ? setActivePanel(PanelRoute.MultiplayerResult)
+      ? finishGame({ activePopout, activePanel: PanelRoute.MultiplayerResult })
       : console.log();
-  }, [timeLeft]);
+  }, [timeLeft, activePopout]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -69,7 +70,14 @@ export const MultiplayerGame = ({ id }) => {
     } catch (e) {
       console.log("next task err");
     } finally {
-      back();
+      if (
+        activePopout === PopoutRoute.Loading &&
+        activePanel === PanelRoute.MultiplayerGame
+      ) {
+        back();
+      } else if (activePopout === PopoutRoute.Loading) {
+        _setActivePopout(null);
+      }
     }
   };
 
@@ -168,7 +176,9 @@ export const MultiplayerGame = ({ id }) => {
                           value,
                           gameInfo.taskId
                         );
-                        setActivePopout(PopoutRoute.Loading);
+                        if (timeLeft > 0) {
+                          setActivePopout(PopoutRoute.Loading);
+                        }
                       }
                     }
                     callNextTask();

@@ -150,14 +150,12 @@ const LvlResultPage = ({ id }) => {
               new Date(time.finished) - new Date(time.started).getTime();
             setFinishedTime(Math.min(timeMs / 1000, 30));
             console.log(rightResults, devideLvl(lvlNumber)[2] - 1, lvlNumber);
-            if (rightResults > devideLvl(lvlNumber)[2] - 1 || timeMs >= 30000) {
-              if (timeMs < 30000) {
-                setComplete([true, "right"]);
-              } else {
-                setComplete([false, "beOnTime"]);
-              }
-            } else {
+            if (rightResults > devideLvl(lvlNumber)[2] - 1 && timeMs <= 30000) {
+              setComplete([true, "right"]);
+            } else if (timeMs <= 30000) {
               setComplete([false, "notright"]);
+            } else {
+              setComplete([false, "beOnTime"]);
             }
           })
           .catch(function (error) {

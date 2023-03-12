@@ -6,6 +6,7 @@ import {
   AlertFinishGamePopout,
   AlertGameExistPopout,
   AlertGameExitPopout,
+  AlertLobbyExitPopout,
   AlertLobbyNotExist,
   AlertShareGamePopout,
   LoadingPopout,
@@ -37,4 +38,5 @@ const popouts = {
   [PopoutRoute.AlertLobbyNotExist]: <AlertLobbyNotExist />,
   [PopoutRoute.AlertShareGame]: <AlertShareGamePopout />,
   [PopoutRoute.AlertFinishGame]: <AlertFinishGamePopout />,
+  [PopoutRoute.AlertLobbyExit]: <AlertLobbyExitPopout />,
 };
