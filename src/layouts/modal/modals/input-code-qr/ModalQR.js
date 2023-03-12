@@ -2,7 +2,6 @@ import { back } from "@blumjs/router";
 import {
   Button,
   ButtonGroup,
-  Div,
   ModalPage,
   ModalPageHeader,
   PanelHeaderButton,
@@ -22,10 +21,13 @@ import { $main } from "../../../../core/main";
 
 export const ModalQRCode = ({ id }) => {
   const { joinCode } = useStore($main);
-  let options = useMemo(() => ({
-    foregroundColor: "#0077FF",
-    logoData: "https://i.ibb.co/xLkkGgd/vk-logo-3674340.png",
-  }));
+  let options = useMemo(
+    () => ({
+      foregroundColor: "#0077FF",
+      logoData: "https://i.ibb.co/xLkkGgd/vk-logo-3674340.png",
+    }),
+    []
+  );
 
   const platform = usePlatform();
 
@@ -45,7 +47,6 @@ export const ModalQRCode = ({ id }) => {
         back();
       })
       .catch((error) => {
-        // Ошибка
         console.log(error);
       });
   }, [joinCode]);
@@ -55,6 +56,7 @@ export const ModalQRCode = ({ id }) => {
       id={id}
       header={
         <ModalPageHeader
+          separator={false}
           before={platform === "android" && <PanelHeaderClose onClick={back} />}
           after={
             platform === "ios" && (
@@ -63,18 +65,18 @@ export const ModalQRCode = ({ id }) => {
               </PanelHeaderButton>
             )
           }
-        ></ModalPageHeader>
+        />
       }
     >
-      <Div>
-        <Div>
-          <div style={{ margin: 10 }} className="qr-code">
+      <div>
+        <div className="qr-code-container">
+          <div className="qr-code">
             <img src={`data:image/svg+xml;utf8,${encodeURIComponent(qrSvg)}`} />
           </div>
-        </Div>
+        </div>
 
         <ButtonGroup
-          style={{ marginTop: 20, marginBottom: 10 }}
+          style={{ marginTop: 40, marginBottom: 10 }}
           gap="space"
           className="qr-code-share-button-div"
         >
@@ -89,7 +91,7 @@ export const ModalQRCode = ({ id }) => {
             Поделиться
           </Button>
         </ButtonGroup>
-      </Div>
+      </div>
     </ModalPage>
   );
 };

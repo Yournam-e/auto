@@ -79,6 +79,13 @@ const App = () => {
   const { appearance, activeStory, user, gameInfo, connectType } =
     useStore($main);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "scroll";
+    };
+  }, []);
+
   useInitRouter(
     {
       view: ViewRoute.Main,

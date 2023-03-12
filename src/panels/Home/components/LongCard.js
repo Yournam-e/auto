@@ -2,12 +2,20 @@ import { Icon24ClockOutline, Icon24Play } from "@vkontakte/icons";
 import { Button, Card, Div, Title } from "@vkontakte/vkui";
 
 import { useStore } from "effector-react";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { $main, checkToDelete } from "../../../core/main";
+import { decOfNum } from "../../../scripts/decOfNum";
 import "../Home.css";
 
 export const LongCard = memo(() => {
-  const { appearance, lvlsInfo } = useStore($main);
+  const { appearance, lvlsInfo, bestLvlsResult } = useStore($main);
+  const bestResult = useMemo(
+    () =>
+      bestLvlsResult.some((b) => b.lvlType === "single30")
+        ? bestLvlsResult.filter((b) => b.lvlType === "single30")[0].best
+        : -1,
+    [bestLvlsResult]
+  );
   const startGame = useCallback(() => {
     checkToDelete(lvlsInfo);
   }, [lvlsInfo]);
@@ -39,11 +47,31 @@ export const LongCard = memo(() => {
                   color: appearance === "dark" ? "#C4C8CC" : "#2C2D2E",
                 }}
               >
-                Попробуйте 30-секундный режим
+                {bestResult > -1 ? "" : "Попробуйте "}30-секундный режим
               </Title>
             </div>
+            {bestResult > -1 && (
+              <div>
+                <Title
+                  level="1"
+                  className="long-card-text"
+                  style={{
+                    color: appearance === "light" ? "#6D7885" : "#909499",
+                  }}
+                >
+                  Ваш рекорд:{" "}
+                  {decOfNum(bestResult, ["балл", "балла", "баллов"])}
+                </Title>
+              </div>
+            )}
             <div>
-              <Title level="3" className="long-card-text">
+              <Title
+                level="3"
+                className="long-card-text"
+                style={{
+                  color: appearance === "light" ? "#818C99" : "#76787A",
+                }}
+              >
                 Решите как можно больше задач за 30 секунд
               </Title>
             </div>

@@ -151,7 +151,17 @@
   margin-top: 25%;
 }
 
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 .result-task-title {
+  opacity: 0;
+  animation: appear 100ms ease-in-out forwards;
   font-family: "SF Pro Rounded";
   font-style: normal;
   font-weight: 600;

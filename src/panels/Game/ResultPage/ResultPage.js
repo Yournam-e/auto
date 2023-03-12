@@ -3,7 +3,9 @@ import {
   Icon16Done,
   Icon24RefreshOutline,
   Icon24StoryOutline,
+  Icon56CancelCircleOutline,
   Icon56CheckCircleOutline,
+  Icon56RecentOutline,
 } from "@vkontakte/icons";
 import bridge from "@vkontakte/vk-bridge";
 import {
@@ -25,6 +27,7 @@ import { PanelRoute, PopoutRoute } from "../../../constants/router";
 import { $main, checkToDelete } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
 import Eyes from "../../../img/Eyes.png";
+import { decOfNum } from "../../../scripts/decOfNum";
 import "../Game.css";
 
 const ResultPage = ({ id }) => {
@@ -41,19 +44,6 @@ const ResultPage = ({ id }) => {
   const [friendsResult, setFriendsResult] = useState(); //результаты друзей
 
   const [tokenAvailability, setTokenAvailability] = useState(false);
-
-  function decOfNum(number, titles, needNumber = true) {
-    if (number !== undefined) {
-      let decCache = [],
-        decCases = [2, 0, 1, 1, 1, 2];
-      if (!decCache[number])
-        decCache[number] =
-          number % 100 > 4 && number % 100 < 20
-            ? 2
-            : decCases[Math.min(number % 10, 5)];
-      return (needNumber ? number + " " : "") + titles[decCache[number]];
-    }
-  }
 
   async function loadFonts(fonts = []) {
     new Promise((resolve, reject) => {
@@ -253,19 +243,6 @@ const ResultPage = ({ id }) => {
     }
   }, [friendsIds]);
 
-  function decOfNum(number, titles, needNumber = true) {
-    if (number !== undefined) {
-      let decCache = [],
-        decCases = [2, 0, 1, 1, 1, 2];
-      if (!decCache[number])
-        decCache[number] =
-          number % 100 > 4 && number % 100 < 20
-            ? 2
-            : decCases[Math.min(number % 10, 5)];
-      return (needNumber ? number + " " : "") + titles[decCache[number]];
-    }
-  }
-
   useEffect(() => {
     сheckFriends();
 
@@ -286,34 +263,58 @@ const ResultPage = ({ id }) => {
               }
             }
           })
-          .catch(function (error) {});
+          .catch(function (error) {
+            setRight(false);
+          });
       })
-      .catch(function (error) {});
+      .catch(function (error) {
+        setRight(false);
+      });
   }, []);
 
   return (
     <CustomPanel id={id} className="resultPagePanel">
       <Div className="check-circle-outline">
         <div>
-          <Icon56CheckCircleOutline
-            fill="#1A84FF"
-            style={{ marginLeft: "auto", marginRight: "auto" }}
-          />
+          {right === null ? (
+            <Icon56RecentOutline
+              fill="#1A84FF"
+              style={{
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            />
+          ) : right === false ? (
+            <Icon56CancelCircleOutline
+              fill="#FF2525"
+              style={{
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            />
+          ) : (
+            <Icon56CheckCircleOutline
+              fill="#1A84FF"
+              style={{ marginLeft: "auto", marginRight: "auto" }}
+            />
+          )}
         </div>
         <div style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}>
           {
             <Title className="result-task-title">
-              {right
-                ? `${decOfNum(right, ["балл", "балла", "баллов"])}`
-                : "0 баллов"}
+              {right === null
+                ? "Ждем..."
+                : right === false
+                ? "Произошла ошибка"
+                : `${decOfNum(right, ["балл", "балла", "баллов"])}`}
             </Title>
           }
         </div>
 
         <div style={{ marginLeft: 18, marginRight: 18, marginTop: 16 }}>
           <Title className="result-task-text">
-            {right !== null && right !== 0 ? "Неплохо!" : ""} Поделись
-            результатами с друзьями:
+            {!right && right !== 0 ? "Неплохо!" : ""} Поделись результатами с
+            друзьями:
           </Title>
         </div>
 

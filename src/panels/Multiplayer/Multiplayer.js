@@ -84,6 +84,7 @@ export const Multiplayer = ({ id }) => {
   var clickTime = 0;
 
   client.leftRoom = ({ userId }) => {
+    console.log("fired left room");
     if (userId && activePanel === PanelRoute.Menu) {
       setPlayerLobbyList((pLL) => pLL.filter((item) => item.userId !== userId));
       setPlayersId((p) => p.filter((n) => n !== userId));
@@ -105,25 +106,28 @@ export const Multiplayer = ({ id }) => {
     setNotUserRoom(false);
     back();
   };
-
-  bridge.subscribe((e) => {
-    if (e.detail.type === "VKWebAppViewHide") {
-      if (connectType === "join") {
+  useEffect(() => {
+    const bridgeHandler = (e) => {
+      console.log("bridge event", e.detail.type);
+      if (e.detail.type === "VKWebAppViewHide") {
+        if (connectType === "join") {
+          setConnectType("host");
+          joinToYourRoom({ gameInfo, isFirstStart });
+          leaveRoom(user.id);
+        }
+      }
+      if (e.detail.type === "VKWebAppViewRestore") {
         setConnectType("host");
         joinToYourRoom({ gameInfo, isFirstStart });
         leaveRoom(user.id);
+        back();
       }
-    }
-  });
-
-  bridge.subscribe((e) => {
-    if (e.detail.type === "VKWebAppViewRestore") {
-      setConnectType("host");
-      joinToYourRoom({ gameInfo, isFirstStart });
-      leaveRoom(joinCode);
-      back();
-    }
-  });
+    };
+    bridge.subscribe(bridgeHandler);
+    return () => {
+      bridge.unsubscribe(bridgeHandler);
+    };
+  }, [gameInfo, isFirstStart, user]);
 
   useEffect(() => {
     axios

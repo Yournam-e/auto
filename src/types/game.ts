@@ -11,4 +11,5 @@ export type BestLvlResult = {
     seconds: number;
     milliseconds: number;
   };
+  best: number;
 };

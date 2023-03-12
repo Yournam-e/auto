@@ -85,7 +85,6 @@ export const Home = ({ id }) => {
 
   useEffect(() => {
     document.body.classList.add("body-dark");
-    loadBestLvlsResult();
     axios
       .get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
@@ -105,6 +104,9 @@ export const Home = ({ id }) => {
       })
       .catch(function (error) {
         console.warn(error);
+      })
+      .finally(() => {
+        loadBestLvlsResult();
       });
   }, []);
 

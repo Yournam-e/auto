@@ -148,7 +148,7 @@ const LvlResultPage = ({ id }) => {
 
             const timeMs =
               new Date(time.finished) - new Date(time.started).getTime();
-            setFinishedTime(timeMs / 1000);
+            setFinishedTime(Math.min(timeMs / 1000, 30));
             console.log(rightResults, devideLvl(lvlNumber)[2] - 1, lvlNumber);
             if (rightResults > devideLvl(lvlNumber)[2] - 1 || timeMs >= 30000) {
               if (timeMs < 30000) {

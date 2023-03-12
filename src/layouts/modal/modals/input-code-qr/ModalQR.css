@@ -1,9 +1,16 @@
-.qr-code {
+.qr-code-container {
+  width: 100%;
   display: flex;
   justify-content: center;
-  padding-top: 10px;
-  margin-bottom: 25px;
+}
+.qr-code {
   min-height: 230px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 6px;
+  padding-bottom: 1px;
+  border-radius: 20px;
+  background-color: white;
 }
 
 .qr-code-share-button {
