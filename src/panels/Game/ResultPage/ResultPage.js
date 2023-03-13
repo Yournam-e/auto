@@ -31,6 +31,7 @@ import { CustomPanel } from "../../../atoms/CustomPanel";
 import { PanelRoute, PopoutRoute } from "../../../constants/router";
 import { $main, checkToDelete } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
+import { useResultButtonDelay } from "../../../hooks/useDebouncing";
 import Eyes from "../../../img/Eyes.png";
 import { decOfNum } from "../../../scripts/decOfNum";
 import "../Game.css";
@@ -281,6 +282,8 @@ const ResultPage = ({ id }) => {
       });
   }, []);
 
+  const { isLoading } = useResultButtonDelay();
+
   return (
     <CustomPanel id={id} className="resultPagePanel">
       <Div className="check-circle-outline">
@@ -332,6 +335,7 @@ const ResultPage = ({ id }) => {
           style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}
         >
           <Button
+            disabled={isLoading}
             onClick={async function () {
               if (right !== null) {
                 showStoryBox(right);
@@ -385,6 +389,7 @@ const ResultPage = ({ id }) => {
                       </Title>
 
                       <Button
+                        disabled={isLoading}
                         className="friendsPoint"
                         before={<Icon16Done />}
                         hasActive={false}
@@ -438,6 +443,7 @@ const ResultPage = ({ id }) => {
 
               <div className="result-task-button-div">
                 <Button
+                  disabled={isLoading}
                   className="result-getFriend-button"
                   onClick={getFriendsAndCheck}
                   style={{
@@ -461,6 +467,7 @@ const ResultPage = ({ id }) => {
           <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
             <div className="result-buttonRetry-div">
               <Button
+                disabled={isLoading}
                 size="l"
                 style={{
                   backgroundColor: "#1A84FF",
@@ -477,6 +484,7 @@ const ResultPage = ({ id }) => {
             </div>
             <div className="result-buttonNotNow-div">
               <Button
+                disabled={isLoading}
                 className="result-buttonGroup-notNow"
                 onClick={() => {
                   setActivePanel(PanelRoute.Menu);

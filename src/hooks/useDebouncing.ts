@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useTimeout } from "./useTimeout";
 
-export const useDebouncing = (delay: number) => {
-  const [isLoading, setLoading] = useState(false);
+export const useDebouncing = (delay: number, initValue?: boolean) => {
+  const [isLoading, setLoading] = useState(!!initValue);
   useTimeout(
     () => {
       if (isLoading) {
@@ -16,3 +16,4 @@ export const useDebouncing = (delay: number) => {
 };
 
 export const useGameButtonDelay = () => useDebouncing(200);
+export const useResultButtonDelay = () => useDebouncing(1000, true);

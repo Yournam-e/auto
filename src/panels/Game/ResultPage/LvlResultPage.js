@@ -17,6 +17,7 @@ import { CustomPanel } from "../../../atoms/CustomPanel";
 import { PanelRoute, PopoutRoute } from "../../../constants/router";
 import { $main, setAllTasks, setLvlNumber, setReady } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
+import { useResultButtonDelay } from "../../../hooks/useDebouncing";
 import { ReactComponent as ClockIcon } from "../../../img/Сlock.svg";
 import "./LvlResultPage.css";
 
@@ -171,6 +172,8 @@ const LvlResultPage = ({ id }) => {
       });
   }, []);
 
+  const { isLoading } = useResultButtonDelay();
+
   return (
     <CustomPanel id={id}>
       <div className="main-div-resilt-page">
@@ -323,6 +326,7 @@ const LvlResultPage = ({ id }) => {
           <div className="result-buttonRetry-div">
             {
               <Button
+                disabled={isLoading}
                 size="l"
                 onClick={() => {
                   async function deleteAndStart() {
@@ -355,6 +359,7 @@ const LvlResultPage = ({ id }) => {
           </div>
           <div className="result-buttonNotNow-div">
             <Button
+              disabled={isLoading}
               className="result-buttonGroup-notNow"
               onClick={(e) => {
                 setFinishedTime(0);

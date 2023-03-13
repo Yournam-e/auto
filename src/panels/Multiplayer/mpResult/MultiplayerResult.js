@@ -24,6 +24,7 @@ import {
   setJoinCode,
   setPlayersId,
 } from "../../../core/main";
+import { useResultButtonDelay } from "../../../hooks/useDebouncing";
 import { createRoom, joinRoom, leaveRoom } from "../../../sockets/game";
 import { client } from "../../../sockets/receiver";
 import "../../Game/Game.css";
@@ -157,6 +158,8 @@ const MultiplayerResult = ({ id }) => {
     };
   }
 
+  const { isLoading } = useResultButtonDelay();
+
   return (
     <CustomPanel id={id} className="resultPagePanel">
       <Div className="check-circle-outline">
@@ -219,6 +222,7 @@ const MultiplayerResult = ({ id }) => {
                               {inItem.name}
                             </Title>
                             <Button
+                              disabled={isLoading}
                               className="friendsPoint"
                               before={<Icon16Done />}
                               hasActive={false}
@@ -265,7 +269,7 @@ const MultiplayerResult = ({ id }) => {
                     false
                   )
                 }
-                disabled={timeLeft ? (readyToReplay ? true : false) : true}
+                disabled={timeLeft ? (readyToReplay ? true : isLoading) : true}
                 style={{
                   backgroundColor: "#1A84FF",
                   borderRadius: 100,
@@ -286,6 +290,7 @@ const MultiplayerResult = ({ id }) => {
               style={{ paddingBottom: 21 }}
             >
               <Button
+                disabled={isLoading}
                 className="result-buttonGroup-notNow"
                 onClick={(e) => {
                   //joinToYourRoom()
