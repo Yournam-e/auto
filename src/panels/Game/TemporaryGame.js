@@ -17,6 +17,7 @@ import { CustomPanel } from "../../atoms/CustomPanel";
 import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
 import { $main, finishGame, setAnswer } from "../../core/main";
+import { useGameButtonDelay } from "../../hooks/useDebouncing";
 import "../../img/Fonts.css";
 
 const TemporaryGame = ({ id }) => {
@@ -36,7 +37,10 @@ const TemporaryGame = ({ id }) => {
   const seconds = getPadTime(timeLeft - minutes * 60); //секунды
 
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (
+      timeLeft === 0 &&
+      (activePopout === null || activePopout === undefined)
+    ) {
       finishGame({ activePopout, activePanel: PanelRoute.Result });
     }
   }, [timeLeft, activePopout]);
@@ -74,6 +78,8 @@ const TemporaryGame = ({ id }) => {
         }
       });
   }
+
+  const { isLoading, setLoading } = useGameButtonDelay();
 
   return (
     <CustomPanel id={id}>
@@ -166,7 +172,7 @@ const TemporaryGame = ({ id }) => {
           {[0, 1, 2, 3].map((value, index) => {
             return (
               <Button
-                disabled={!!activePopout}
+                disabled={!!activePopout || timeLeft === 0 || isLoading}
                 stretched
                 size="l"
                 sizeY="regular"
@@ -179,6 +185,7 @@ const TemporaryGame = ({ id }) => {
                 }}
                 key={index}
                 onClick={() => {
+                  setLoading(true);
                   if (first) {
                     createLvl();
                   }

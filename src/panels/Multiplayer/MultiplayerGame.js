@@ -26,6 +26,7 @@ import {
   setMpGameResults,
   setTaskInfo,
 } from "../../core/main";
+import { useGameButtonDelay } from "../../hooks/useDebouncing";
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
@@ -47,7 +48,7 @@ export const MultiplayerGame = ({ id }) => {
   };
 
   useEffect(() => {
-    timeLeft === 0
+    timeLeft === 0 && (activePopout === undefined || activePopout === null)
       ? finishGame({ activePopout, activePanel: PanelRoute.MultiplayerResult })
       : console.log();
   }, [timeLeft, activePopout]);
@@ -59,8 +60,6 @@ export const MultiplayerGame = ({ id }) => {
     }, 1000);
     return () => clearInterval(interval);
   }, [isCounting]);
-
-  //код времени не мой кст :)
 
   client.nextTask = ({ answers, task, id }) => {
     try {
@@ -80,6 +79,8 @@ export const MultiplayerGame = ({ id }) => {
       }
     }
   };
+
+  const { isLoading, setLoading } = useGameButtonDelay();
 
   return (
     <CustomPanel id={id}>
@@ -155,7 +156,7 @@ export const MultiplayerGame = ({ id }) => {
             answersInfo.map((value, index) => {
               return (
                 <Button
-                  disabled={!!activePopout}
+                  disabled={!!activePopout || timeLeft === 0 || isLoading}
                   stretched
                   size="l"
                   sizeY="regular"
@@ -181,6 +182,7 @@ export const MultiplayerGame = ({ id }) => {
                         }
                       }
                     }
+                    setLoading(true);
                     callNextTask();
                   }}
                 >

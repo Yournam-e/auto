@@ -12,17 +12,19 @@ import {
 import { leaveRoom } from "../../../../sockets/game";
 
 export const AlertGameExitPopout = memo(() => {
-  const { user } = useStore($main);
+  const { joinCode } = useStore($main);
   const handleClose = useCallback(() => {
     back();
   }, []);
   const handleAction = useCallback(() => {
     setLeavingRoom(true);
     setConnectType("host");
-    leaveRoom(user.id);
+    if (joinCode) {
+      leaveRoom(joinCode);
+    }
     setActivePanel(PanelRoute.Menu);
     setActiveStory(StoryRoute.Multiplayer);
-  }, [user?.id]);
+  }, [joinCode]);
 
   return (
     <Alert

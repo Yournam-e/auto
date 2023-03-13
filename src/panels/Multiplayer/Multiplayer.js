@@ -492,7 +492,7 @@ export const Multiplayer = ({ id }) => {
                 if (connectType === "join") {
                   setConnectType("host");
                   joinToYourRoom({ gameInfo, isFirstStart });
-                  leaveRoom(user.id);
+                  leaveRoom(joinCode);
                 } else {
                   startGame(joinCode, complexity, playersId);
                 }

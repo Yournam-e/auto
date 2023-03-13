@@ -29,6 +29,7 @@ import {
   setLvlResult,
   setTimeFinish,
 } from "../../core/main";
+import { useGameButtonDelay } from "../../hooks/useDebouncing";
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 
 const LvlGame = ({ id }) => {
@@ -99,7 +100,7 @@ const LvlGame = ({ id }) => {
   }
 
   useEffect(() => {
-    timeLeft === 0
+    timeLeft === 0 && (activePopout === null || activePopout === undefined)
       ? finishGame({ activePanel: PanelRoute.ResultLvl, activePopout })
       : console.log();
   }, [timeLeft, activePopout]);
@@ -111,7 +112,8 @@ const LvlGame = ({ id }) => {
     }, 1000);
     return () => clearInterval(interval);
   }, [isCounting]);
-  //код времени не мой кст :)
+
+  const { isLoading, setLoading } = useGameButtonDelay();
 
   return (
     <CustomPanel id={id}>
@@ -186,7 +188,7 @@ const LvlGame = ({ id }) => {
           {[0, 1, 2, 3].map((value, index) => {
             return (
               <Button
-                disabled={!!activePopout}
+                disabled={!!activePopout || timeLeft === 0 || isLoading}
                 stretched
                 size="l"
                 sizeY="regular"
@@ -199,6 +201,7 @@ const LvlGame = ({ id }) => {
                   color: appearance === "light" ? "#000" : "#F0F1F5",
                 }}
                 onClick={() => {
+                  setLoading(true);
                   //ExmpleGeneration(value, setCount, setAnswer, setEquation, equation, count)
                   if (first) {
                     createLvl();

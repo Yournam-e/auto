@@ -83,6 +83,7 @@ const App = () => {
     gameInfo,
     connectType,
     playerLobbyList,
+    joinCode,
   } = useStore($main);
   const { activePanel, activePopout, activeView, isRouteInit } = useRouter();
 
@@ -246,7 +247,7 @@ const App = () => {
         console.log("app hidden");
         if (connectType === "join" && user && user.id) {
           setConnectType("host");
-          leaveRoom(user.id);
+          leaveRoom(joinCode);
         }
       }
       if (e.detail.type === "VKWebAppViewRestore") {
