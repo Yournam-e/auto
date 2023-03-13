@@ -1,4 +1,9 @@
-import { back, setActivePanel, setActivePopout } from "@blumjs/router";
+import {
+  back,
+  setActivePanel,
+  setActivePopout,
+  useRouter,
+} from "@blumjs/router";
 import {
   Icon16Done,
   Icon24RefreshOutline,
@@ -31,6 +36,7 @@ import { decOfNum } from "../../../scripts/decOfNum";
 import "../Game.css";
 
 const ResultPage = ({ id }) => {
+  const { activePopot } = useRouter();
   const { user, appearance, answer } = useStore($main);
   const url = "https://showtime.app-dich.com/api/plus-plus/";
 
@@ -205,6 +211,7 @@ const ResultPage = ({ id }) => {
   } //в useEffect
 
   async function getFriendsAndCheck() {
+    setActivePopout(PopoutRoute.Loading);
     const promise = new Promise((resolve, reject) => {
       var params = window.location.search
         .replace("?", "")
@@ -219,7 +226,9 @@ const ResultPage = ({ id }) => {
         ? resolve(true)
         : resolve(true);
     });
-    promise.then((result) => result === true && getIds(result));
+    promise
+      .then((result) => result === true && getIds(result))
+      .finally(() => back());
   } //// получи друзей и чекай token'ы (при нажатии)
 
   useEffect(() => {
@@ -430,10 +439,7 @@ const ResultPage = ({ id }) => {
               <div className="result-task-button-div">
                 <Button
                   className="result-getFriend-button"
-                  onClick={() => {
-                    setActivePopout(PopoutRoute.Loading);
-                    getFriendsAndCheck();
-                  }}
+                  onClick={getFriendsAndCheck}
                   style={{
                     backgroundColor:
                       appearance === "dark" ? "#293950" : "#F4F9FF",
