@@ -370,7 +370,7 @@ export const Multiplayer = ({ id }) => {
             style={{
               marginTop: 16,
               marginBottom: 16,
-              height: 56 * 4,
+              height: 60 * 4,
               overflowY: "auto",
             }}
           >
