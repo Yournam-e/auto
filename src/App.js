@@ -34,7 +34,6 @@ import LobbyForGuest from "./panels/Multiplayer/LobbyForGuest/LobbyForGuest";
 import MultiplayerResult from "./panels/Multiplayer/mpResult/MultiplayerResult";
 import NotConnection from "./panels/NotConnection/NotConnection";
 import searchToObject from "./scripts/searchToObject";
-import { client } from "./sockets/receiver";
 
 import { useEventListener } from "./scripts/useEventListener";
 
@@ -59,16 +58,11 @@ import {
 } from "./constants/router";
 import {
   $main,
-  joinToYourRoom,
   setActiveStory,
-  setAnswersInfo,
   setAppearance,
   setConnectType,
   setGameInfo,
   setHaveHash,
-  setPlayerLobbyList,
-  setPlayersId,
-  setTaskInfo,
   setUser,
 } from "./core/main";
 import { ModalLayout } from "./layouts/modal/ModalLayout";
@@ -134,6 +128,10 @@ const App = () => {
         }
       })
     ),
+    createCatchBackBrowserRouteMiddleware(PopoutRoute.AlertError, () => {
+      setActiveViewPanel({ view: ViewRoute.Main, panel: PanelRoute.Menu });
+      _setActivePopout(null);
+    }),
     createDisableBackBrowserRouteMiddleware(PopoutRoute.Loading),
     createCatchBackBrowserRouteMiddleware(PanelRoute.Menu, (s) => {
       if (s.modal || s.popout) {
@@ -147,7 +145,7 @@ const App = () => {
         bridge.send("VKWebAppClose", { status: "success" });
       }
     }),
-    createRouteMiddleware((storeRoutes) => {
+    createRouteMiddleware(() => {
       if (!window.history.state || window.history.state.view === undefined) {
         setActiveViewPanel({ view: ViewRoute.Main, panel: PanelRoute.Menu });
         bridge.send("VKWebAppClose", { status: "success" });
@@ -168,21 +166,12 @@ const App = () => {
   );
 
   useEventListener("offline", () => {
+    if (connectType === "join") {
+      setConnectType("host");
+      leaveRoom(joinCode);
+    }
     setActivePanel(PanelRoute.NotConnection);
   });
-
-  client.joinedRoom = ({ users }) => {
-    users !== 0 ? setPlayerLobbyList(users) : console.log("");
-    const newArr = users.map((u) => u.userId);
-    setPlayersId(newArr);
-  };
-
-  client.gameStarted = ({ task, answers, id }) => {
-    setTaskInfo(task);
-    setAnswersInfo(answers);
-    setGameInfo({ ...gameInfo, taskId: id });
-    setActivePanel(PanelRoute.MultiplayerGame);
-  };
 
   useEffect(() => {
     console.log(window.location.hash, "cash");
@@ -255,7 +244,6 @@ const App = () => {
         setConnectType("host");
         const user = await bridge.send("VKWebAppGetUserInfo");
         setUser(user);
-        joinToYourRoom({ isFirstStart: true, gameInfo });
       }
     };
     bridge.subscribe(callback);

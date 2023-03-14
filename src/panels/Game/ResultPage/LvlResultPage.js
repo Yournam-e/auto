@@ -103,8 +103,9 @@ const LvlResultPage = ({ id }) => {
                       setReady(true);
                       resolve();
                     })
-
-                    .catch(function () {});
+                    .catch(function () {
+                      reject();
+                    });
                 } catch (e) {}
               }
 
@@ -119,7 +120,9 @@ const LvlResultPage = ({ id }) => {
           deleted();
         });
 
-        promise.then((result) => setActivePanel(PanelRoute.LvlGame));
+        promise
+          .then((result) => setActivePanel(PanelRoute.LvlGame))
+          .catch(() => setActivePopout(PopoutRoute.AlertError));
       })
       .catch(function (error) {
         console.warn(error);
@@ -167,7 +170,11 @@ const LvlResultPage = ({ id }) => {
           });
       })
       .catch(function (error) {
-        back();
+        back({
+          afterBackHandledCallback: () => {
+            setActivePopout(PopoutRoute.AlertError);
+          },
+        });
         console.warn(error);
       });
   }, []);
@@ -208,7 +215,11 @@ const LvlResultPage = ({ id }) => {
 
           <Title
             className="lvl-res-title-div"
-            style={{ color: appearance === "light" ? "" : "#fff" }}
+            style={{
+              color: appearance === "light" ? "" : "#fff",
+              width: 205,
+              textAlign: "center",
+            }}
           >
             {complete
               ? complete[0]
@@ -270,6 +281,7 @@ const LvlResultPage = ({ id }) => {
           <List className="all-task-list">
             {allTasks &&
               allTasks.map((item, idx) => {
+                console.log(item.id);
                 if (item.id) {
                   return (
                     <Cell
@@ -324,38 +336,36 @@ const LvlResultPage = ({ id }) => {
       >
         <ButtonGroup className="result-buttonGroup" mode="vertical" gap="m">
           <div className="result-buttonRetry-div">
-            {
-              <Button
-                disabled={isLoading}
-                size="l"
-                onClick={() => {
-                  async function deleteAndStart() {
-                    setFinishedTime(0);
-                    setAllTasks([{}]);
-                    playNext();
-                  }
-                  deleteAndStart();
-                }}
-                style={{
-                  backgroundColor: "#1A84FF",
-                  borderRadius: 100,
-                }}
-                className="result-buttonGroup-retry"
-                appearance="accent"
-                stretched
-                before={
-                  complete && lvlNumber !== 10 && complete[0] ? (
-                    <Icon20ArrowRightOutline />
-                  ) : (
-                    <Icon24RefreshOutline width={20} height={20} />
-                  )
+            <Button
+              disabled={isLoading}
+              size="l"
+              onClick={() => {
+                async function deleteAndStart() {
+                  setFinishedTime(0);
+                  setAllTasks([{}]);
+                  playNext();
                 }
-              >
-                {complete && lvlNumber !== 10 && complete[0]
-                  ? "Следующий уровень"
-                  : "Попробовать снова"}
-              </Button>
-            }
+                deleteAndStart();
+              }}
+              style={{
+                backgroundColor: "#1A84FF",
+                borderRadius: 100,
+              }}
+              className="result-buttonGroup-retry"
+              appearance="accent"
+              stretched
+              before={
+                complete && lvlNumber !== 10 && complete[0] ? (
+                  <Icon20ArrowRightOutline />
+                ) : (
+                  <Icon24RefreshOutline width={20} height={20} />
+                )
+              }
+            >
+              {complete && lvlNumber !== 10 && complete[0]
+                ? "Следующий уровень"
+                : "Попробовать снова"}
+            </Button>
           </div>
           <div className="result-buttonNotNow-div">
             <Button

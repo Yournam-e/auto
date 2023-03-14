@@ -17,8 +17,9 @@ export const UserCell = memo<Props>(({ name, avatar }) => {
         avatar ? (
           <Avatar className="user_avatar_connected" src={avatar} />
         ) : (
-          <div
+          <Avatar
             style={{
+              background: "transparent",
               borderColor: appearance === "light" ? "#E3E3E6" : "#38383B",
             }}
             className="noneUser"

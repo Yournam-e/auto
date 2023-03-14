@@ -1,3 +1,4 @@
+export * from "./alert-error";
 export * from "./alert-finish-game";
 export * from "./alert-game-exist";
 export * from "./alert-game-exit";

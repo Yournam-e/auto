@@ -66,12 +66,17 @@ const TemporaryGame = ({ id }) => {
         });
 
         setGameData(response.data.data);
+        back();
       })
       .catch(function (error) {
+        back({
+          afterBackHandledCallback: () => {
+            setActivePopout(PopoutRoute.AlertError);
+          },
+        });
         console.log("create err", error);
       })
       .finally(() => {
-        back();
         if (first) {
           setFirst(false);
           setIsCounting(true);

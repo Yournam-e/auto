@@ -35,6 +35,7 @@ import {
   setMpGameResults,
   setNotAdd,
   setNotUserRoom,
+  setOwnerId,
   setPanelsHistory,
   setPlatform,
   setPlayerLobbyList,
@@ -90,6 +91,7 @@ type Store = {
   itAgain: boolean;
   complexity: Complexity;
   bestLvlsResult: BestLvlResult[];
+  ownerId: number | null;
 };
 
 export const $main = createStore<Store>({
@@ -139,6 +141,7 @@ export const $main = createStore<Store>({
   itAgain: false,
   complexity: "easy",
   bestLvlsResult: [],
+  ownerId: null,
 })
   .on(setAppearance, (state, appearance) => ({
     ...state,
@@ -279,4 +282,8 @@ export const $main = createStore<Store>({
   .on(setBestLvlsResult, (state, bestLvlsResult) => ({
     ...state,
     bestLvlsResult,
+  }))
+  .on(setOwnerId, (state, ownerId) => ({
+    ...state,
+    ownerId,
   }));

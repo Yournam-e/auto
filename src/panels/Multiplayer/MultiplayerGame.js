@@ -67,7 +67,8 @@ export const MultiplayerGame = ({ id }) => {
       setAnswersInfo(answers);
       setTaskInfo(task);
     } catch (e) {
-      console.log("next task err");
+      setActivePopout(PopoutRoute.AlertError);
+      console.log("next task err", e);
     } finally {
       if (
         activePopout === PopoutRoute.Loading &&

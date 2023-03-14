@@ -33,6 +33,7 @@ export enum PopoutRoute {
   AlertShareGame = "AlertShareGame",
   AlertFinishGame = "AlertFinishGame",
   AlertLobbyExit = "AlertLobbyExit",
+  AlertError = "AlertError",
 }
 
 export enum StoryRoute {

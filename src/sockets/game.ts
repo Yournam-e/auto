@@ -17,9 +17,9 @@ export const connectRoom = (query: string, roomId: string) => {
     transports: ["polling"],
   });
 
+  initCallbacks(socket);
   socket.on("connect", () => {
     console.debug("ws connected");
-    initCallbacks(socket);
     connected = true;
 
     joinRoom(roomId);

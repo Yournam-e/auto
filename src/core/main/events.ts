@@ -52,3 +52,4 @@ export const setAgain = createEvent<boolean>();
 export const setNotUserRoom = createEvent<boolean>();
 export const setComplexity = createEvent<Complexity>();
 export const setBestLvlsResult = createEvent<BestLvlResult[]>();
+export const setOwnerId = createEvent<number>();

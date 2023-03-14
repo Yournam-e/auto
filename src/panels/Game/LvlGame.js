@@ -86,12 +86,17 @@ const LvlGame = ({ id }) => {
           lvlType: devideType(),
           answers: [],
         });
+        back();
       })
       .catch(function (error) {
+        back({
+          afterBackHandledCallback: () => {
+            setActivePopout(PopoutRoute.AlertError);
+          },
+        });
         console.log("create err", error);
       })
       .finally(() => {
-        back();
         if (first) {
           setFirst(false);
           setIsCounting(true);

@@ -29,6 +29,7 @@ import {
   setActivePopout,
   useRouter,
 } from "@blumjs/router";
+import { isArray } from "@vkontakte/vkjs";
 import axios from "axios";
 import { useStore } from "effector-react";
 import { UserCell } from "../../atoms/UserCell";
@@ -46,6 +47,7 @@ import {
   setJoinCode,
   setLeavingRoom,
   setNotUserRoom,
+  setOwnerId,
   setPlayerLobbyList,
   setPlayersId,
   setTaskInfo,
@@ -78,41 +80,70 @@ export const Multiplayer = ({ id }) => {
     leavingRoom,
     notUserRoom,
     complexity,
+    ownerId,
   } = useStore($main);
   const { activePanel } = useRouter();
   const thisUserId = useUserId();
 
-  client.leftRoom = ({ userId }) => {
-    console.log("fired left room");
-    if (userId && activePanel === PanelRoute.Menu) {
-      setPlayerLobbyList((pLL) => pLL.filter((item) => item.userId !== userId));
-      setPlayersId((p) => p.filter((n) => n !== userId));
-    }
-  };
-
-  client.gameStarted = ({ answers, task, id }) => {
-    console.log("fired game started");
-    setTaskInfo(task);
-    setAnswersInfo(answers);
-    setGameInfo({ ...gameInfo, taskId: id });
-    setNotUserRoom(false);
-    setActivePanel(PanelRoute.MultiplayerGame);
-  };
-
-  client.roomCreated = ({ roomId }) => {
-    console.log(roomId, "created");
-    joinRoom(roomId);
-    setJoinCode(roomId);
-    setNotUserRoom(false);
-    back();
-  };
+  useEffect(() => {
+    client.leftRoom = ({ userId }) => {
+      console.log("fired left room", userId);
+      if (
+        userId !== thisUserId &&
+        isArray(playerLobbyList) &&
+        playersId &&
+        activePanel === PanelRoute.Menu
+      ) {
+        setPlayerLobbyList(
+          playerLobbyList.filter((item) => item.userId !== userId)
+        );
+        setPlayersId(playersId.filter((n) => n !== userId));
+      }
+    };
+    client.gameStarted = ({ answers, task, id }) => {
+      console.log("fired game started");
+      setTaskInfo(task);
+      setAnswersInfo(answers);
+      setGameInfo({ ...gameInfo, taskId: id });
+      setNotUserRoom(false);
+      setActivePanel(PanelRoute.MultiplayerGame);
+    };
+    client.roomCreated = ({ roomId }) => {
+      console.log(roomId, "created");
+      joinRoom(roomId);
+      setJoinCode(roomId);
+      setNotUserRoom(false);
+      back();
+    };
+    client.joinedRoom = ({ users }) => {
+      console.log("joined room", users);
+      if (users !== 0) {
+        setPlayerLobbyList(users);
+        setPlayersId(users.map((u) => u.userId));
+      }
+    };
+    client.gameStarted = ({ answers, task, id }) => {
+      setTaskInfo(task);
+      setAnswersInfo(answers);
+      setGameInfo({ taskId: id, roomId: joinCode });
+      setActivePanel(PanelRoute.MultiplayerGame);
+    };
+    return () => {
+      client.leftRoom = () => {};
+      client.gameStarted = () => {};
+      client.roomCreated = () => {};
+      client.joinedRoom = () => {};
+      client.gameStarted = () => {};
+    };
+  }, [activePanel, playerLobbyList, playersId, gameInfo, joinCode]);
 
   useEffect(() => {
     axios
       .get(`https://showtime.app-dich.com/api/plus-plus/user-games${qsSign}`)
       .then(async function (response) {
         console.log(response.data.data[0], "user-games", window.location.hash);
-        if (response.data.data[0].ownerId === useUserId) {
+        setOwnerId(response.data.data[0].ownerId);
+        if (response.data.data[0].ownerId === thisUserId) {
           if (response.data.data[0].started) {
             browserBack();
             setGameExists(true);
@@ -133,7 +164,6 @@ export const Multiplayer = ({ id }) => {
       axios
         .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
         .then(async (response) => {
-          console.log(response);
           setJoinCode(response.data.data);
 
           setGameInfo({ ...gameInfo, roomId: response.data.data });
@@ -162,18 +192,15 @@ export const Multiplayer = ({ id }) => {
     }
   }, []);
 
-  client.gameStarted = ({ answers, task, id }) => {
-    setTaskInfo(task);
-    setAnswersInfo(answers);
-    setGameInfo({ taskId: id, roomId: joinCode });
-    setActivePanel(PanelRoute.MultiplayerGame);
-  };
-
   useEffect(() => {
-    if (connectType === "join" && playerLobbyList.length === 1 && notUserRoom) {
+    if (
+      connectType === "join" &&
+      isArray(playerLobbyList) &&
+      !playerLobbyList.some((p) => p.userId === ownerId)
+    ) {
       setActivePopout(PopoutRoute.AlertLobbyNotExist);
     }
-  }, [playerLobbyList.length, connectType, notUserRoom]);
+  }, [playerLobbyList.length, ownerId, connectType, notUserRoom]);
 
   const [isCodeCopied, setCodeCopied] = useState(false);
   useTimeout(
@@ -243,11 +270,6 @@ export const Multiplayer = ({ id }) => {
                   setActivePopout(PopoutRoute.Loading);
                   createRoom(joinCode);
                   setJoinCode(null);
-
-                  setPlayerLobbyList((pLL) =>
-                    pLL.filter((item) => item.userId === user.id)
-                  );
-                  setPlayersId((p) => p.filter((n) => n === user.id));
                 }}
                 style={{
                   display: "inline-block",
@@ -343,34 +365,26 @@ export const Multiplayer = ({ id }) => {
           )}
         </div>
 
-        {user && connectType === "host" ? (
-          <List style={{ marginTop: 16, marginBottom: 16 }}>
-            <UserCell
-              name={`${user.first_name} ${user.last_name}`}
-              avatar={user.photo_200}
-            />
-            {[0, 1, 2, 3]
-              .filter(
-                (i) =>
-                  !playerLobbyList[i] ||
-                  (playerLobbyList[i] && playerLobbyList[i].userId != user.id)
-              )
-              .slice(0, 3)
-              .map((i) => (
-                <UserCell
-                  name={
-                    playerLobbyList[i] ? playerLobbyList[i].name : undefined
-                  }
-                  avatar={
-                    playerLobbyList[i] ? playerLobbyList[i].avatar : undefined
-                  }
-                  key={i}
-                />
-              ))}
-          </List>
-        ) : (
-          <List>
-            {[0, 1, 2, 3].map((i) => (
+        {user && (
+          <List
+            style={{
+              marginTop: 16,
+              marginBottom: 16,
+              height: 56 * 4,
+              overflowY: "auto",
+            }}
+          >
+            {[
+              0,
+              1,
+              2,
+              3,
+              ...new Array(
+                playerLobbyList && playerLobbyList.length > 4
+                  ? playerLobbyList.length - 4
+                  : 0
+              ).fill(0),
+            ].map((_, i) => (
               <UserCell
                 name={playerLobbyList[i] ? playerLobbyList[i].name : undefined}
                 avatar={

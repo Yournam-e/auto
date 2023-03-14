@@ -249,7 +249,9 @@ const ResultPage = ({ id }) => {
             }
           }
         })
-        .catch(function (error) {});
+        .catch(function (error) {
+          setActivePopout(PopoutRoute.AlertError);
+        });
     }
   }, [friendsIds]);
 
@@ -279,6 +281,7 @@ const ResultPage = ({ id }) => {
       })
       .catch(function (error) {
         setRight(false);
+        setActivePopout(PopoutRoute.AlertError);
       });
   }, []);
 

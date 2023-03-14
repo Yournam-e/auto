@@ -3,6 +3,7 @@ import { memo, useEffect, useState } from "react";
 import { PopoutRoute } from "../../constants/router";
 import "./PopoutLayout.css";
 import {
+  AlertError,
   AlertFinishGamePopout,
   AlertGameExistPopout,
   AlertGameExitPopout,
@@ -39,4 +40,5 @@ const popouts = {
   [PopoutRoute.AlertShareGame]: <AlertShareGamePopout />,
   [PopoutRoute.AlertFinishGame]: <AlertFinishGamePopout />,
   [PopoutRoute.AlertLobbyExit]: <AlertLobbyExitPopout />,
+  [PopoutRoute.AlertError]: <AlertError />,
 };
