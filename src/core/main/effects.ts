@@ -78,9 +78,10 @@ export const loadBestLvlsResult = createEffect(() => {
 });
 
 export const finishGame = createEffect<
-  { activePopout: PopoutRoute; activePanel: PanelRoute },
+  { activePopout?: PopoutRoute | null; activePanel: PanelRoute },
   void
 >(({ activePanel, activePopout }) => {
+  console.log("finishing lvl");
   setTimeFinish(Date.now());
   if (activePopout === PopoutRoute.AlertFinishGame) {
     back({

@@ -7,6 +7,7 @@ import {
   Complexity,
   ConnectType,
   GameInfo,
+  MultiplayerGameResult,
 } from "../../types";
 import {
   setActiveStory,
@@ -58,7 +59,7 @@ type Store = {
   taskInfo: any;
   answersInfo: any;
   joinCode: null | string;
-  mpGameResults: any[];
+  mpGameResults: MultiplayerGameResult | null;
   playersId: number[];
   isFirstStart: boolean;
   playerLobbyList: any[];
@@ -108,7 +109,7 @@ export const $main = createStore<Store>({
   taskInfo: null,
   answersInfo: null,
   joinCode: null,
-  mpGameResults: [],
+  mpGameResults: null,
   playersId: [],
   isFirstStart: true,
   playerLobbyList: [],

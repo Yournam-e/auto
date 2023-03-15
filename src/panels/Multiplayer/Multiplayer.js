@@ -46,6 +46,7 @@ import {
   setGameInfo,
   setJoinCode,
   setLeavingRoom,
+  setMpGameResults,
   setNotUserRoom,
   setOwnerId,
   setPlayerLobbyList,
@@ -82,7 +83,7 @@ export const Multiplayer = ({ id }) => {
     complexity,
     ownerId,
   } = useStore($main);
-  const { activePanel } = useRouter();
+  const { activePanel, activePopout } = useRouter();
   const thisUserId = useUserId();
 
   useEffect(() => {
@@ -126,6 +127,7 @@ export const Multiplayer = ({ id }) => {
       setTaskInfo(task);
       setAnswersInfo(answers);
       setGameInfo({ taskId: id, roomId: joinCode });
+      setMpGameResults(null);
       setActivePanel(PanelRoute.MultiplayerGame);
     };
     return () => {
@@ -196,7 +198,8 @@ export const Multiplayer = ({ id }) => {
     if (
       connectType === "join" &&
       isArray(playerLobbyList) &&
-      !playerLobbyList.some((p) => p.userId === ownerId)
+      !playerLobbyList.some((p) => p.userId === ownerId) &&
+      activePopout !== PopoutRoute.AlertLobbyNotExist
     ) {
       setActivePopout(PopoutRoute.AlertLobbyNotExist);
     }

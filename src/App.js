@@ -162,8 +162,15 @@ const App = () => {
       _setActivePopout(null);
       bridge.send("VKWebAppClose", { status: "success" });
       return false;
+    }),
+    createRouteMiddleware((s, p) => {
+      console.log(window.history.state, "routes!!!");
+      return true;
     })
   );
+  useEffect(() => {
+    console.log(activeView, activePanel, activePopout, "routes!");
+  }, [activePanel, activeView, activePopout]);
 
   useEventListener("offline", () => {
     if (connectType === "join") {
@@ -178,40 +185,41 @@ const App = () => {
     const img = new Image();
     img.src = Eyes;
 
-    async function fetchData() {
-      const user = await bridge.send("VKWebAppGetUserInfo");
-      setUser(user);
-      setGameInfo({ ...gameInfo, userId: user.id });
-    }
-    fetchData();
+    if (isRouteInit) {
+      async function fetchData() {
+        const user = await bridge.send("VKWebAppGetUserInfo");
+        setUser(user);
+        setGameInfo({ ...gameInfo, userId: user.id });
+      }
+      fetchData();
 
-    if (searchToObject().vk_ref === "im_attach_picker") {
-      setActivePanel(PanelRoute.Menu);
-      setActiveStory(StoryRoute.Multiplayer);
-    } else if (
-      searchToObject().vk_ref === "im_app_action" &&
-      window.location.hash
-    ) {
-      setGameInfo({
-        ...gameInfo,
-        roomId: window.location.hash.slice(1),
-      });
-      setHaveHash(true);
-      setConnectType("join");
-      setActivePanel(PanelRoute.Menu);
-      setActiveStory(StoryRoute.Multiplayer);
-    } else if (!window.location.hash || window.location.hash === "#") {
-      setHaveHash(null);
-    } else {
-      setGameInfo({
-        ...gameInfo,
-        roomId: window.location.hash.slice(1),
-      });
-      setHaveHash(true);
-      setConnectType("join");
-      setActiveStory(StoryRoute.Multiplayer);
+      if (searchToObject().vk_ref === "im_attach_picker") {
+        setActivePanel(PanelRoute.Menu);
+        setActiveStory(StoryRoute.Multiplayer);
+      } else if (
+        searchToObject().vk_ref === "im_app_action" &&
+        window.location.hash
+      ) {
+        setGameInfo({
+          ...gameInfo,
+          roomId: window.location.hash.slice(1),
+        });
+        setHaveHash(true);
+        setConnectType("join");
+        setActiveStory(StoryRoute.Multiplayer);
+      } else if (!window.location.hash || window.location.hash === "#") {
+        setHaveHash(null);
+      } else {
+        setGameInfo({
+          ...gameInfo,
+          roomId: window.location.hash.slice(1),
+        });
+        setHaveHash(true);
+        setConnectType("join");
+        setActiveStory(StoryRoute.Multiplayer);
+      }
     }
-  }, []);
+  }, [isRouteInit]);
 
   useEffect(() => {
     const callback = async (e) => {

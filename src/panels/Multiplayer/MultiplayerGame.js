@@ -8,31 +8,27 @@ import { getPadTime } from "../../scripts/getPadTime";
 import { answerTask } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
 
-import {
-  back,
-  setActivePopout,
-  useRouter,
-  _setActivePopout,
-} from "@blumjs/router";
+import { back, setActivePopout, useRouter } from "@blumjs/router";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../atoms/CustomPanel";
 import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
 import {
   $main,
-  finishGame,
   setAnswersInfo,
   setGameInfo,
   setMpGameResults,
   setTaskInfo,
 } from "../../core/main";
 import { useGameButtonDelay } from "../../hooks/useDebouncing";
+import { useGameFinish } from "../../hooks/useGameFinish";
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 import { ReactComponent as ClockIcon } from "../../img/Сlock.svg";
 
 export const MultiplayerGame = ({ id }) => {
   const { activePanel, activePopout } = useRouter();
-  const { gameInfo, taskInfo, answersInfo, appearance } = useStore($main);
+  const { gameInfo, taskInfo, answersInfo, appearance, mpGameResults } =
+    useStore($main);
 
   const [timeLeft, setTimeLeft] = useState(30); //время
   const [isCounting, setIsCounting] = useState(true); //время
@@ -41,17 +37,7 @@ export const MultiplayerGame = ({ id }) => {
 
   const seconds = getPadTime(timeLeft - minutes * 60); //секунды
 
-  client.gameFinished = ({ game }) => {
-    console.log("game finished", game);
-    setGameInfo(null);
-    setMpGameResults(game);
-  };
-
-  useEffect(() => {
-    timeLeft === 0 && (activePopout === undefined || activePopout === null)
-      ? finishGame({ activePopout, activePanel: PanelRoute.MultiplayerResult })
-      : console.log();
-  }, [timeLeft, activePopout]);
+  useGameFinish(timeLeft, PanelRoute.MultiplayerResult, !!mpGameResults);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,25 +47,35 @@ export const MultiplayerGame = ({ id }) => {
     return () => clearInterval(interval);
   }, [isCounting]);
 
-  client.nextTask = ({ answers, task, id }) => {
-    try {
-      setGameInfo({ ...gameInfo, taskId: id });
-      setAnswersInfo(answers);
-      setTaskInfo(task);
-    } catch (e) {
-      setActivePopout(PopoutRoute.AlertError);
-      console.log("next task err", e);
-    } finally {
-      if (
-        activePopout === PopoutRoute.Loading &&
-        activePanel === PanelRoute.MultiplayerGame
-      ) {
-        back();
-      } else if (activePopout === PopoutRoute.Loading) {
-        _setActivePopout(null);
+  useEffect(() => {
+    client.gameFinished = ({ game }) => {
+      console.log("game finished", game);
+      setGameInfo(null);
+      setMpGameResults(game);
+    };
+    client.nextTask = ({ answers, task, id }) => {
+      try {
+        setGameInfo({ ...gameInfo, taskId: id });
+        setAnswersInfo(answers);
+        setTaskInfo(task);
+      } catch (e) {
+        setIsCounting(false);
+        setActivePopout(PopoutRoute.AlertError);
+        console.log("next task err", e);
+      } finally {
+        if (
+          activePopout === PopoutRoute.Loading &&
+          activePanel === PanelRoute.MultiplayerGame
+        ) {
+          back();
+        }
       }
-    }
-  };
+    };
+    return () => {
+      client.gameFinished = () => {};
+      client.nextTask = () => {};
+    };
+  }, [activePanel, activePopout, gameInfo]);
 
   const { isLoading, setLoading } = useGameButtonDelay();
 

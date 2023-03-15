@@ -13,3 +13,11 @@ export type BestLvlResult = {
   };
   best: number;
 };
+export type MultiplayerGameResult = {
+  difficulty: string | null;
+  players: {
+    userId: number;
+    rightResults: number;
+    totalResults: number;
+  }[];
+};

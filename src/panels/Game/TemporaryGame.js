@@ -16,8 +16,9 @@ import { useStore } from "effector-react";
 import { CustomPanel } from "../../atoms/CustomPanel";
 import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
-import { $main, finishGame, setAnswer } from "../../core/main";
+import { $main, setAnswer } from "../../core/main";
 import { useGameButtonDelay } from "../../hooks/useDebouncing";
+import { useGameFinish } from "../../hooks/useGameFinish";
 import "../../img/Fonts.css";
 
 const TemporaryGame = ({ id }) => {
@@ -36,14 +37,7 @@ const TemporaryGame = ({ id }) => {
 
   const seconds = getPadTime(timeLeft - minutes * 60); //секунды
 
-  useEffect(() => {
-    if (
-      timeLeft === 0 &&
-      (activePopout === null || activePopout === undefined)
-    ) {
-      finishGame({ activePopout, activePanel: PanelRoute.Result });
-    }
-  }, [timeLeft, activePopout]);
+  useGameFinish(timeLeft, PanelRoute.Result);
 
   useEffect(() => {
     setInterval(() => {
@@ -71,6 +65,7 @@ const TemporaryGame = ({ id }) => {
       .catch(function (error) {
         back({
           afterBackHandledCallback: () => {
+            setIsCounting(false);
             setActivePopout(PopoutRoute.AlertError);
           },
         });

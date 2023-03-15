@@ -1,3 +1,4 @@
+import { MultiplayerGameResult } from "../types";
 import { clientPerformCallback } from "./callbacks";
 
 export const client = clientPerformCallback((m) => ({
@@ -12,18 +13,7 @@ export const client = clientPerformCallback((m) => ({
   roomCreated: m<(data: { roomId: string }) => void>(),
   nextTask:
     m<(data: { task: (string | number)[]; answers: number[] }) => void>(),
-  gameFinished: m<
-    (data: {
-      game: {
-        difficulty: string | null;
-        players: {
-          userId: number;
-          rightResults: number;
-          totalResults: number;
-        }[];
-      } | null;
-    }) => void
-  >(),
+  gameFinished: m<(data: { game: MultiplayerGameResult | null }) => void>(),
   lvlFinished:
     m<(data: { lvlId: string; userId: number; id: string }) => void>(),
   joinedRoom: m<

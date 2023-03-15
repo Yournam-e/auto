@@ -74,7 +74,7 @@ const MultiplayerResult = ({ id }) => {
     if (newA.length === 0 && playerLobbyList && playerLobbyList !== null) {
       setNewA(playerLobbyList);
     }
-  }, [playerLobbyList]);
+  }, [playerLobbyList, newA.length]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -109,8 +109,6 @@ const MultiplayerResult = ({ id }) => {
     if (friendList) {
       devideArray();
     }
-
-    console.log(friendList);
   }, [friendList]);
 
   function countPosition(rights, index) {

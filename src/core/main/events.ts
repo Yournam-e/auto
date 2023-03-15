@@ -7,6 +7,7 @@ import {
   Complexity,
   ConnectType,
   GameInfo,
+  MultiplayerGameResult,
 } from "../../types";
 
 export const setAppearance = createEvent<Appearance>();
@@ -18,7 +19,7 @@ export const setGameInfo = createEvent<GameInfo>();
 export const setTaskInfo = createEvent<any>();
 export const setAnswersInfo = createEvent<any>();
 export const setJoinCode = createEvent<null | string>();
-export const setMpGameResults = createEvent<any[]>();
+export const setMpGameResults = createEvent<MultiplayerGameResult | null>();
 export const setPlayersId = createEvent<number[]>();
 export const setFirstStart = createEvent<boolean>();
 export const setPlayerLobbyList = createEvent<any[]>();

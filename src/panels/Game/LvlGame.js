@@ -24,12 +24,12 @@ import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
 import {
   $main,
-  finishGame,
   setAllTasks,
   setLvlResult,
   setTimeFinish,
 } from "../../core/main";
 import { useGameButtonDelay } from "../../hooks/useDebouncing";
+import { useGameFinish } from "../../hooks/useGameFinish";
 import { ReactComponent as RedClockIcon } from "../../img/ClockRed.svg";
 
 const LvlGame = ({ id }) => {
@@ -91,6 +91,7 @@ const LvlGame = ({ id }) => {
       .catch(function (error) {
         back({
           afterBackHandledCallback: () => {
+            setIsCounting(false);
             setActivePopout(PopoutRoute.AlertError);
           },
         });
@@ -104,11 +105,7 @@ const LvlGame = ({ id }) => {
       });
   }
 
-  useEffect(() => {
-    timeLeft === 0 && (activePopout === null || activePopout === undefined)
-      ? finishGame({ activePanel: PanelRoute.ResultLvl, activePopout })
-      : console.log();
-  }, [timeLeft, activePopout]);
+  useGameFinish(timeLeft, PanelRoute.ResultLvl);
 
   useEffect(() => {
     const interval = setInterval(() => {

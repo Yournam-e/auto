@@ -9,15 +9,8 @@ import { leaveRoom } from "../../../../sockets/game";
 
 export const AlertLobbyNotExist = memo(() => {
   const { joinCode, gameInfo, isFirstStart } = useStore($main);
-  const handleActionCreate = useCallback(() => {
-    if (joinCode) {
-      leaveRoom(joinCode);
-    }
-  }, [joinCode]);
-  const handleActionMenu = useCallback(() => {
-    setActiveStory(StoryRoute.Single);
-  }, []);
   const handleClose = useCallback(() => {
+    console.log("close fired routes");
     setConnectType("host");
     joinToYourRoom({ gameInfo, isFirstStart });
     if (joinCode) {
@@ -25,6 +18,13 @@ export const AlertLobbyNotExist = memo(() => {
     }
     back();
   }, [joinCode, gameInfo, isFirstStart]);
+  const handleActionCreate = useCallback(() => {
+    handleClose();
+  }, [handleClose]);
+  const handleActionMenu = useCallback(() => {
+    handleClose();
+    setActiveStory(StoryRoute.Single);
+  }, [handleClose]);
 
   return (
     <Alert
@@ -32,13 +32,11 @@ export const AlertLobbyNotExist = memo(() => {
         {
           title: "Создать",
           mode: "destructive",
-          autoclose: true,
           action: handleActionCreate,
         },
         {
           title: "В меню",
           mode: "cancel",
-          autoclose: true,
           action: handleActionMenu,
         },
       ]}
