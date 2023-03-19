@@ -2,7 +2,7 @@ import {
   back,
   setActivePanel,
   setActivePopout,
-  useRouter,
+  useRouter
 } from "@blumjs/router";
 import {
   Icon16Done,
@@ -10,7 +10,7 @@ import {
   Icon24StoryOutline,
   Icon56CancelCircleOutline,
   Icon56CheckCircleOutline,
-  Icon56RecentOutline,
+  Icon56RecentOutline
 } from "@vkontakte/icons";
 import bridge from "@vkontakte/vk-bridge";
 import {
@@ -21,14 +21,14 @@ import {
   Div,
   List,
   Text,
-  Title,
+  Title
 } from "@vkontakte/vkui";
-import axios from "axios";
 import { createCanvas } from "canvas";
 import { useStore } from "effector-react";
 import { useCallback, useEffect, useState } from "react";
 import { CustomPanel } from "../../../atoms/CustomPanel";
 import { PanelRoute, PopoutRoute } from "../../../constants/router";
+import { AX } from "../../../core/data/fetcher";
 import { $main, checkToDelete } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
 import { useResultButtonDelay } from "../../../hooks/useDebouncing";
@@ -39,7 +39,7 @@ import "../Game.css";
 const ResultPage = ({ id }) => {
   const { activePopot } = useRouter();
   const { user, appearance, answer } = useStore($main);
-  const url = "https://showtime.app-dich.com/api/plus-plus/";
+  const url = "/api/plus-plus/";
 
   const [lvlsInfo, setLvlsInfo] = useState(null);
 
@@ -94,11 +94,11 @@ const ResultPage = ({ id }) => {
         window.location.search.length > 0 &&
         JSON.parse(
           '{"' +
-            decodeURI(window.location.search.substring(1))
-              .replace(/"/g, '\\"')
-              .replace(/&/g, '","')
-              .replace(/=/g, '":"') +
-            '"}'
+          decodeURI(window.location.search.substring(1))
+            .replace(/"/g, '\\"')
+            .replace(/&/g, '","')
+            .replace(/=/g, '":"') +
+          '"}'
         )
       );
     }
@@ -187,10 +187,10 @@ const ResultPage = ({ id }) => {
                   setTokenAvailability(true);
                 }
               })
-              .catch((error) => {});
+              .catch((error) => { });
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   } ///получи id друзей
 
@@ -234,9 +234,9 @@ const ResultPage = ({ id }) => {
 
   useEffect(() => {
     if (friendsIds) {
-      axios
+      AX
         .post(
-          `https://showtime.app-dich.com/api/plus-plus/rating/friends${qsSign}`,
+          `/api/plus-plus/rating/friends${qsSign}`,
           {
             ids: friendsIds.items,
           }
@@ -258,14 +258,14 @@ const ResultPage = ({ id }) => {
   useEffect(() => {
     сheckFriends();
 
-    axios
-      .put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
+    AX
+      .put(`/api/plus-plus/lvl${qsSign}`, {
         id: answer.id,
         lvlType: answer.lvlType,
         answers: answer.answers,
       })
       .then(async function (response) {
-        axios
+        AX
           .get(`${url}info${qsSign}`) //получил инфу о лвлах
           .then(async function (res) {
             await setLvlsInfo(res.data.data);
@@ -320,8 +320,8 @@ const ResultPage = ({ id }) => {
               {right === null
                 ? "Ждем..."
                 : right === false
-                ? "Произошла ошибка"
-                : `${decOfNum(right, ["балл", "балла", "баллов"])}`}
+                  ? "Произошла ошибка"
+                  : `${decOfNum(right, ["балл", "балла", "баллов"])}`}
             </Title>
           }
         </div>

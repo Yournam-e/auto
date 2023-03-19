@@ -1,10 +1,10 @@
 import { back, setActivePanel } from "@blumjs/router";
-import axios from "axios";
 import { createEffect } from "effector";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
 import { qsSign } from "../../hooks/qs-sign";
 import { connectRoom, joinRoom } from "../../sockets/game";
 import { BestLvlResult, GameInfo } from "../../types";
+import { AX } from "../data/fetcher";
 import {
   setBestLvlsResult,
   setFirstStart,
@@ -21,8 +21,7 @@ type JoinToYourRoom = {
 };
 export const joinToYourRoom = createEffect<JoinToYourRoom, void>(
   ({ gameInfo, isFirstStart }) => {
-    axios
-      .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
+    AX.post(`/api/plus-plus/room${qsSign}`)
       .then(async function (response) {
         setJoinCode(response.data.data);
 
@@ -49,10 +48,7 @@ export const checkToDelete = createEffect<any, void>((lvlsInfo) => {
     console.log("lvlsInfo check to delete start", lvlsInfo);
     lvlsInfo.map((item: any) => {
       if (item.lvlType === "single30") {
-        axios
-          .delete(
-            `https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`
-          )
+        AX.delete(`/api/plus-plus/lvl/${item.id}${qsSign}`)
           .then(async function (response) {
             console.log("check to delete ok", response);
           })
@@ -65,10 +61,7 @@ export const checkToDelete = createEffect<any, void>((lvlsInfo) => {
 });
 
 export const loadBestLvlsResult = createEffect(() => {
-  axios
-    .get<{ data: BestLvlResult[] }>(
-      `https://showtime.app-dich.com/api/plus-plus/best${qsSign}`
-    )
+  AX.get<{ data: BestLvlResult[] }>(`/api/plus-plus/best${qsSign}`)
     .then((res) => {
       setBestLvlsResult(res.data.data);
     })

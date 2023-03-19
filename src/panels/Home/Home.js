@@ -4,7 +4,6 @@ import { CardGrid, Panel, PanelHeader } from "@vkontakte/vkui";
 
 import "./Home.css";
 
-import axios from "axios";
 import { useStore } from "effector-react";
 import { qsSign } from "../../hooks/qs-sign";
 import { LevelCard } from "./components/LevelCard";
@@ -12,13 +11,14 @@ import { LongCard } from "./components/LongCard";
 
 import { setActivePopout } from "@blumjs/router";
 import { PopoutRoute } from "../../constants/router";
+import { AX } from "../../core/data/fetcher";
 import { $main, loadBestLvlsResult, setLvlsInfo } from "../../core/main";
 import "../../img/Fonts.css";
 
 export const Home = ({ id }) => {
   const { gameExists } = useStore($main);
 
-  const url = "https://showtime.app-dich.com/api/plus-plus/";
+  const url = "/api/plus-plus/";
 
   const [completeLvls, setCompleteLvls] = useState([
     { id: "one", complete: false, needComplete: 8 },
@@ -85,7 +85,7 @@ export const Home = ({ id }) => {
 
   useEffect(() => {
     document.body.classList.add("body-dark");
-    axios
+    AX
       .get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
         setLvlsInfo(response.data.data);

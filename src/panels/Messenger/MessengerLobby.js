@@ -10,7 +10,7 @@ import {
   Panel,
   PanelHeader,
   Separator,
-  Title,
+  Title
 } from "@vkontakte/vkui";
 
 import {
@@ -18,7 +18,7 @@ import {
   Icon20QrCodeOutline,
   Icon20Sync,
   Icon24Play,
-  Icon28ArrowUturnLeftOutline,
+  Icon28ArrowUturnLeftOutline
 } from "@vkontakte/icons";
 import "./../Multiplayer/Multiplayer.css";
 
@@ -27,16 +27,16 @@ import bridge from "@vkontakte/vk-bridge";
 import {
   setActiveModal,
   setActivePanel,
-  setActivePopout,
+  setActivePopout
 } from "@blumjs/router";
-import axios from "axios";
 import { useStore } from "effector-react";
 import {
   ModalRoute,
   PanelRoute,
   PopoutRoute,
-  StoryRoute,
+  StoryRoute
 } from "../../constants/router";
+import { AX } from "../../core/data/fetcher";
 import {
   $main,
   joinToYourRoom,
@@ -48,7 +48,7 @@ import {
   setGameInfo,
   setJoinCode,
   setNotUserRoom,
-  setTaskInfo,
+  setTaskInfo
 } from "../../core/main";
 import { qsSign } from "../../hooks/qs-sign";
 import { useUserId } from "../../hooks/useUserId";
@@ -57,7 +57,7 @@ import {
   createRoom,
   joinRoom,
   leaveRoom,
-  startGame,
+  startGame
 } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
 
@@ -100,8 +100,8 @@ const MessengerLobby = ({ id }) => {
   useEffect(() => {
     console.log(window.location.href);
 
-    axios
-      .get(`https://showtime.app-dich.com/api/plus-plus/user-games${qsSign}`)
+    AX
+      .get(`/api/plus-plus/user-games${qsSign}`)
       .then(async function (response) {
         console.log(response.data.data[0]);
         console.log(response.data.data[0].roomId);
@@ -130,8 +130,8 @@ const MessengerLobby = ({ id }) => {
     }
 
     if (haveHash) {
-      axios
-        .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
+      AX
+        .post(`/api/plus-plus/room${qsSign}`)
         .then(async function (response) {
           setJoinCode(response.data.data);
 
@@ -148,7 +148,7 @@ const MessengerLobby = ({ id }) => {
 
           setFirstStart(false);
         })
-        .catch(function (error) {});
+        .catch(function (error) { });
     } else if (itAgain) {
       setGameInfo({ ...gameInfo, roomId: joinCode });
     } else {
@@ -217,7 +217,7 @@ const MessengerLobby = ({ id }) => {
                     .then(() => {
                       alert(`Copied!`);
                     })
-                    .catch((error) => {});
+                    .catch((error) => { });
                 }
               }}
             >
@@ -363,8 +363,8 @@ const MessengerLobby = ({ id }) => {
                   index === 0
                     ? true
                     : false || playerLobbyList[index]
-                    ? false
-                    : true
+                      ? false
+                      : true
                 }
               >
                 {playerLobbyList[index] ? (

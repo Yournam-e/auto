@@ -8,7 +8,7 @@ import {
   Panel,
   PanelHeader,
   Separator,
-  Title,
+  Title
 } from "@vkontakte/vkui";
 
 import {
@@ -16,7 +16,7 @@ import {
   Icon20QrCodeOutline,
   Icon20Sync,
   Icon24Play,
-  Icon28ArrowUturnLeftOutline,
+  Icon28ArrowUturnLeftOutline
 } from "@vkontakte/icons";
 import "./../Multiplayer/Multiplayer.css";
 
@@ -27,13 +27,13 @@ import {
   setActiveModal,
   setActivePanel,
   setActivePopout,
-  useRouter,
+  useRouter
 } from "@blumjs/router";
 import { isArray } from "@vkontakte/vkjs";
-import axios from "axios";
 import { useStore } from "effector-react";
 import { UserCell } from "../../atoms/UserCell";
 import { ModalRoute, PanelRoute, PopoutRoute } from "../../constants/router";
+import { AX } from "../../core/data/fetcher";
 import {
   $main,
   joinToYourRoom,
@@ -51,7 +51,7 @@ import {
   setOwnerId,
   setPlayerLobbyList,
   setPlayersId,
-  setTaskInfo,
+  setTaskInfo
 } from "../../core/main";
 import { qsSign } from "../../hooks/qs-sign";
 import { useTimeout } from "../../hooks/useTimeout";
@@ -62,9 +62,10 @@ import {
   createRoom,
   joinRoom,
   leaveRoom,
-  startGame,
+  startGame
 } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
+
 
 export const Multiplayer = ({ id }) => {
   const {
@@ -87,6 +88,8 @@ export const Multiplayer = ({ id }) => {
   const thisUserId = useUserId();
 
   useEffect(() => {
+    client.activeDevice = () => console.debug('using another device');
+
     client.leftRoom = ({ userId }) => {
       console.log("fired left room", userId);
       if (
@@ -131,17 +134,17 @@ export const Multiplayer = ({ id }) => {
       setActivePanel(PanelRoute.MultiplayerGame);
     };
     return () => {
-      client.leftRoom = () => {};
-      client.gameStarted = () => {};
-      client.roomCreated = () => {};
-      client.joinedRoom = () => {};
-      client.gameStarted = () => {};
+      client.leftRoom = () => { };
+      client.gameStarted = () => { };
+      client.roomCreated = () => { };
+      client.joinedRoom = () => { };
+      client.gameStarted = () => { };
     };
   }, [activePanel, playerLobbyList, playersId, gameInfo, joinCode]);
 
   useEffect(() => {
-    axios
-      .get(`https://showtime.app-dich.com/api/plus-plus/user-games${qsSign}`)
+    AX
+      .get(`/api/plus-plus/user-games${qsSign}`)
       .then(async function (response) {
         console.log(response.data.data[0], "user-games", window.location.hash);
         setOwnerId(response.data.data[0].ownerId);
@@ -163,8 +166,8 @@ export const Multiplayer = ({ id }) => {
       });
 
     if (haveHash && isFirstStart) {
-      axios
-        .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
+      AX
+        .post(`/api/plus-plus/room${qsSign}`)
         .then(async (response) => {
           setJoinCode(response.data.data);
 
@@ -246,9 +249,8 @@ export const Multiplayer = ({ id }) => {
 
           <div style={{ height: 30 }} className="multiplayer-title-div">
             <Title
-              className={`multiplayer-title-code${
-                joinCode && !isCodeCopied ? " trigger-change-code" : ""
-              }`}
+              className={`multiplayer-title-code${joinCode && !isCodeCopied ? " trigger-change-code" : ""
+                }`}
               style={{
                 display: "inline-block",
                 paddingLeft: 5,
@@ -265,9 +267,8 @@ export const Multiplayer = ({ id }) => {
             </Title>
             {connectType === "host" && !isCodeCopied && (
               <Icon20Sync
-                className={`multiplayer-title-return${
-                  joinCode ? " trigger-change-code-reverse" : ""
-                }`}
+                className={`multiplayer-title-return${joinCode ? " trigger-change-code-reverse" : ""
+                  }`}
                 fill="#1A84FF"
                 onClick={async function () {
                   setActivePopout(PopoutRoute.Loading);
@@ -491,8 +492,8 @@ export const Multiplayer = ({ id }) => {
                   connectType === "host"
                     ? "#1A84FF"
                     : appearance === "dark"
-                    ? "#293950"
-                    : "#EBF1FA",
+                      ? "#293950"
+                      : "#EBF1FA",
                 color: connectType === "host" ? "#fff" : "#1A84FF",
               }}
               before={

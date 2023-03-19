@@ -6,15 +6,15 @@ import {
   Icon20BombOutline,
   Icon20RecentOutline,
   Icon24CheckCircleOutline,
-  Icon24Play,
+  Icon24Play
 } from "@vkontakte/icons";
 import { Button, Card, Text, Title } from "@vkontakte/vkui";
-import axios from "axios";
 import { useStore } from "effector-react";
 import { qsSign } from "../../../hooks/qs-sign";
 import "../Home.css";
 
 import { PanelRoute, PopoutRoute } from "../../../constants/router";
+import { AX } from "../../../core/data/fetcher";
 import { $main, setLvlNumber, setReady } from "../../../core/main";
 import "../../../img/Fonts.css";
 
@@ -24,31 +24,6 @@ export const LevelCard = ({ number, devideLvl }) => {
 
   const [thisLvl, setThisLvl] = useState(null);
   const [bestResult, setBestResult] = useState(null);
-
-  function devideTypes(i) {
-    switch (i) {
-      case "one":
-        return 1;
-      case "two":
-        return 2;
-      case "three":
-        return 3;
-      case "four":
-        return 4;
-      case "five":
-        return 5;
-      case "six":
-        return 6;
-      case "seven":
-        return 7;
-      case "eight":
-        return 8;
-      case "nine":
-        return 9;
-      case "ten":
-        return 10;
-    }
-  }
 
   function devideType() {
     switch (number) {
@@ -79,8 +54,10 @@ export const LevelCard = ({ number, devideLvl }) => {
     try {
       let inf = lvlsInfo;
       let searchTerm = devideType(number);
-      let findedLevel = inf.find((lvl) => lvl.lvlType === searchTerm);
-      setThisLvl(findedLevel);
+      let findedLevel = inf?.find((lvl) => lvl.lvlType === searchTerm);
+      if (findedLevel) {
+        setThisLvl(findedLevel);
+      }
     } catch (e) {
       console.log("lvlsInfo err", e);
     }
@@ -99,8 +76,8 @@ export const LevelCard = ({ number, devideLvl }) => {
             String(lvl.bestTime.milliseconds).length === 1
               ? `00${lvl.bestTime.milliseconds}`
               : String(lvl.bestTime.milliseconds).length === 2
-              ? `0${lvl.bestTime.milliseconds}`
-              : String(lvl.bestTime.milliseconds),
+                ? `0${lvl.bestTime.milliseconds}`
+                : String(lvl.bestTime.milliseconds),
         });
       }
     }
@@ -122,15 +99,15 @@ export const LevelCard = ({ number, devideLvl }) => {
         lvlsInfo.map((item, index) => {
           if (item.lvlType === devideType(number)) {
             try {
-              axios
+              AX
                 .delete(
-                  `https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`
+                  `/api/plus-plus/lvl/${item.id}${qsSign}`
                 )
                 .then(async function (response) {
                   setReady(true);
                 })
-                .catch(function () {});
-            } catch (e) {}
+                .catch(function () { });
+            } catch (e) { }
           }
         });
       resolve();

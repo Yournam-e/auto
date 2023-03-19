@@ -10,9 +10,8 @@ import {
   back,
   setActivePanel,
   setActivePopout,
-  useRouter,
+  useRouter
 } from "@blumjs/router";
-import axios from "axios";
 import { qsSign } from "../../hooks/qs-sign";
 import { getPadTime } from "../../scripts/getPadTime";
 
@@ -22,11 +21,12 @@ import { useStore } from "effector-react";
 import { CustomPanel } from "../../atoms/CustomPanel";
 import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
+import { AX } from "../../core/data/fetcher";
 import {
   $main,
   setAllTasks,
   setLvlResult,
-  setTimeFinish,
+  setTimeFinish
 } from "../../core/main";
 import { useGameButtonDelay } from "../../hooks/useDebouncing";
 import { useGameFinish } from "../../hooks/useGameFinish";
@@ -75,8 +75,8 @@ const LvlGame = ({ id }) => {
 
   function createLvl() {
     setActivePopout(PopoutRoute.Loading);
-    axios
-      .post(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
+    AX
+      .post(`/api/plus-plus/lvl${qsSign}`, {
         lvlType: devideType(),
       })
       .then(async function (response) {

@@ -1,7 +1,8 @@
 import io, { Socket } from "socket.io-client";
+import { BASE_URL } from "../constants/api";
 import { initCallbacks } from "./callbacks";
 
-const ns = "https://showtime.app-dich.com/plusplus";
+const ns = `${BASE_URL}/plusplus`;
 
 let connected = false;
 

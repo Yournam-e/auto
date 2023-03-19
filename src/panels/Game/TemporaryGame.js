@@ -4,7 +4,6 @@ import { Button, Div, Title } from "@vkontakte/vkui";
 
 import "./Game.css";
 
-import axios from "axios";
 import { qsSign } from "../../hooks/qs-sign";
 import { getPadTime } from "../../scripts/getPadTime";
 
@@ -16,6 +15,7 @@ import { useStore } from "effector-react";
 import { CustomPanel } from "../../atoms/CustomPanel";
 import { GamePanelHeader } from "../../atoms/GamePanelHeader";
 import { PanelRoute, PopoutRoute } from "../../constants/router";
+import { AX } from "../../core/data/fetcher";
 import { $main, setAnswer } from "../../core/main";
 import { useGameButtonDelay } from "../../hooks/useDebouncing";
 import { useGameFinish } from "../../hooks/useGameFinish";
@@ -48,8 +48,8 @@ const TemporaryGame = ({ id }) => {
 
   function createLvl() {
     setActivePopout(PopoutRoute.Loading);
-    axios
-      .post(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
+    AX
+      .post(`/api/plus-plus/lvl${qsSign}`, {
         lvlType: "single30",
       })
       .then(async function (response) {

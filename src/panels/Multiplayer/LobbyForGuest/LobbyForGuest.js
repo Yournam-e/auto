@@ -6,18 +6,18 @@ import { Icon20QrCodeOutline } from "@vkontakte/icons";
 import "../Multiplayer.css";
 
 import { setActiveModal, setActivePanel } from "@blumjs/router";
-import axios from "axios";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../../atoms/CustomPanel";
 import { UserCell } from "../../../atoms/UserCell";
 import { ModalRoute, PanelRoute } from "../../../constants/router";
+import { AX } from "../../../core/data/fetcher";
 import {
   $main,
   setAnswersInfo,
   setFirstStart,
   setGameInfo,
   setJoinCode,
-  setTaskInfo,
+  setTaskInfo
 } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
 import { client } from "../../../sockets/receiver";
@@ -33,14 +33,14 @@ const LobbyForGuest = ({ id }) => {
   };
 
   useEffect(() => {
-    axios
-      .post(`https://showtime.app-dich.com/api/plus-plus/room${qsSign}`)
-      .then(async function (response) {
+    AX
+      .post(`/api/plus-plus/room${qsSign}`)
+      .then(function (response) {
         console.log(response.data.data, "lobby guests");
-        await setJoinCode(response.data.data);
+        setJoinCode(response.data.data);
 
         console.log("12");
-        await setGameInfo({ ...gameInfo, roomId: response.data.data });
+        setGameInfo({ ...gameInfo, roomId: response.data.data });
         setFirstStart(false);
       })
       .catch(function (error) {

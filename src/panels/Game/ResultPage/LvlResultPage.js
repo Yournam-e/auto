@@ -8,13 +8,13 @@ import {
   Icon24RefreshOutline,
   Icon56CancelCircleOutline,
   Icon56CheckCircleOutline,
-  Icon56RecentOutline,
+  Icon56RecentOutline
 } from "@vkontakte/icons";
 import { Button, ButtonGroup, Cell, List, Title } from "@vkontakte/vkui";
-import axios from "axios";
 import { useStore } from "effector-react";
 import { CustomPanel } from "../../../atoms/CustomPanel";
 import { PanelRoute, PopoutRoute } from "../../../constants/router";
+import { AX } from "../../../core/data/fetcher";
 import { $main, setAllTasks, setLvlNumber, setReady } from "../../../core/main";
 import { qsSign } from "../../../hooks/qs-sign";
 import { useResultButtonDelay } from "../../../hooks/useDebouncing";
@@ -23,7 +23,7 @@ import "./LvlResultPage.css";
 
 const LvlResultPage = ({ id }) => {
   const { allTasks, lvlResult, lvlNumber, appearance } = useStore($main);
-  const url = "https://showtime.app-dich.com/api/plus-plus/";
+  const url = "/api/plus-plus/";
 
   const [complete, setComplete] = useState();
 
@@ -80,9 +80,9 @@ const LvlResultPage = ({ id }) => {
   }
 
   function playNext() {
-    const url = "https://showtime.app-dich.com/api/plus-plus/";
+    const url = "/api/plus-plus/";
 
-    axios
+    AX
       .get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
         const lvls = await response.data.data;
@@ -95,9 +95,9 @@ const LvlResultPage = ({ id }) => {
                 devideType(complete[0] ? lvlNumber + 1 : lvlNumber)
               ) {
                 try {
-                  axios
+                  AX
                     .delete(
-                      `https://showtime.app-dich.com/api/plus-plus/lvl/${item.id}${qsSign}`
+                      `/api/plus-plus/lvl/${item.id}${qsSign}`
                     )
                     .then(async function (response) {
                       setReady(true);
@@ -106,7 +106,7 @@ const LvlResultPage = ({ id }) => {
                     .catch(function () {
                       reject();
                     });
-                } catch (e) {}
+                } catch (e) { }
               }
 
               complete[0]
@@ -132,14 +132,14 @@ const LvlResultPage = ({ id }) => {
   useEffect(() => {
     setActivePopout(PopoutRoute.Loading);
     setReady(false);
-    axios
-      .put(`https://showtime.app-dich.com/api/plus-plus/lvl${qsSign}`, {
+    AX
+      .put(`/api/plus-plus/lvl${qsSign}`, {
         id: lvlResult.id,
         lvlType: lvlResult.lvlType,
         answers: lvlResult.answers,
       })
       .then(async function (response) {
-        axios
+        AX
           .get(`${url}info${qsSign}`) //получил инфу о лвлах
           .then(async function (response) {
             const items = response.data.data;

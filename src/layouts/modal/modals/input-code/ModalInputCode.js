@@ -5,7 +5,7 @@ import {
   Div,
   ModalPage,
   ModalPageHeader,
-  usePlatform,
+  usePlatform
 } from "@vkontakte/vkui";
 
 import bridge from "@vkontakte/vk-bridge";
@@ -14,16 +14,15 @@ import { Icon24DismissDark } from "@vkontakte/icons";
 
 import "./style.css";
 
-import axios from "axios";
-
 import { back, setActivePopout } from "@blumjs/router";
 import { useStore } from "effector-react";
 import { PopoutRoute } from "../../../../constants/router";
+import { AX } from "../../../../core/data/fetcher";
 import {
   $main,
   setConnectType,
   setGameInfo,
-  setJoinCode,
+  setJoinCode
 } from "../../../../core/main";
 import { qsSign } from "../../../../hooks/qs-sign";
 import { joinRoom } from "../../../../sockets/game";
@@ -37,9 +36,9 @@ export const ModalInputCode = ({ id }) => {
   const [disabledButton, setDisabledButton] = useState(true);
 
   async function getId() {
-    axios
+    AX
       .get(
-        `https://showtime.app-dich.com/api/plus-plus/room/exists/${textInput.current.state.value}${qsSign}`
+        `/api/plus-plus/room/exists/${textInput.current.state.value}${qsSign}`
       ) //получил инфу о лвлах
       .then(async function (res) {
         await console.log(res.data.data, textInput.current.state.value);
