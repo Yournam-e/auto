@@ -28,4 +28,5 @@ export const client = clientPerformCallback((m) => ({
     }) => void
   >(),
   leftRoom: m<(data: { userId: number }) => void>(),
+  activeDevice: m<() => void>(),
 }));
