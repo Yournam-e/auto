@@ -8,7 +8,7 @@ import {
   Icon24RefreshOutline,
   Icon56CancelCircleOutline,
   Icon56CheckCircleOutline,
-  Icon56RecentOutline
+  Icon56RecentOutline,
 } from "@vkontakte/icons";
 import { Button, ButtonGroup, Cell, List, Title } from "@vkontakte/vkui";
 import { useStore } from "effector-react";
@@ -82,8 +82,7 @@ const LvlResultPage = ({ id }) => {
   function playNext() {
     const url = "/api/plus-plus/";
 
-    AX
-      .get(`${url}info${qsSign}`) //получил инфу о лвлах
+    AX.get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
         const lvls = await response.data.data;
 
@@ -95,10 +94,7 @@ const LvlResultPage = ({ id }) => {
                 devideType(complete[0] ? lvlNumber + 1 : lvlNumber)
               ) {
                 try {
-                  AX
-                    .delete(
-                      `/api/plus-plus/lvl/${item.id}${qsSign}`
-                    )
+                  AX.delete(`/api/plus-plus/lvl/${item.id}${qsSign}`)
                     .then(async function (response) {
                       setReady(true);
                       resolve();
@@ -106,7 +102,7 @@ const LvlResultPage = ({ id }) => {
                     .catch(function () {
                       reject();
                     });
-                } catch (e) { }
+                } catch (e) {}
               }
 
               complete[0]
@@ -132,15 +128,13 @@ const LvlResultPage = ({ id }) => {
   useEffect(() => {
     setActivePopout(PopoutRoute.Loading);
     setReady(false);
-    AX
-      .put(`/api/plus-plus/lvl${qsSign}`, {
-        id: lvlResult.id,
-        lvlType: lvlResult.lvlType,
-        answers: lvlResult.answers,
-      })
+    AX.put(`/api/plus-plus/lvl${qsSign}`, {
+      id: lvlResult.id,
+      lvlType: lvlResult.lvlType,
+      answers: lvlResult.answers,
+    })
       .then(async function (response) {
-        AX
-          .get(`${url}info${qsSign}`) //получил инфу о лвлах
+        AX.get(`${url}info${qsSign}`) //получил инфу о лвлах
           .then(async function (response) {
             const items = response.data.data;
             console.log(items);
@@ -177,6 +171,9 @@ const LvlResultPage = ({ id }) => {
         });
         console.warn(error);
       });
+    return () => {
+      setAllTasks([]);
+    };
   }, []);
 
   const { isLoading } = useResultButtonDelay();
@@ -340,12 +337,8 @@ const LvlResultPage = ({ id }) => {
               disabled={isLoading}
               size="l"
               onClick={() => {
-                async function deleteAndStart() {
-                  setFinishedTime(0);
-                  setAllTasks([{}]);
-                  playNext();
-                }
-                deleteAndStart();
+                setFinishedTime(0);
+                playNext();
               }}
               style={{
                 backgroundColor: "#1A84FF",
@@ -373,8 +366,6 @@ const LvlResultPage = ({ id }) => {
               className="result-buttonGroup-notNow"
               onClick={(e) => {
                 setFinishedTime(0);
-
-                setAllTasks([{}]);
                 setActivePanel(PanelRoute.Menu);
               }}
               size="l"

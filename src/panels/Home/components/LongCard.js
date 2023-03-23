@@ -47,10 +47,10 @@ export const LongCard = memo(() => {
                   color: appearance === "dark" ? "#C4C8CC" : "#2C2D2E",
                 }}
               >
-                {bestResult > -1 ? "" : "Попробуйте "}30-секундный режим
+                {bestResult > 0 ? "" : "Попробуйте "}30-секундный режим
               </Title>
             </div>
-            {bestResult > -1 && (
+            {bestResult > 0 && (
               <div>
                 <Title
                   level="1"

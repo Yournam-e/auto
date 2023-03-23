@@ -21,3 +21,14 @@ export type MultiplayerGameResult = {
     totalResults: number;
   }[];
 };
+
+type GameAudio<T> = {
+  timeOver: T;
+  during: T;
+  finishSuccess: T;
+  finishFailed: T;
+  replySuccess: T;
+  replyFailed: T;
+};
+export type GameAudioElements = GameAudio<HTMLAudioElement | null>;
+export type GameAudioSettings = GameAudio<boolean>;
