@@ -1,9 +1,14 @@
-body {
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-
-.lolllll {
+.appear_trigger {
+  animation: appear 500ms forwards;
 }
-
 .lvl-title {
   margin-top: 24px;
   font-family: "SF Pro Rounded";

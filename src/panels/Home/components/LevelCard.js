@@ -6,7 +6,7 @@ import {
   Icon20BombOutline,
   Icon20RecentOutline,
   Icon24CheckCircleOutline,
-  Icon24Play
+  Icon24Play,
 } from "@vkontakte/icons";
 import { Button, Card, Text, Title } from "@vkontakte/vkui";
 import { useStore } from "effector-react";
@@ -76,8 +76,8 @@ export const LevelCard = ({ number, devideLvl }) => {
             String(lvl.bestTime.milliseconds).length === 1
               ? `00${lvl.bestTime.milliseconds}`
               : String(lvl.bestTime.milliseconds).length === 2
-                ? `0${lvl.bestTime.milliseconds}`
-                : String(lvl.bestTime.milliseconds),
+              ? `0${lvl.bestTime.milliseconds}`
+              : String(lvl.bestTime.milliseconds),
         });
       }
     }
@@ -99,15 +99,12 @@ export const LevelCard = ({ number, devideLvl }) => {
         lvlsInfo.map((item, index) => {
           if (item.lvlType === devideType(number)) {
             try {
-              AX
-                .delete(
-                  `/api/plus-plus/lvl/${item.id}${qsSign}`
-                )
+              AX.delete(`/api/plus-plus/lvl/${item.id}${qsSign}`)
                 .then(async function (response) {
                   setReady(true);
                 })
-                .catch(function () { });
-            } catch (e) { }
+                .catch(function () {});
+            } catch (e) {}
           }
         });
       resolve();
@@ -186,7 +183,7 @@ export const LevelCard = ({ number, devideLvl }) => {
                   paddingLeft: 5,
                 }}
               >
-                {lvlsInfo && devideLvl(number)[1]}
+                {devideLvl(number)[1]}
               </Text>
             </div>
             <div
@@ -207,7 +204,7 @@ export const LevelCard = ({ number, devideLvl }) => {
                   paddingLeft: 5,
                 }}
               >
-                {lvlsInfo && devideLvl(number)[0]}
+                {devideLvl(number)[0]}
               </Text>
             </div>
 
@@ -222,7 +219,9 @@ export const LevelCard = ({ number, devideLvl }) => {
                 height={20}
               />
               <Text
-                className="lvl-card-parametr-text"
+                className={`lvl-card-parametr-text ${
+                  bestResult ? "appear_trigger" : ""
+                }`}
                 style={{
                   display: "inline-block",
                   verticalAlign: "middle",
