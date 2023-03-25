@@ -24,9 +24,22 @@ export const client = clientPerformCallback((m) => ({
         name: string;
         firstName: string;
         lastName: string;
+        isOwner: boolean;
       }[];
     }) => void
   >(),
   leftRoom: m<(data: { userId: number }) => void>(),
   activeDevice: m<() => void>(),
+  newOwner: m<
+    (data: {
+      users: {
+        userId: number;
+        avatar: string;
+        name: string;
+        firstName: string;
+        lastName: string;
+        isOwner: boolean;
+      }[];
+    }) => void
+  >(),
 }));
