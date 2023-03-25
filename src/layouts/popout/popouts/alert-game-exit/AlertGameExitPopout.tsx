@@ -17,13 +17,17 @@ export const AlertGameExitPopout = memo(() => {
     back();
   }, []);
   const handleAction = useCallback(() => {
-    setLeavingRoom(true);
-    setConnectType("host");
-    if (joinCode) {
-      leaveRoom(joinCode);
-    }
-    setActivePanel(PanelRoute.Menu);
-    setActiveStory(StoryRoute.Multiplayer);
+    back({
+      afterBackHandledCallback: () => {
+        setLeavingRoom(true);
+        setConnectType("host");
+        if (joinCode) {
+          leaveRoom(joinCode);
+        }
+        setActivePanel(PanelRoute.Menu);
+        setActiveStory(StoryRoute.Single);
+      },
+    });
   }, [joinCode]);
 
   return (
@@ -32,7 +36,6 @@ export const AlertGameExitPopout = memo(() => {
         {
           title: "Завершить",
           mode: "destructive",
-          autoclose: true,
           action: handleAction,
         },
         {

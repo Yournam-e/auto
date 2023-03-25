@@ -1,16 +1,24 @@
-import { back, setActivePanel } from "@blumjs/router";
+import {
+  back,
+  setActivePanel,
+  setActivePopout,
+  setActiveViewPanel,
+} from "@blumjs/router";
 import { createEffect } from "effector";
-import { PanelRoute, PopoutRoute } from "../../constants/router";
+import { PanelRoute, PopoutRoute, ViewRoute } from "../../constants/router";
 import { qsSign } from "../../hooks/qs-sign";
+import { browserBack } from "../../scripts/browserBack";
 import { connectRoom, joinRoom } from "../../sockets/game";
 import { BestLvlResult, GameInfo } from "../../types";
 import { AX } from "../data/fetcher";
 import {
   setBestLvlsResult,
   setFirstStart,
+  setGameExists,
   setGameInfo,
   setJoinCode,
   setNotUserRoom,
+  setOwnerId,
   setSingleType,
   setTimeFinish,
 } from "./events";
@@ -85,4 +93,48 @@ export const finishGame = createEffect<
   } else {
     setActivePanel(activePanel);
   }
+});
+
+export const toOffline = createEffect(() => {
+  setActiveViewPanel({
+    view: ViewRoute.Main,
+    panel: PanelRoute.NotConnection,
+  });
+});
+
+export const getRoomInfo = createEffect<{ thisUserId: number }, void>(
+  ({ thisUserId }) => {
+    AX.get(`/api/plus-plus/user-games${qsSign}`)
+      .then(async function (response) {
+        console.log(response.data.data[0], "user-games", window.location.hash);
+        setOwnerId(response.data.data[0].ownerId);
+        if (response.data.data[0].ownerId === thisUserId) {
+          if (response.data.data[0].started) {
+            browserBack();
+            setGameExists(true);
+          }
+        }
+        if (response.data.data[0].roomId === window.location.hash.slice(1)) {
+          if (response.data.data[0].started) {
+            browserBack();
+            setGameExists(true);
+          }
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+);
+export const isRoomExist = createEffect<number, void>((roomId) => {
+  AX.get<{ data: boolean }>(`/api/plus-plus/room/exists/${roomId}${qsSign}`)
+    .then((res) => {
+      if (!res.data.data) {
+        setActivePopout(PopoutRoute.AlertLobbyNotExist);
+      }
+    })
+    .catch((res) => {
+      setActivePopout(PopoutRoute.AlertLobbyNotExist);
+      console.log("err", res);
+    });
 });

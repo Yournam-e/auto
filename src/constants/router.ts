@@ -17,6 +17,7 @@ export enum PanelRoute {
   MultiplayerResult = "MultiplayerResult",
   LobbyForGuest = "LobbyForGuest",
   NotConnection = "NotConnection",
+  AnotherDevice = "AnotherDevice",
 }
 
 export enum ModalRoute {

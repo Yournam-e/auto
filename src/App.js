@@ -34,10 +34,11 @@ import LobbyForGuest from "./panels/Multiplayer/LobbyForGuest/LobbyForGuest";
 import MultiplayerResult from "./panels/Multiplayer/mpResult/MultiplayerResult";
 import NotConnection from "./panels/NotConnection/NotConnection";
 import searchToObject from "./scripts/searchToObject";
-
 import { useEventListener } from "./scripts/useEventListener";
+import { client } from "./sockets/receiver";
 
 import {
+  back,
   createCatchBackBrowserRouteMiddleware,
   createDisableBackBrowserRouteMiddleware,
   createRouteMiddleware,
@@ -58,15 +59,18 @@ import {
 } from "./constants/router";
 import {
   $main,
+  joinToYourRoom,
   setActiveStory,
   setAppearance,
   setConnectType,
   setGameInfo,
   setHaveHash,
   setUser,
+  toOffline,
 } from "./core/main";
 import { ModalLayout } from "./layouts/modal/ModalLayout";
 import { PopoutLayout } from "./layouts/popout/PopoutLayout";
+import { AnotherDevice } from "./panels/Errors";
 import { leaveRoom } from "./sockets/game";
 
 const App = () => {
@@ -78,8 +82,16 @@ const App = () => {
     connectType,
     playerLobbyList,
     joinCode,
+    isFirstStart,
   } = useStore($main);
-  const { activePanel, activePopout, activeView, isRouteInit } = useRouter();
+  const {
+    activePanel,
+    activePopout,
+    activeModal,
+    activeView,
+    isRouteInit,
+    isBackFromBrowser,
+  } = useRouter();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -123,8 +135,13 @@ const App = () => {
     ].map((p) =>
       createCatchBackBrowserRouteMiddleware(p, (s) => {
         if (!s.popout) {
-          setActivePanel(p);
-          setActivePopout(PopoutRoute.AlertFinishGame);
+          if (p !== PanelRoute.MultiplayerGame) {
+            setActivePanel(p);
+            setActivePopout(PopoutRoute.AlertFinishGame);
+          } else {
+            setActivePanel(p);
+            setActivePopout(PopoutRoute.AlertGameExit);
+          }
         }
       })
     ),
@@ -145,6 +162,13 @@ const App = () => {
         bridge.send("VKWebAppClose", { status: "success" });
       }
     }),
+    createCatchBackBrowserRouteMiddleware(PanelRoute.AnotherDevice, () => {
+      setActiveViewPanel({
+        view: ViewRoute.Main,
+        panel: PanelRoute.AnotherDevice,
+      });
+      bridge.send("VKWebAppClose", { status: "success" });
+    }),
     createRouteMiddleware(() => {
       if (!window.history.state || window.history.state.view === undefined) {
         setActiveViewPanel({ view: ViewRoute.Main, panel: PanelRoute.Menu });
@@ -154,30 +178,48 @@ const App = () => {
       if (navigator.onLine) {
         return true;
       }
-      setActiveViewPanel({
-        view: ViewRoute.Main,
-        panel: PanelRoute.NotConnection,
-      });
-      _setActiveModal(null);
-      _setActivePopout(null);
-      bridge.send("VKWebAppClose", { status: "success" });
-      return false;
-    }),
-    createRouteMiddleware((s, p) => {
-      console.log(window.history.state, "routes!!!");
+      if (isBackFromBrowser) {
+        toOffline();
+        _setActiveModal(null);
+        _setActivePopout(null);
+        bridge.send("VKWebAppClose", { status: "success" });
+        return false;
+      }
       return true;
     })
   );
-  useEffect(() => {
-    console.log(activeView, activePanel, activePopout, "routes!");
-  }, [activePanel, activeView, activePopout]);
-
   useEventListener("offline", () => {
     if (connectType === "join") {
       setConnectType("host");
       leaveRoom(joinCode);
     }
-    setActivePanel(PanelRoute.NotConnection);
+    if (activePopout) {
+      back({
+        afterBackHandledCallback: () => {
+          if (activeModal) {
+            back({
+              afterBackHandledCallback: toOffline,
+            });
+          } else {
+            toOffline();
+          }
+        },
+      });
+    } else if (activeModal) {
+      back({
+        afterBackHandledCallback: () => {
+          if (activePopout) {
+            back({
+              afterBackHandledCallback: toOffline,
+            });
+          } else {
+            toOffline();
+          }
+        },
+      });
+    } else {
+      toOffline();
+    }
   });
 
   useEffect(() => {
@@ -240,12 +282,15 @@ const App = () => {
         }
         setAppearance(theme);
       }
-      if (e.detail.type === "VKWebAppViewHide") {
-        console.log("app hidden");
-        if (connectType === "join" && user && user.id) {
-          setConnectType("host");
-          leaveRoom(joinCode);
-        }
+      if (
+        e.detail.type === "VKWebAppChangeFragment" ||
+        e.detail.type === "VKWebAppViewHide" ||
+        e.detail.type === "VKWebAppCloseResult"
+      ) {
+        console.log("app closed");
+        setConnectType("host");
+        joinToYourRoom({ gameInfo, isFirstStart });
+        leaveRoom(joinCode);
       }
       if (e.detail.type === "VKWebAppViewRestore") {
         console.log("restored app");
@@ -255,10 +300,15 @@ const App = () => {
       }
     };
     bridge.subscribe(callback);
+    client.activeDevice = () => {
+      setActivePanel(PanelRoute.AnotherDevice);
+      console.debug("using another device");
+    };
     return () => {
       bridge.unsubscribe(callback);
+      client.activeDevice = () => {};
     };
-  }, [user, gameInfo, connectType]);
+  }, [user, gameInfo, connectType, client]);
 
   if (!isRouteInit) {
     return (
@@ -285,7 +335,7 @@ const App = () => {
                       style={{
                         background:
                           appearance === "light" ? "#F7F7FA" : "#1D1D20",
-                        height: window.pageYOffset,
+                        minHeight: "100vh",
                       }}
                     >
                       <Epic
@@ -369,7 +419,6 @@ const App = () => {
                         >
                           <Home id={PanelRoute.Single} />
                         </View>
-
                         <View
                           id={StoryRoute.Multiplayer}
                           activePanel={PanelRoute.Multiplayer}
@@ -388,6 +437,7 @@ const App = () => {
                   <MultiplayerResult id={PanelRoute.MultiplayerResult} />
                   <LobbyForGuest id={PanelRoute.LobbyForGuest} />
                   <NotConnection id={PanelRoute.NotConnection} />
+                  <AnotherDevice id={PanelRoute.AnotherDevice} />
                 </View>
               </Root>
             </SplitCol>

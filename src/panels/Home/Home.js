@@ -85,8 +85,7 @@ export const Home = ({ id }) => {
 
   useEffect(() => {
     document.body.classList.add("body-dark");
-    AX
-      .get(`${url}info${qsSign}`) //получил инфу о лвлах
+    AX.get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
         setLvlsInfo(response.data.data);
         response.data.data.map((item) => {

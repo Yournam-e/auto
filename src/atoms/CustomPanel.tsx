@@ -20,6 +20,7 @@ export const CustomPanel = memo<Props>(({ id, style, className, children }) => {
         style={{
           background: appearance === "light" ? "#F7F7FA" : "#1D1D20",
           minHeight: "100vh",
+          overflowY: "auto",
           ...style,
         }}
       >

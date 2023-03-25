@@ -8,7 +8,7 @@ import {
   Panel,
   PanelHeader,
   Separator,
-  Title
+  Title,
 } from "@vkontakte/vkui";
 
 import {
@@ -16,7 +16,7 @@ import {
   Icon20QrCodeOutline,
   Icon20Sync,
   Icon24Play,
-  Icon28ArrowUturnLeftOutline
+  Icon28ArrowUturnLeftOutline,
 } from "@vkontakte/icons";
 import "./../Multiplayer/Multiplayer.css";
 
@@ -27,7 +27,7 @@ import {
   setActiveModal,
   setActivePanel,
   setActivePopout,
-  useRouter
+  useRouter,
 } from "@blumjs/router";
 import { isArray } from "@vkontakte/vkjs";
 import { useStore } from "effector-react";
@@ -36,13 +36,14 @@ import { ModalRoute, PanelRoute, PopoutRoute } from "../../constants/router";
 import { AX } from "../../core/data/fetcher";
 import {
   $main,
+  getRoomInfo,
+  isRoomExist,
   joinToYourRoom,
   setAgain,
   setAnswersInfo,
   setComplexity,
   setConnectType,
   setFirstStart,
-  setGameExists,
   setGameInfo,
   setJoinCode,
   setLeavingRoom,
@@ -51,25 +52,22 @@ import {
   setOwnerId,
   setPlayerLobbyList,
   setPlayersId,
-  setTaskInfo
+  setTaskInfo,
 } from "../../core/main";
 import { qsSign } from "../../hooks/qs-sign";
 import { useTimeout } from "../../hooks/useTimeout";
 import { useUserId } from "../../hooks/useUserId";
-import { browserBack } from "../../scripts/browserBack";
 import {
   connectRoom,
   createRoom,
   joinRoom,
   leaveRoom,
-  startGame
+  startGame,
 } from "../../sockets/game";
 import { client } from "../../sockets/receiver";
 
-
 export const Multiplayer = ({ id }) => {
   const {
-    user,
     gameInfo,
     playersId,
     joinCode,
@@ -80,16 +78,13 @@ export const Multiplayer = ({ id }) => {
     appearance,
     itAgain,
     leavingRoom,
-    notUserRoom,
     complexity,
     ownerId,
   } = useStore($main);
-  const { activePanel, activePopout } = useRouter();
+  const { activePanel } = useRouter();
   const thisUserId = useUserId();
 
   useEffect(() => {
-    client.activeDevice = () => console.debug('using another device');
-
     client.leftRoom = ({ userId }) => {
       console.log("fired left room", userId);
       if (
@@ -122,8 +117,14 @@ export const Multiplayer = ({ id }) => {
     client.joinedRoom = ({ users }) => {
       console.log("joined room", users);
       if (users !== 0) {
+        users.forEach((u) => u.isOwner && setOwnerId(u.userId));
         setPlayerLobbyList(users);
         setPlayersId(users.map((u) => u.userId));
+      }
+    };
+    client.newOwner = ({ users }) => {
+      if (isArray(users)) {
+        users.forEach((u) => u.isOwner && setOwnerId(u.userId));
       }
     };
     client.gameStarted = ({ answers, task, id }) => {
@@ -134,57 +135,34 @@ export const Multiplayer = ({ id }) => {
       setActivePanel(PanelRoute.MultiplayerGame);
     };
     return () => {
-      client.leftRoom = () => { };
-      client.gameStarted = () => { };
-      client.roomCreated = () => { };
-      client.joinedRoom = () => { };
-      client.gameStarted = () => { };
+      client.leftRoom = () => {};
+      client.gameStarted = () => {};
+      client.roomCreated = () => {};
+      client.joinedRoom = () => {};
+      client.newOwner = () => {};
+      client.gameStarted = () => {};
     };
-  }, [activePanel, playerLobbyList, playersId, gameInfo, joinCode]);
+  }, [activePanel, playerLobbyList, playersId, gameInfo, joinCode, thisUserId]);
 
   useEffect(() => {
-    AX
-      .get(`/api/plus-plus/user-games${qsSign}`)
-      .then(async function (response) {
-        console.log(response.data.data[0], "user-games", window.location.hash);
-        setOwnerId(response.data.data[0].ownerId);
-        if (response.data.data[0].ownerId === thisUserId) {
-          if (response.data.data[0].started) {
-            browserBack();
-            setGameExists(true);
-          }
-        }
-        if (response.data.data[0].roomId === window.location.hash.slice(1)) {
-          if (response.data.data[0].started) {
-            browserBack();
-            setGameExists(true);
-          }
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
+    getRoomInfo({ thisUserId });
     if (haveHash && isFirstStart) {
-      AX
-        .post(`/api/plus-plus/room${qsSign}`)
+      AX.post(`/api/plus-plus/room${qsSign}`)
         .then(async (response) => {
-          setJoinCode(response.data.data);
-
+          console.log("connect to host", response.data);
+          setJoinCode(window.location.hash.slice(1));
           setGameInfo({ ...gameInfo, roomId: response.data.data });
           if (window.location.hash.slice(1) === response.data.data) {
             setConnectType("host");
-            setJoinCode(window.location.hash.slice(1));
-            connectRoom(qsSign, window.location.hash.slice(1), thisUserId);
-          } else {
-            setJoinCode(window.location.hash.slice(1));
-            connectRoom(qsSign, window.location.hash.slice(1), thisUserId);
-            setNotUserRoom(true);
           }
+          connectRoom(qsSign, window.location.hash.slice(1));
           setFirstStart(false);
         })
         .catch(function (error) {
           console.log("err connect to room", error);
+        })
+        .finally(() => {
+          isRoomExist(window.location.hash.slice(1));
         });
     } else if (leavingRoom === true) {
       joinToYourRoom({ gameInfo, isFirstStart });
@@ -198,15 +176,12 @@ export const Multiplayer = ({ id }) => {
   }, []);
 
   useEffect(() => {
-    if (
-      connectType === "join" &&
-      isArray(playerLobbyList) &&
-      !playerLobbyList.some((p) => p.userId === ownerId) &&
-      activePopout !== PopoutRoute.AlertLobbyNotExist
-    ) {
-      setActivePopout(PopoutRoute.AlertLobbyNotExist);
+    if (ownerId === thisUserId && connectType === "join") {
+      setConnectType("host");
+    } else if (ownerId !== thisUserId && connectType === "host") {
+      setConnectType("join");
     }
-  }, [playerLobbyList.length, ownerId, connectType, notUserRoom]);
+  }, [ownerId, thisUserId, connectType]);
 
   const [isCodeCopied, setCodeCopied] = useState(false);
   useTimeout(
@@ -249,8 +224,9 @@ export const Multiplayer = ({ id }) => {
 
           <div style={{ height: 30 }} className="multiplayer-title-div">
             <Title
-              className={`multiplayer-title-code${joinCode && !isCodeCopied ? " trigger-change-code" : ""
-                }`}
+              className={`multiplayer-title-code${
+                joinCode && !isCodeCopied ? " trigger-change-code" : ""
+              }`}
               style={{
                 display: "inline-block",
                 paddingLeft: 5,
@@ -267,8 +243,9 @@ export const Multiplayer = ({ id }) => {
             </Title>
             {connectType === "host" && !isCodeCopied && (
               <Icon20Sync
-                className={`multiplayer-title-return${joinCode ? " trigger-change-code-reverse" : ""
-                  }`}
+                className={`multiplayer-title-return${
+                  joinCode ? " trigger-change-code-reverse" : ""
+                }`}
                 fill="#1A84FF"
                 onClick={async function () {
                   setActivePopout(PopoutRoute.Loading);
@@ -368,38 +345,34 @@ export const Multiplayer = ({ id }) => {
             </div>
           )}
         </div>
-
-        {user && (
-          <List
-            style={{
-              marginTop: 16,
-              marginBottom: 16,
-              height: 60 * 4,
-              overflowY: "auto",
-            }}
-          >
-            {[
-              0,
-              1,
-              2,
-              3,
-              ...new Array(
-                playerLobbyList && playerLobbyList.length > 4
-                  ? playerLobbyList.length - 4
-                  : 0
-              ).fill(0),
-            ].map((_, i) => (
-              <UserCell
-                name={playerLobbyList[i] ? playerLobbyList[i].name : undefined}
-                avatar={
-                  playerLobbyList[i] ? playerLobbyList[i].avatar : undefined
-                }
-                key={i}
-              />
-            ))}
-          </List>
-        )}
-
+        <List
+          style={{
+            marginTop: 16,
+            marginBottom: 16,
+            height: 60 * 4,
+            overflowY: "auto",
+          }}
+        >
+          {[
+            0,
+            1,
+            2,
+            3,
+            ...new Array(
+              playerLobbyList && playerLobbyList.length > 4
+                ? playerLobbyList.length - 4
+                : 0
+            ).fill(0),
+          ].map((_, i) => (
+            <UserCell
+              name={playerLobbyList[i] ? playerLobbyList[i].name : undefined}
+              avatar={
+                playerLobbyList[i] ? playerLobbyList[i].avatar : undefined
+              }
+              key={i}
+            />
+          ))}
+        </List>
         <div className="multiplayer-play-group">
           {connectType === "host" && (
             <Div>
@@ -492,8 +465,8 @@ export const Multiplayer = ({ id }) => {
                   connectType === "host"
                     ? "#1A84FF"
                     : appearance === "dark"
-                      ? "#293950"
-                      : "#EBF1FA",
+                    ? "#293950"
+                    : "#EBF1FA",
                 color: connectType === "host" ? "#fff" : "#1A84FF",
               }}
               before={

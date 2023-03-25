@@ -9,25 +9,26 @@ import {
   useRouter,
 } from "@blumjs/router";
 import { useStore } from "effector-react";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { CustomPanel } from "../../atoms/CustomPanel";
 import { PanelRoute, PopoutRoute, StoryRoute } from "../../constants/router";
 import { $main, setActiveStory } from "../../core/main";
+import { useTimeout } from "../../hooks/useTimeout";
 import "../../img/Fonts.css";
 
 const NotConnection = ({ id }) => {
   const { appearance } = useStore($main);
   const { activePopout } = useRouter();
 
-  useEffect(() => {
-    let timerId = null;
-    if (activePopout) {
-      timerId = setTimeout(() => {
+  useTimeout(
+    () => {
+      if (activePopout) {
         back();
-      }, 2000);
-    }
-    return () => clearTimeout(timerId);
-  }, [activePopout]);
+      }
+    },
+    2000,
+    [activePopout]
+  );
 
   const updateOnlineStatus = useCallback(() => {
     if (navigator.onLine) {
