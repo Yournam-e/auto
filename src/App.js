@@ -38,7 +38,6 @@ import { useEventListener } from "./scripts/useEventListener";
 import { client } from "./sockets/receiver";
 
 import {
-  back,
   createCatchBackBrowserRouteMiddleware,
   createDisableBackBrowserRouteMiddleware,
   createRouteMiddleware,
@@ -59,6 +58,7 @@ import {
 } from "./constants/router";
 import {
   $main,
+  cleanUpperLayout,
   joinToYourRoom,
   setActiveStory,
   setAppearance,
@@ -193,33 +193,13 @@ const App = () => {
       setConnectType("host");
       leaveRoom(joinCode);
     }
-    if (activePopout) {
-      back({
-        afterBackHandledCallback: () => {
-          if (activeModal) {
-            back({
-              afterBackHandledCallback: toOffline,
-            });
-          } else {
-            toOffline();
-          }
-        },
-      });
-    } else if (activeModal) {
-      back({
-        afterBackHandledCallback: () => {
-          if (activePopout) {
-            back({
-              afterBackHandledCallback: toOffline,
-            });
-          } else {
-            toOffline();
-          }
-        },
-      });
-    } else {
-      toOffline();
-    }
+    cleanUpperLayout({
+      activeModal,
+      activePopout,
+      callback: () => {
+        setActivePanel(PanelRoute.NotConnection);
+      },
+    });
   });
 
   useEffect(() => {
@@ -301,14 +281,20 @@ const App = () => {
     };
     bridge.subscribe(callback);
     client.activeDevice = () => {
-      setActivePanel(PanelRoute.AnotherDevice);
+      cleanUpperLayout({
+        activeModal,
+        activePopout,
+        callback: () => {
+          setActivePanel(PanelRoute.AnotherDevice);
+        },
+      });
       console.debug("using another device");
     };
     return () => {
       bridge.unsubscribe(callback);
       client.activeDevice = () => {};
     };
-  }, [user, gameInfo, connectType, client]);
+  }, [user, gameInfo, connectType, client, activeModal, activePopout]);
 
   if (!isRouteInit) {
     return (

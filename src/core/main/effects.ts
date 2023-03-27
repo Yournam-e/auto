@@ -5,7 +5,12 @@ import {
   setActiveViewPanel,
 } from "@blumjs/router";
 import { createEffect } from "effector";
-import { PanelRoute, PopoutRoute, ViewRoute } from "../../constants/router";
+import {
+  ModalRoute,
+  PanelRoute,
+  PopoutRoute,
+  ViewRoute,
+} from "../../constants/router";
 import { qsSign } from "../../hooks/qs-sign";
 import { browserBack } from "../../scripts/browserBack";
 import { connectRoom, joinRoom } from "../../sockets/game";
@@ -137,4 +142,37 @@ export const isRoomExist = createEffect<number, void>((roomId) => {
       setActivePopout(PopoutRoute.AlertLobbyNotExist);
       console.log("err", res);
     });
+});
+
+export const cleanUpperLayout = createEffect<
+  { activePopout: PopoutRoute; activeModal: ModalRoute; callback: () => void },
+  void
+>(({ activePopout, activeModal, callback }) => {
+  if (activePopout) {
+    back({
+      afterBackHandledCallback: () => {
+        if (activeModal) {
+          back({
+            afterBackHandledCallback: callback,
+          });
+        } else {
+          callback();
+        }
+      },
+    });
+  } else if (activeModal) {
+    back({
+      afterBackHandledCallback: () => {
+        if (activePopout) {
+          back({
+            afterBackHandledCallback: callback,
+          });
+        } else {
+          callback();
+        }
+      },
+    });
+  } else {
+    callback();
+  }
 });
