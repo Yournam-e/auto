@@ -277,39 +277,36 @@ export const Multiplayer = ({ id }) => {
               Поделиться QR
             </Button>
           </div>
-          {false && (
-            <div className="multiplayer-qr-button-div">
-              <Button
-                className="multiplayer-qr-button"
-                style={{
-                  backgroundColor:
-                    appearance === "dark" ? "#293950" : "#F4F9FF",
-                  color: "#1984FF",
-                }}
-                onClick={() => {
-                  bridge
-                    .send("VKWebAppAddToChat", {
-                      action_title: "Присоединиться к лобби",
-                      hash: joinCode,
-                    })
-                    .then((data) => {
-                      console.log(data);
-                    })
-                    .catch((error) => {
-                      console.log("addToChat err", error);
-                      if (error) {
-                        setActivePopout(PopoutRoute.AlertShareGame);
-                      }
-                    });
-                }}
-                before={<Icon20MessageOutline width={22} height={22} />}
-                mode="secondary"
-              >
-                Пригласить чат
-              </Button>
-            </div>
-          )}
 
+          <div className="multiplayer-qr-button-div">
+            <Button
+              className="multiplayer-qr-button"
+              style={{
+                backgroundColor: appearance === "dark" ? "#293950" : "#F4F9FF",
+                color: "#1984FF",
+              }}
+              onClick={() => {
+                bridge
+                  .send("VKWebAppAddToChat", {
+                    action_title: "Присоединиться к лобби",
+                    hash: joinCode,
+                  })
+                  .then((data) => {
+                    console.log(data);
+                  })
+                  .catch((error) => {
+                    console.log("addToChat err", error);
+                    if (error) {
+                      setActivePopout(PopoutRoute.AlertShareGame);
+                    }
+                  });
+              }}
+              before={<Icon20MessageOutline width={22} height={22} />}
+              mode="secondary"
+            >
+              Пригласить чат
+            </Button>
+          </div>
           {connectType === "host" && (
             <div>
               <div className="multiplayer-separator-div">
