@@ -31,7 +31,7 @@ export const MultiplayerGame = ({ id }) => {
     useStore($main);
 
   const [timeLeft, setTimeLeft] = useState(30); //время
-  const [isCounting, setIsCounting] = useState(true); //время
+  const [isCounting, setIsCounting] = useState(true);
 
   const minutes = getPadTime(Math.floor(timeLeft / 60)); //минуты
 
