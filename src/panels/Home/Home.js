@@ -10,6 +10,7 @@ import { LevelCard } from "./components/LevelCard";
 import { LongCard } from "./components/LongCard";
 
 import { setActivePopout } from "@blumjs/router";
+import bridge from "@vkontakte/vk-bridge";
 import { PopoutRoute } from "../../constants/router";
 import { AX } from "../../core/data/fetcher";
 import { $main, loadBestLvlsResult, setLvlsInfo } from "../../core/main";
@@ -84,6 +85,19 @@ export const Home = ({ id }) => {
   }
 
   useEffect(() => {
+    bridge
+      .send("VKWebAppShowBannerAd", {
+        banner_location: "bottom",
+      })
+      .then((data) => {
+        if (data.result) {
+          // Баннерная реклама отобразилась
+        }
+      })
+      .catch((error) => {
+        // Ошибка
+        console.log(error);
+      });
     document.body.classList.add("body-dark");
     AX.get(`${url}info${qsSign}`) //получил инфу о лвлах
       .then(async function (response) {
