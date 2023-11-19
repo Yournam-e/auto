@@ -1,0 +1,75 @@
+
+.repairItem
+{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  margin-top: 14px;
+  margin-left: 14px;
+}
+
+.inRepairItem
+{
+  background: orange;
+  padding: 10px;
+  margin-right: 5px;
+}
+
+.dataInRepairItem{
+  border: 1px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  border-radius: 10px;
+  max-height: 90;
+  
+  text-align: center;
+  vertical-align: middle;
+}
+.repairsDateBlock{
+  display: inline-block; 
+}
+
+.repairDiscription{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+}
+.repairsPanelDiscBlock{
+    max-width: 159px;
+}
+
+.repairsPanelDiscBlockAS{
+    max-height: 150px;
+
+}
+
+.repairsPanelName{
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  line-clamp: 1;
+  box-orient: vertical;
+}
+.repairsPanelDisc{
+  font-family: 'SF Pro Text';
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  box-orient: vertical;
+}
+
+.repairsPanelDiscSpan{
+  font-family: 'SF Pro Text';
+}

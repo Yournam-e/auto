@@ -5,7 +5,27 @@
 .vkuiPanel__fade {
   animation-fill-mode: forwards !important;
 }
+@font-face {
+  font-family: 'SF Pro Text';
+  src: url(/src/fonts/SF-Pro-Display-Medium.otf) format('otf');
+  font-style: medium;
+  font-weight: 400;
+}
 
+@font-face {
+  font-family: 'SF Pro Text';
+  src: url(/src/fonts/SF-Pro-Display-Medium.otf) format('otf'),
+    url(/src/fonts/SF-Pro-Display-Medium.otf) format('otf');
+  font-style: semibold;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: 'SF Pro Rounded';
+  src: url(/src/fonts/SF-Pro-Display-Medium.otf) format('otf');
+  font-style: bold;
+  font-weight: 700;
+}
 body,
 div {
   user-select: none;

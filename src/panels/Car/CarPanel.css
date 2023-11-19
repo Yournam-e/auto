@@ -1,0 +1,39 @@
+.centerdd{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.carImage{
+    display: block;
+    margin: 0 auto;
+}
+
+.sedgsdsdg1324124{
+    height: fit-content;
+}
+
+.asdsdfsdfsadasdasd{
+    margin: auto;
+}
+.editMileageButton{
+    position: absolute;
+    bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sdfgdsfg{
+    
+  position: relative;
+  display: inline-block;
+}
+
+
+* {
+    --vkui--size_border--regular: 3px;
+}

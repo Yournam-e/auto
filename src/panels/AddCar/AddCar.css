@@ -1,0 +1,81 @@
+
+
+.result-absolute-div{
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 10%;
+  bottom: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+
+
+.result-buttonGroup {
+  display: flex;
+  align-items: center;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.result-buttonRetry-div {
+  width: 100%;
+  margin-top: -16px;
+  display: flex;
+  align-items: center;
+}
+.result-buttonRetry-div:active {
+  width: 100%;
+  margin-top: -16px;
+  display: flex;
+  align-items: center;
+  -webkit-transform: scale(0.94);
+  transform: scale(0.94);
+  transition: all 100ms ease-in-out;
+  transition-timing-function: ease-in-out;
+}
+
+
+.result-buttonGroup-notNow {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.result-buttonGroup-retry {
+  margin-top: 10px;
+  font-family: "SF Pro Text";
+  src: url("../../fonts/SF-Pro-Display-Medium.otf");
+  font-style: normal;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 18px;
+
+  padding-left: 25px;
+  padding-right: 25px;
+
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  letter-spacing: -0.25px;
+}
+.result-buttonNotNow-div {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.inputsGroup{
+  padding-bottom: 10%;
+
+}
+
+
+
+.vkuibright_light, :root, [scheme=bright_light], body[scheme=bright_light]{
+  --accent:#000000;
+}
+.vkuiCellButton {
+  color: #000;
+}
